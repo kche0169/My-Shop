@@ -3,177 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy - 虚拟购物网站</title>
-    <!-- 引入 Tailwind CSS（无需本地安装，CDN 直接使用） -->
-    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
-    <!-- 引入 Font Awesome 图标（购物车、箭头等，提升界面美观度） -->
+    <title>ShopEasy</title>
+
+    <!-- Tailwind CSS -->
+    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- 自定义补充样式（仅少量未被 Tailwind 覆盖的样式，符合 CSS 分离要求） -->
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/custom.css">
 </head>
+
 <body class="bg-gray-50 font-sans">
-    <!-- 头部：语义化 <header> 标签，包含导航栏和购物清单 -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <!-- 层级导航菜单（语义化 <nav> 标签，符合 3 分要求） -->
-            <nav class="w-full md:w-auto">
-                <div class="flex items-center">
-                    <!-- 网站 Logo（跳转至首页） -->
-                    <a href="index.html" class="text-2xl font-bold text-blue-600 mr-6">ShopEasy</a>
-                    <!-- 层级导航链路：Home（当前页仅显示 Home，无下级） -->
-                    <div class="flex items-center text-gray-600">
-                        <span class="text-gray-800 font-medium">Home</span>
-                    </div>
-                </div>
-            </nav>
 
-            <!-- 购物清单（hover 展开，符合 3 分要求，响应式支持点击开合） -->
-            <div class="relative inline-block w-full md:w-auto">
-                <!-- 隐藏 checkbox（用于响应式点击开合） -->
-                <input type="checkbox" id="cart-toggle" class="hidden">
-                <!-- 购物清单触发按钮 -->
-                <label for="cart-toggle" class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 cursor-pointer w-full justify-center md:justify-start">
-                    <<i class="fa-solid fa-cart-shopping mr-2"></</i>
-                    <span>Shopping List</span>
-                    <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
-                </label>
-                <!-- 购物清单下拉框（hover/点击展开，覆盖下层元素） -->
-                <div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg z-50 hidden border border-gray-200">
-                    <!-- 清单标题 -->
-                    <div class="px-4 py-3 border-b border-gray-200 font-medium text-gray-800">我的购物清单（2件商品）</div>
-                    <!-- 清单内容（含数量输入框） -->
-                    <div class="px-4 py-3 max-h-60 overflow-y-auto">
-                        <!-- 商品1 -->
-                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                            <span class="text-gray-800 w-28 truncate">无线蓝牙耳机</span>
-                            <input type="number" value="1" min="1" class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            <span class="text-gray-800 font-medium">$199.99</span>
-                        </div>
-                        <!-- 商品2 -->
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-800 w-28 truncate">智能手表</span>
-                            <input type="number" value="1" min="1" class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            <span class="text-gray-800 font-medium">$299.99</span>
-                        </div>
-                    </div>
-                    <!-- 清单底部：总价 + 结账按钮 -->
-                    <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
-                        <div class="flex justify-between font-bold text-lg mb-3">
-                            <span>总计：</span>
-                            <span class="text-blue-600">$499.98</span>
-                        </div>
-                        <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                            <<i class="fa-solid fa-arrow-right mr-2"></</i>Checkout
-                        </button>
-                    </div>
+<!-- ================= Header ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+
+        <!-- Navigation -->
+        <nav class="w-full md:w-auto">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 mr-6">ShopEasy</a>
+                <div class="flex items-center text-gray-600">
+                    <span class="text-gray-800 font-medium">Home</span>
                 </div>
             </div>
-        </div>
-    </header>
+        </nav>
 
-    <!-- 主内容区：语义化 <main> 标签，包含产品列表 -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- 分类导航（可选，提升用户体验） -->
-        <section class="mb-8">
-            <div class="bg-white rounded-lg shadow-sm p-4">
-                <h2 class="text-xl font-bold mb-4 text-gray-800">商品分类</h2>
-                <ul class="flex flex-wrap gap-4">
-                    <li><a href="category1.html" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition-colors duration-300">电子产品</a></li>
-                    <li><a href="category2.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors duration-300">家居用品</a></li>
-                    <li><a href="category3.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors duration-300">运动户外</a></li>
-                    <li><a href="category4.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 transition-colors duration-300">时尚服饰</a></li>
-                </ul>
-            </div>
-        </section>
+        <!-- Shopping List -->
+        <div class="relative inline-block w-full md:w-auto">
+            <input type="checkbox" id="cart-toggle" class="hidden">
 
-        <!-- 无表格产品列表（符合 2 分要求，flexbox/grid 布局） -->
-        <section class="product-list">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">热门产品</h2>
-            <!-- 网格布局：自适应列数（手机1列、平板2列、电脑3列、大屏4列） -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <!-- 产品卡片 1：点击缩略图/名称跳转至产品页 -->
-                <a href="products/product1.html" class="block group">
-                    <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4 h-full flex flex-col">
-                        <!-- 产品缩略图 -->
-                        <div class="relative overflow-hidden rounded-md mb-4">
-                            <img src="images/thumbnails/prod1.jpg" alt="无线蓝牙耳机" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <!-- 产品名称 -->
-                        <h3 class="text-lg font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">无线蓝牙耳机</h3>
-                        <!-- 产品简介（可选） -->
-                        <p class="text-gray-600 text-sm mb-4 flex-grow">蓝牙5.3 | 降噪功能 | 24小时续航</p>
-                        <!-- 产品价格 -->
-                        <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
-                        <!-- Add to Cart 按钮 -->
-                        <button class="mt-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                            <<i class="fa-solid fa-cart-shopping mr-2"></</i>Add to Cart
-                        </button>
-                    </div>
-                </a>
+            <label for="cart-toggle"
+                   class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
+                          hover:bg-blue-700 transition-colors duration-300 cursor-pointer
+                          w-full justify-center md:justify-start">
+                <i class="fa-solid fa-cart-shopping mr-2"></i>
+                <span>Shopping List</span>
+                <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                             flex items-center justify-center text-sm">2</span>
+            </label>
 
-                <!-- 产品卡片 2 -->
-                <a href="products/product2.html" class="block group">
-                    <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4 h-full flex flex-col">
-                        <div class="relative overflow-hidden rounded-md mb-4">
-                            <img src="images/thumbnails/prod2.jpg" alt="智能手表" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">智能手表</h3>
-                        <p class="text-gray-600 text-sm mb-4 flex-grow">心率监测 | 血氧检测 | 防水50米</p>
-                        <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
-                        <button class="mt-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                            <<i class="fa-solid fa-cart-shopping mr-2"></</i>Add to Cart
-                        </button>
-                    </div>
-                </a>
+            <!-- Dropdown -->
+            <div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg
+                        z-50 hidden border border-gray-200">
 
-                <!-- 产品卡片 3 -->
-                <a href="products/product3.html" class="block group">
-                    <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4 h-full flex flex-col">
-                        <div class="relative overflow-hidden rounded-md mb-4">
-                            <img src="images/thumbnails/prod3.jpg" alt="无线充电器" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">无线充电器</h3>
-                        <p class="text-gray-600 text-sm mb-4 flex-grow">15W快充 | 兼容多设备 | 防滑设计</p>
-                        <p class="text-blue-600 font-bold text-xl mb-4">$79.99</p>
-                        <button class="mt-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                            <<i class="fa-solid fa-cart-shopping mr-2"></</i>Add to Cart
-                        </button>
-                    </div>
-                </a>
-
-                <!-- 产品卡片 4 -->
-                <a href="products/product4.html" class="block group">
-                    <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4 h-full flex flex-col">
-                        <div class="relative overflow-hidden rounded-md mb-4">
-                            <img src="images/thumbnails/prod4.jpg" alt="机械键盘" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">机械键盘</h3>
-                        <p class="text-gray-600 text-sm mb-4 flex-grow">青轴手感 | 可编程按键 | RGB背光</p>
-                        <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
-                        <button class="mt-auto bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
-                            <<i class="fa-solid fa-cart-shopping mr-2"></</i>Add to Cart
-                        </button>
-                    </div>
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <!-- 页脚：语义化 <footer> 标签 -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="text-center md:text-left">
-                    <p class="text-lg font-bold mb-2">ShopEasy 虚拟购物网站</p>
-                    <p class="text-gray-400">© 2026 IEMS5718 网络编程与网络安全 - Phase 1 作业</p>
+                <div class="px-4 py-3 border-b border-gray-200 font-medium text-gray-800">
+                    My Shopping List (2 items)
                 </div>
-                <div class="flex gap-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"><<i class="fa-brands fa-facebook"></</i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"><<i class="fa-brands fa-twitter"></</i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors duration-300"><<i class="fa-brands fa-instagram"></</i></a>
+
+                <div class="px-4 py-3 max-h-60 overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+                        <span class="text-gray-800 w-28 truncate">Wireless Bluetooth Earphones</span>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
+                        <span class="text-gray-800 font-medium">$199.99</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-800 w-28 truncate">Smart Watch</span>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
+                        <span class="text-gray-800 font-medium">$299.99</span>
+                    </div>
+                </div>
+
+                <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
+                    <div class="flex justify-between font-bold text-lg mb-3">
+                        <span>Total:</span>
+                        <span class="text-blue-600">$499.98</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                                   hover:bg-blue-700 transition-colors duration-300
+                                   flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-right mr-2"></i>
+                        Checkout
+                    </button>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+</header>
+
+<!-- ================= Main ================= -->
+<main class="container mx-auto px-4 py-8">
+
+    <!-- Category -->
+    <section class="mb-8">
+        <div class="bg-white rounded-lg shadow-sm p-4">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Product Categories</h2>
+            <ul class="flex flex-wrap gap-4">
+                <li><a href="category/electronics.html" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-md">Electronics</a></li>
+                <li><a href="category/home.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Home & Living</a></li>
+                <li><a href="category/sports.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Sports & Outdoors</a></li>
+                <li><a href="category/fashion.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Fashion</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Product List -->
+    <section>
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+            <!-- Product Card -->
+            <a href="products/product1.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
+                    <img src="images/thumbnails/prod1.jpg" alt="Wireless Bluetooth Earphones"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Bluetooth Earphones</h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">Bluetooth 5.3 | Noise Cancelling | 24-hour Battery</p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product Card -->
+            <a href="products/product2.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
+                    <img src="images/thumbnails/prod2.jpg" alt="Smart Watch"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+        </div>
+    </section>
+</main>
+
+<!-- ================= Footer ================= -->
+<footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <p class="text-lg font-bold">ShopEasy - Virtual Shopping Website</p>
+            <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
+        </div>
+        <div class="flex gap-6">
+            <i class="fa-brands fa-facebook text-gray-400"></i>
+            <i class="fa-brands fa-twitter text-gray-400"></i>
+            <i class="fa-brands fa-instagram text-gray-400"></i>
+        </div>
+    </div>
+</footer>
+
 </body>
 </html>

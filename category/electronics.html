@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronics - ShopEasy</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/custom.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+<!-- ================= Header ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+
+        <!-- Logo and navigation -->
+        <nav class="flex items-center gap-6">
+            <a href="../index.html" class="text-2xl font-bold text-blue-600">
+                ShopEasy
+            </a>
+            <span class="text-gray-600">Category / Electronics</span>
+        </nav>
+
+        <!-- Back to home -->
+        <a href="../index.html"
+           class="text-blue-600 hover:underline flex items-center">
+            <i class="fa-solid fa-house mr-2"></i>
+            Home
+        </a>
+    </div>
+</header>
+
+<!-- ================= Main Content ================= -->
+<main class="container mx-auto px-4 py-8">
+
+    <!-- Category description -->
+    <section class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            Electronics
+        </h1>
+        <p class="text-gray-600">
+            Explore our wide range of cutting-edge electronics including audio devices, smart wearables, laptops, tablets, chargers, and more. 
+            Click on a product to view detailed specifications and add to cart.
+        </p>
+    </section>
+
+    <!-- Product list (grid layout, no table) -->
+    <section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+            <!-- Product card 1 - From your example -->
+            <a href="../products/product1.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics1.jpg"
+                         alt="Wireless Bluetooth Earphones"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        Wireless Bluetooth Earphones
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        Bluetooth 5.3 | Noise Cancelling | 24-hour Battery
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $199.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 2 - From your example -->
+            <a href="../products/product2.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics2.jpg"
+                         alt="Smart Watch"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        Smart Watch
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        Heart Rate | Blood Oxygen | 50m Waterproof
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $299.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 3 -->
+            <a href="../products/product3.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics3.jpg"
+                         alt="Wireless Noise-Cancelling Headphones"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        Wireless Noise-Cancelling Headphones
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        40-hour playtime | Active Noise Cancellation | Touch Controls
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $149.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 4 -->
+            <a href="../products/product4.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics4.jpg"
+                         alt="13-inch Laptop"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        13-inch Ultrabook Laptop
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        Intel Core i7 | 16GB RAM | 512GB SSD | 13.3" Retina Display
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $999.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 5 -->
+            <a href="../products/product5.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics5.jpg"
+                         alt="10.5-inch Tablet"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        10.5-inch Android Tablet
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        4GB RAM | 128GB Storage | 90Hz Display | Stylus Included
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $279.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 6 -->
+            <a href="../products/product6.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics6.jpg"
+                         alt="65W GaN Charger"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        65W GaN Fast Charger (3 Ports)
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        USB-C PD | Compact design | Compatible with MacBook, iPhone, iPad
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $49.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 7 -->
+            <a href="../products/product7.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics7.jpg"
+                         alt="4K Action Camera"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        4K Action Camera
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        Waterproof 10m | 5.3K Video | Dual Screens | Stabilization
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $249.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+            <!-- Product card 8 -->
+            <a href="../products/product8.html" class="block group">
+                <div class="bg-white rounded-lg shadow-sm hover:shadow-md
+                            transition-shadow duration-300 p-4 h-full flex flex-col">
+                    <img src="../images/thumbnails/electronics8.jpg"
+                         alt="True Wireless Earbuds"
+                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">
+                        True Wireless Earbuds with ANC
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">
+                        Active Noise Cancellation | IPX4 | 30-hour Total Playtime
+                    </p>
+                    <p class="text-blue-600 font-bold text-xl mb-4">
+                        $89.99
+                    </p>
+                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+                    </button>
+                </div>
+            </a>
+
+        </div>
+    </section>
+</main>
+
+<!-- ================= Footer ================= -->
+<footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row
+                justify-between items-center gap-4">
+        <div>
+            <p class="text-lg font-bold">ShopEasy</p>
+            <p class="text-gray-400">
+                © 2026 IEMS5718 Phase 1
+            </p>
+        </div>
+        <div class="flex gap-6">
+            <i class="fa-brands fa-facebook text-gray-400"></i>
+            <i class="fa-brands fa-twitter text-gray-400"></i>
+            <i class="fa-brands fa-instagram text-gray-400"></i>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
