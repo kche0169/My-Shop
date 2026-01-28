@@ -1,0 +1,21 @@
+/* 响应式：点击购物清单时显示（通过 checkbox 状态控制） */
+#cart-toggle:checked ~ div {
+    display: block;
+}
+
+/* 解决小屏幕下购物清单按钮宽度问题 */
+@media (max-width: 768px) {
+    .product-list .grid {
+        gap: 4px;
+    }
+}
+
+/* 自定义产品卡片hover效果（可选优化） */
+.group .product-name {
+    transition: color 0.3s ease;
+}
+
+/* 确保购物清单始终覆盖下层元素（强化 z-index） */
+.z-50 {
+    z-index: 50 !important;
+}
