@@ -109,11 +109,15 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-            <!-- Product Card -->
+            <!-- Product Card 1 -->
             <a href="products/product1.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <img src="images/thumbnails/prod1.jpg" alt="Wireless Bluetooth Earphones"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <!-- 圖片容器：固定比例 + 背景色 -->
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="images/electronics/wireless_blueteeth_headphone/wireless_blueteeth_headphone.jpg"
+                            alt="Wireless Bluetooth Earphones"
+                            class="absolute inset-0 w-full h-full object-contain p-4">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Bluetooth Earphones</h3>
                     <p class="text-gray-600 text-sm mb-4 flex-grow">Bluetooth 5.3 | Noise Cancelling | 24-hour Battery</p>
                     <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
@@ -123,11 +127,15 @@
                 </div>
             </a>
 
-            <!-- Product Card -->
+            <!-- Product Card 2 -->
             <a href="products/product2.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <img src="images/thumbnails/prod2.jpg" alt="Smart Watch"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <!-- 同樣的圖片容器設定 -->
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="images/electronics/smart_watch/smart_watch.jpg"
+                            alt="Smart Watch"
+                            class="absolute inset-0 w-full h-full object-contain p-4">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
                     <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
                     <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
