@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy - 虚拟购物网站</title>
+    <title>ShopEasy</title>
 
     <!-- Tailwind CSS -->
     <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
@@ -51,19 +51,19 @@
                         z-50 hidden border border-gray-200">
 
                 <div class="px-4 py-3 border-b border-gray-200 font-medium text-gray-800">
-                    我的购物清单（2件商品）
+                    My Shopping List (2 items)
                 </div>
 
                 <div class="px-4 py-3 max-h-60 overflow-y-auto">
                     <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                        <span class="text-gray-800 w-28 truncate">无线蓝牙耳机</span>
+                        <span class="text-gray-800 w-28 truncate">Wireless Bluetooth Earphones</span>
                         <input type="number" value="1" min="1"
                                class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
                         <span class="text-gray-800 font-medium">$199.99</span>
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <span class="text-gray-800 w-28 truncate">智能手表</span>
+                        <span class="text-gray-800 w-28 truncate">Smart Watch</span>
                         <input type="number" value="1" min="1"
                                class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
                         <span class="text-gray-800 font-medium">$299.99</span>
@@ -72,7 +72,7 @@
 
                 <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
                     <div class="flex justify-between font-bold text-lg mb-3">
-                        <span>总计：</span>
+                        <span>Total:</span>
                         <span class="text-blue-600">$499.98</span>
                     </div>
                     <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
@@ -93,29 +93,29 @@
     <!-- Category -->
     <section class="mb-8">
         <div class="bg-white rounded-lg shadow-sm p-4">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">商品分类</h2>
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Product Categories</h2>
             <ul class="flex flex-wrap gap-4">
-                <li><a href="category1.html" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-md">电子产品</a></li>
-                <li><a href="category2.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">家居用品</a></li>
-                <li><a href="category3.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">运动户外</a></li>
-                <li><a href="category4.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">时尚服饰</a></li>
+                <li><a href="category/electronics.html" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-md">Electronics</a></li>
+                <li><a href="category/home.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Home & Living</a></li>
+                <li><a href="category/sports.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Sports & Outdoors</a></li>
+                <li><a href="category/fashion.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Fashion</a></li>
             </ul>
         </div>
     </section>
 
     <!-- Product List -->
     <section>
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">热门产品</h2>
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
             <!-- Product Card -->
             <a href="products/product1.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <img src="images/thumbnails/prod1.jpg" alt="无线蓝牙耳机"
+                    <img src="images/thumbnails/prod1.jpg" alt="Wireless Bluetooth Earphones"
                          class="w-full h-48 object-cover rounded-md mb-4">
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">无线蓝牙耳机</h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">蓝牙5.3 | 降噪 | 24小时续航</p>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Bluetooth Earphones</h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">Bluetooth 5.3 | Noise Cancelling | 24-hour Battery</p>
                     <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
                     <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
                         <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
@@ -126,10 +126,10 @@
             <!-- Product Card -->
             <a href="products/product2.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <img src="images/thumbnails/prod2.jpg" alt="智能手表"
+                    <img src="images/thumbnails/prod2.jpg" alt="Smart Watch"
                          class="w-full h-48 object-cover rounded-md mb-4">
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">智能手表</h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">心率 | 血氧 | 防水50米</p>
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
+                    <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
                     <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
                     <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
                         <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
@@ -145,7 +145,7 @@
 <footer class="bg-gray-800 text-white py-8 mt-12">
     <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <p class="text-lg font-bold">ShopEasy 虚拟购物网站</p>
+            <p class="text-lg font-bold">ShopEasy - Virtual Shopping Website</p>
             <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
         </div>
         <div class="flex gap-6">
