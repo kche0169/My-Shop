@@ -1,167 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEasy</title>
 
-    <!-- Tailwind CSS -->
-    <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body class="bg-gray-50 font-sans">
 
 <!-- ================= Header ================= -->
-<header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-2">
 
-        <!-- Navigation -->
-        <nav class="w-full md:w-auto">
-            <div class="flex items-center">
-                <a href="index.html" class="text-2xl font-bold text-blue-600 mr-6">ShopEasy</a>
-                <div class="flex items-center text-gray-600">
-                    <span class="text-gray-800 font-medium">Home</span>
-                </div>
-            </div>
-        </nav>
+    <!-- Logo + Home Breadcrumb -->
+    <div class="flex items-center gap-6 w-full md:w-auto">
+      <!-- Logo -->
+      <a href="index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
 
-        <!-- Shopping List -->
-        <div class="relative inline-block w-full md:w-auto">
-            <input type="checkbox" id="cart-toggle" class="hidden">
-
-            <label for="cart-toggle"
-                   class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
-                          hover:bg-blue-700 transition-colors duration-300 cursor-pointer
-                          w-full justify-center md:justify-start">
-                <i class="fa-solid fa-cart-shopping mr-2"></i>
-                <span>Shopping List</span>
-                <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                             flex items-center justify-center text-sm">2</span>
-            </label>
-
-            <!-- Dropdown -->
-            <div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg
-                        z-50 hidden border border-gray-200">
-
-                <div class="px-4 py-3 border-b border-gray-200 font-medium text-gray-800">
-                    My Shopping List (2 items)
-                </div>
-
-                <div class="px-4 py-3 max-h-60 overflow-y-auto">
-                    <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-                        <span class="text-gray-800 w-28 truncate">Wireless Bluetooth Earphones</span>
-                        <input type="number" value="1" min="1"
-                               class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
-                        <span class="text-gray-800 font-medium">$199.99</span>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-800 w-28 truncate">Smart Watch</span>
-                        <input type="number" value="1" min="1"
-                               class="w-16 px-2 py-1 border border-gray-300 rounded-md text-center">
-                        <span class="text-gray-800 font-medium">$299.99</span>
-                    </div>
-                </div>
-
-                <div class="px-4 py-3 border-t border-gray-200 bg-gray-50">
-                    <div class="flex justify-between font-bold text-lg mb-3">
-                        <span>Total:</span>
-                        <span class="text-blue-600">$499.98</span>
-                    </div>
-                    <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
-                                   hover:bg-blue-700 transition-colors duration-300
-                                   flex items-center justify-center">
-                        <i class="fa-solid fa-arrow-right mr-2"></i>
-                        Checkout
-                    </button>
-                </div>
-            </div>
-        </div>
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-500 flex gap-1 items-center">
+        <a href="index.html" class="text-gray-800 font-medium">Home</a>
+      </nav>
     </div>
+
+
+    <!-- Shopping List -->
+    <div class="relative cart-wrapper w-full md:w-auto group">
+      <input type="checkbox" id="cart-toggle" class="hidden peer">
+      <label for="cart-toggle" class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
+                 hover:bg-blue-700 transition-colors duration-300 cursor-pointer w-full md:w-auto justify-center">
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                     flex items-center justify-center text-sm font-medium">2</span>
+      </label>
+
+      <!-- Cart Dropdown -->
+      <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                  border border-gray-200 z-50
+                  opacity-0 invisible translate-y-2 pointer-events-none
+                  transition-all duration-200 ease-in-out
+                  group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+
+        <div class="px-5 py-4 border-b font-semibold text-gray-800 text-lg">
+          My Shopping List (2 items)
+        </div>
+
+        <div class="px-5 py-4 max-h-[320px] overflow-y-auto divide-y divide-gray-100">
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4">
+              <div class="text-gray-800 font-medium">Wireless Bluetooth Earphones</div>
+            </div>
+            <input type="number" value="1" min="1" 
+                   class="w-20 px-3 py-2 border rounded text-center text-sm">
+            <div class="text-right font-medium text-gray-800 min-w-[80px] pl-3">$199.99</div>
+          </div>
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4">
+              <div class="text-gray-800 font-medium">Smart Watch</div>
+            </div>
+            <input type="number" value="1" min="1" 
+                   class="w-20 px-3 py-2 border rounded text-center text-sm">
+            <div class="text-right font-medium text-gray-800 min-w-[80px] pl-3">$299.99</div>
+          </div>
+        </div>
+
+        <div class="px-5 py-5 border-t bg-gray-50 rounded-b-lg">
+          <div class="flex justify-between items-center mb-4 text-lg font-bold">
+            <span class="text-gray-800">Total:</span>
+            <span class="text-blue-700">$499.98</span>
+          </div>
+          <button class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 flex items-center justify-center">
+            <i class="fa-solid fa-arrow-right mr-2"></i>Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </header>
 
+
 <!-- ================= Main ================= -->
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-8 flex gap-6">
 
-    <!-- Category -->
-    <section class="mb-8">
-        <div class="bg-white rounded-lg shadow-sm p-4">
-            <h2 class="text-xl font-bold mb-4 text-gray-800">Product Categories</h2>
-            <ul class="flex flex-wrap gap-4">
-                <li><a href="category/electronics.html" class="px-4 py-2 bg-blue-100 text-blue-600 rounded-md">Electronics</a></li>
-                <li><a href="category/home.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Home & Living</a></li>
-                <li><a href="category/sports.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Sports & Outdoors</a></li>
-                <li><a href="category/fashion.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-md">Fashion</a></li>
-            </ul>
+  <!-- ================= Sidebar ================= -->
+  <aside class="w-64 bg-white rounded-lg shadow-sm p-4 flex-shrink-0">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+    <ul class="flex flex-col gap-3">
+      <li>
+        <a href="category/electronics.html"
+           class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Electronics
+        </a>
+      </li>
+      <li>
+        <a href="category/home.html"
+           class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Home & Living
+        </a>
+      </li>
+      <li>
+        <a href="category/sports.html"
+           class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Sports & Outdoors
+        </a>
+      </li>
+      <li>
+        <a href="category/fashion.html"
+           class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Fashion
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ================= Featured Products ================= -->
+  <section class="flex-1">
+
+
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+      <!-- Product Card 1 -->
+      <a href="products/product1.html" class="block group">
+        <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
+          <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+            <img src="images/electronics/wireless_blueteeth_headphone/wireless_blueteeth_headphone.jpg"
+                 alt="Wireless Bluetooth Earphones"
+                 class="absolute inset-0 w-full h-full object-contain p-4">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Bluetooth Earphones</h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">Bluetooth 5.3 | Noise Cancelling | 24-hour Battery</p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
+          <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+          </button>
         </div>
-    </section>
+      </a>
 
-    <!-- Product List -->
-    <section>
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-            <!-- Product Card 1 -->
-            <a href="products/product1.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <!-- 圖片容器：固定比例 + 背景色 -->
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="images/electronics/wireless_blueteeth_headphone/wireless_blueteeth_headphone.jpg"
-                            alt="Wireless Bluetooth Earphones"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Bluetooth Earphones</h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">Bluetooth 5.3 | Noise Cancelling | 24-hour Battery</p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product Card 2 -->
-            <a href="products/product2.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <!-- 同樣的圖片容器設定 -->
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="images/electronics/smart_watch/smart_watch.jpg"
-                            alt="Smart Watch"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-                    </button>
-                </div>
-            </a>
-
+      <!-- Product Card 2 -->
+      <a href="products/product2.html" class="block group">
+        <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
+          <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+            <img src="images/electronics/smart_watch/smart_watch.jpg"
+                 alt="Smart Watch"
+                 class="absolute inset-0 w-full h-full object-contain p-4">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
+          <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+          </button>
         </div>
-    </section>
+      </a>
+
+    </div>
+  </section>
 </main>
+
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <p class="text-lg font-bold">ShopEasy - Virtual Shopping Website</p>
-            <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
-        </div>
-        <div class="flex gap-6">
-            <i class="fa-brands fa-facebook text-gray-400"></i>
-            <i class="fa-brands fa-twitter text-gray-400"></i>
-            <i class="fa-brands fa-instagram text-gray-400"></i>
-        </div>
+  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="text-lg font-bold">ShopEasy - Virtual Shopping Website</p>
+      <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
+    <div class="flex gap-6">
+      <i class="fa-brands fa-facebook text-gray-400"></i>
+      <i class="fa-brands fa-twitter text-gray-400"></i>
+      <i class="fa-brands fa-instagram text-gray-400"></i>
+    </div>
+  </div>
 </footer>
 
 </body>

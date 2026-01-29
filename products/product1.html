@@ -11,102 +11,137 @@
     <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/custom.css">
 </head>
 
 <body class="bg-gray-50 font-sans">
 
 <!-- ================= Header ================= -->
-<header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
 
-        <!-- Logo + Nav -->
-        <nav class="flex items-center gap-6">
-            <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
-            <span class="text-gray-600">Product</span>
+        <!-- Logo + Navigation -->
+        <nav class="w-full md:w-auto flex items-center justify-between md:justify-start">
+            <a href="../index.html" class="text-2xl font-bold text-blue-600 mr-6">ShopEasy</a>
+                <div class="flex items-center text-gray-600 gap-4 text-sm">
+                    <a href="../index.html" class="hover:text-blue-600">Home</a>
+                    <span>&gt;</span>
+                    <a href="../category/electronics.html" class="hover:text-blue-600">Electronics</a>
+                    <span>&gt;</span>
+                    <span class="text-gray-800 font-medium">
+                        Wireless Bluetooth Headphones
+                    </span>
+                </div>
+
         </nav>
 
-        <!-- Back to Category -->
-        <a href="../category/electronics.html"
-           class="text-blue-600 hover:underline flex items-center">
-            <i class="fa-solid fa-arrow-left mr-2"></i>
-            Back to Category
-        </a>
+        <!-- Shopping List -->
+        <div class="relative cart-wrapper w-full md:w-auto group">
+            <input type="checkbox" id="cart-toggle" class="hidden peer">
+
+            <!-- Cart Button -->
+            <label for="cart-toggle"
+                   class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
+                          hover:bg-blue-700 transition-colors duration-300 cursor-pointer
+                          w-full md:w-auto justify-center">
+                <i class="fa-solid fa-cart-shopping mr-2"></i>
+                <span>Shopping List</span>
+                <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                             flex items-center justify-center text-sm font-medium">2</span>
+            </label>
+
+            <!-- Cart Dropdown -->
+            <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                        border border-gray-200 z-50
+                        opacity-0 invisible translate-y-2 pointer-events-none
+                        transition-all duration-200 ease-in-out
+                        group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                        peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+
+                <div class="px-5 py-4 border-b font-semibold text-gray-800">
+                    My Shopping List (2 items)
+                </div>
+
+                <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y">
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex-1 pr-4 text-sm font-medium">
+                            Wireless Bluetooth Headphones
+                        </div>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border rounded text-center text-sm">
+                        <div class="font-medium w-20 text-right">$199.99</div>
+                    </div>
+
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex-1 pr-4 text-sm font-medium">
+                            Smart Watch
+                        </div>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border rounded text-center text-sm">
+                        <div class="font-medium w-20 text-right">$299.99</div>
+                    </div>
+                </div>
+
+                <div class="px-5 py-4 border-t bg-gray-50">
+                    <div class="flex justify-between font-bold mb-4">
+                        <span>Total</span>
+                        <span class="text-blue-700">$499.98</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 
 <!-- ================= Main ================= -->
 <main class="container mx-auto px-4 py-10">
 
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-lg shadow-sm">
 
-        <!-- Product Image -->
-        <div class="w-full h-96 bg-gray-100 flex items-center justify-center">
+        <!-- Image -->
+        <div class="h-96 bg-gray-100 flex items-center justify-center">
             <img src="../images/electronics/wireless_blueteeth_headphone/wireless_blueteeth_headphone.jpg"
-                alt="Wireless Bluetooth Headphones"
-                class="max-w-full max-h-full object-contain rounded-md">
+                 class="max-h-full object-contain">
         </div>
 
-        <!-- Product Info -->
-        <div class="flex flex-col">
-
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                Wireless Bluetooth Headphones
-            </h1>
-
+        <!-- Info -->
+        <div>
+            <h1 class="text-3xl font-bold mb-4">Wireless Bluetooth Headphones</h1>
             <p class="text-gray-600 mb-4">
                 Bluetooth 5.3 | Active Noise Cancellation | 24-hour battery life
             </p>
+            <p class="text-blue-600 text-3xl font-bold mb-6">$199.99</p>
 
-            <p class="text-blue-600 text-3xl font-bold mb-6">
-                $199.99
-            </p>
-
-            <!-- Quantity -->
             <div class="flex items-center gap-4 mb-6">
-                <label for="qty" class="font-medium text-gray-700">Quantity:</label>
-                <input id="qty" type="number" min="1" value="1"
-                       class="w-20 border border-gray-300 rounded-md px-2 py-1 text-center">
+                <label>Quantity:</label>
+                <input type="number" value="1" min="1"
+                       class="w-20 border rounded text-center">
             </div>
 
-            <!-- Add to Cart -->
-            <button
-                class="bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700
-                       transition-colors duration-300 flex items-center justify-center mb-6">
+            <button class="bg-blue-600 text-white py-3 w-full rounded-md hover:bg-blue-700 mb-6">
                 <i class="fa-solid fa-cart-shopping mr-2"></i>
                 Add to Cart
             </button>
 
-            <!-- Product Description -->
             <div class="border-t pt-4">
-                <h2 class="text-lg font-bold text-gray-800 mb-2">
-                    Product Description
-                </h2>
-                <p class="text-gray-600 leading-relaxed">
-This wireless Bluetooth headset adopts the latest Bluetooth 5.3 technology, delivering a stable and fast connection experience.
-It features built-in active noise cancellation, which effectively isolates ambient noise, making it suitable for commuting, sports and daily use.
-The headset offers up to 6 hours of usage on a single charge, and the total battery life can reach 24 hours when used with the charging case.
+                <h2 class="font-bold mb-2">Product Description</h2>
+                <p class="text-gray-600">
+                    This wireless Bluetooth headset adopts the latest Bluetooth 5.3 technology,
+                    featuring active noise cancellation and up to 24 hours of battery life.
                 </p>
             </div>
-
         </div>
     </div>
 </main>
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <p class="text-lg font-bold">ShopEasy</p>
-            <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
-        </div>
-        <div class="flex gap-6">
-            <i class="fa-brands fa-facebook text-gray-400"></i>
-            <i class="fa-brands fa-twitter text-gray-400"></i>
-            <i class="fa-brands fa-instagram text-gray-400"></i>
-        </div>
+    <div class="container mx-auto px-4 text-center">
+        <p class="font-bold">ShopEasy</p>
+        <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
 </footer>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Wacth - ShopEasy</title>
+    <title>Smart Watch - ShopEasy</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,29 +11,82 @@
     <!-- Font Awesome -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../css/custom.css">
 </head>
 
 <body class="bg-gray-50 font-sans">
 
 <!-- ================= Header ================= -->
-<header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
 
-        <!-- Logo + Nav -->
-        <nav class="flex items-center gap-6">
-            <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
-            <span class="text-gray-600">Product</span>
+        <!-- Logo + Hierarchical Navigation -->
+        <nav class="w-full md:w-auto flex items-center gap-2 text-sm text-gray-600">
+            <a href="../index.html" class="text-2xl font-bold text-blue-600 mr-4">ShopEasy</a>
+            <a href="../index.html" class="hover:text-blue-600">Home</a>
+            <span>&gt;</span>
+            <a href="../category/electronics.html" class="hover:text-blue-600">Electronics</a>
+            <span>&gt;</span>
+            <span class="text-gray-800 font-medium">Smart Watch</span>
         </nav>
 
-        <!-- Back to Category -->
-        <a href="../category/electronics.html"
-           class="text-blue-600 hover:underline flex items-center">
-            <i class="fa-solid fa-arrow-left mr-2"></i>
-            Back to Category
-        </a>
+        <!-- Shopping List -->
+        <div class="relative w-full md:w-auto group">
+            <input type="checkbox" id="cart-toggle" class="hidden peer">
+
+            <!-- Cart Button -->
+            <label for="cart-toggle"
+                   class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
+                          hover:bg-blue-700 transition-colors duration-300 cursor-pointer
+                          w-full md:w-auto justify-center">
+                <i class="fa-solid fa-cart-shopping mr-2"></i>
+                <span>Shopping List</span>
+                <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                             flex items-center justify-center text-sm font-medium">2</span>
+            </label>
+
+            <!-- Cart Dropdown -->
+            <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                        border border-gray-200 z-50
+                        opacity-0 invisible translate-y-2 pointer-events-none
+                        transition-all duration-200 ease-in-out
+                        group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                        peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+
+                <div class="px-5 py-4 border-b font-semibold text-gray-800">
+                    My Shopping List (2 items)
+                </div>
+
+                <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y">
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex-1 pr-4 text-sm font-medium">
+                            Wireless Bluetooth Headphones
+                        </div>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border rounded text-center text-sm">
+                        <div class="font-medium w-20 text-right">$199.99</div>
+                    </div>
+
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex-1 pr-4 text-sm font-medium">
+                            Smart Watch
+                        </div>
+                        <input type="number" value="1" min="1"
+                               class="w-16 px-2 py-1 border rounded text-center text-sm">
+                        <div class="font-medium w-20 text-right">$149.99</div>
+                    </div>
+                </div>
+
+                <div class="px-5 py-4 border-t bg-gray-50">
+                    <div class="flex justify-between font-bold mb-4">
+                        <span>Total</span>
+                        <span class="text-blue-700">$349.98</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+                        Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -45,7 +98,7 @@
         <!-- Product Image -->
         <div class="w-full h-96 bg-gray-100 flex items-center justify-center">
             <img src="../images/electronics/smart_watch/smart_watch.jpg"
-                 alt="Wireless Bluetooth Earphones"
+                 alt="Smart Watch"
                  class="max-w-full max-h-full object-contain rounded-md">
         </div>
 
@@ -53,41 +106,37 @@
         <div class="flex flex-col">
 
             <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                Wireless Bluetooth Earphones
+                Smart Watch
             </h1>
 
             <p class="text-gray-600 mb-4">
-                Bluetooth 5.3 | Active Noise Cancelling | 24-hour Battery Life
+                Heart Rate Monitoring | Fitness Tracking | Waterproof Design
             </p>
 
             <p class="text-blue-600 text-3xl font-bold mb-6">
-                $199.99
+                $149.99
             </p>
 
-            <!-- Quantity -->
             <div class="flex items-center gap-4 mb-6">
                 <label for="qty" class="font-medium text-gray-700">Quantity:</label>
                 <input id="qty" type="number" min="1" value="1"
                        class="w-20 border border-gray-300 rounded-md px-2 py-1 text-center">
             </div>
 
-            <!-- Add to Cart -->
-            <button
-                class="bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700
-                       transition-colors duration-300 flex items-center justify-center mb-6">
+            <button class="bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700
+                           transition-colors duration-300 flex items-center justify-center mb-6">
                 <i class="fa-solid fa-cart-shopping mr-2"></i>
                 Add to Cart
             </button>
 
-            <!-- Product Description -->
             <div class="border-t pt-4">
                 <h2 class="text-lg font-bold text-gray-800 mb-2">
                     Product Description
                 </h2>
                 <p class="text-gray-600 leading-relaxed">
-                    These wireless Bluetooth earphones feature the latest Bluetooth 5.3 technology for stable and fast connectivity. 
-                    Built-in active noise cancellation effectively blocks out ambient noise, making them ideal for commuting, workouts, and daily use. 
-                    A single charge provides up to 6 hours of playback, with the charging case extending total battery life to 24 hours.
+                    This smart watch features real-time heart rate monitoring, sleep analysis,
+                    and step tracking. Its waterproof design supports workouts and outdoor use.
+                    The long-lasting battery delivers up to 7 days of usage on a single charge.
                 </p>
             </div>
 
@@ -97,16 +146,9 @@
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <p class="text-lg font-bold">ShopEasy - Virtual Shopping Website</p>
-            <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
-        </div>
-        <div class="flex gap-6">
-            <i class="fa-brands fa-facebook text-gray-400"></i>
-            <i class="fa-brands fa-twitter text-gray-400"></i>
-            <i class="fa-brands fa-instagram text-gray-400"></i>
-        </div>
+    <div class="container mx-auto px-4 text-center">
+        <p class="font-bold">ShopEasy - Virtual Shopping Website</p>
+        <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
 </footer>
 
