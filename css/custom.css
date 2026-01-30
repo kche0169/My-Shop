@@ -1,0 +1,22 @@
+/* ========== Global Layout ========== */
+body {
+  margin: 0;
+}
+
+/* ========== Shopping List ========== */
+.cart-dropdown {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* ========== Product Card Hover ========== */
+.product-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* ========== Breadcrumb ========== */
+.breadcrumb {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
