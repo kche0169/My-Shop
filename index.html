@@ -178,32 +178,52 @@
 <!-- ================= Slider ================= -->
 <div class="relative w-full h-64 overflow-hidden rounded-lg bg-gray-200" id="slider">
 
-  <!-- Slides -->
-    <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out" id="slider-track">
-      <img src="images/banner/banner1.jpg" class="w-full h-full object-cover flex-shrink-0" />
-      <img src="images/banner/banner2.jpg" class="w-full h-full object-cover flex-shrink-0" />
-      <img src="images/banner/banner3.jpg" class="w-full h-full object-cover flex-shrink-0" />
+  <!-- Slides Container -->
+  <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out" id="slider-track">
+    <!-- Slide 1 -->
+    <div class="relative w-full flex-shrink-0">
+      <img src="images/carousel/carousel1.jpg"
+           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+      <img src="images/carousel/carousel1.jpg"
+           class="relative w-full h-full object-contain">
     </div>
-
-    <!-- Left Button -->
-    <button id="prevSlide"
-      class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-
-    <!-- Right Button -->
-    <button id="nextSlide"
-      class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-
-    <!-- Dots -->
-    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
-      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
-      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
-      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+    <!-- Slide 2 -->
+    <div class="relative w-full flex-shrink-0">
+      <img src="images/carousel/carousel2.jpg"
+           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+      <img src="images/carousel/carousel2.jpg"
+           class="relative w-full h-full object-contain">
+    </div>
+    <!-- Slide 3 -->
+    <div class="relative w-full flex-shrink-0">
+      <img src="images/carousel/carousel3.jpg"
+           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+      <img src="images/carousel/carousel3.jpg"
+           class="relative w-full h-full object-contain">
     </div>
   </div>
+
+  <!-- Left Button -->
+  <button id="prevSlide"
+    class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
+    <i class="fa-solid fa-chevron-left"></i>
+  </button>
+
+  <!-- Right Button -->
+  <button id="nextSlide"
+    class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
+    <i class="fa-solid fa-chevron-right"></i>
+  </button>
+
+  <!-- Dots -->
+  <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10" id="slider-dots">
+    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+  </div>
+</div>
+
+
 
 
 
@@ -493,46 +513,35 @@
 </body>
 </html>
 
-
+<!-- ================= Slider JS ================= -->
 <script>
-  const track = document.getElementById('slider-track');
-  const slides = track.children;
-  const dots = document.getElementById('slider-dots').children;
-  const prev = document.getElementById('prevSlide');
-  const next = document.getElementById('nextSlide');
+const track = document.getElementById('slider-track');
+const slides = track.children;
+const dots = document.getElementById('slider-dots').children;
+let current = 0;
 
-  let index = 0;
-  const total = slides.length;
+function showSlide(index) {
+  if (index < 0) index = slides.length - 1;
+  if (index >= slides.length) index = 0;
+  current = index;
+  track.style.transform = `translateX(-${index * 100}%)`;
 
-  function updateSlider() {
-    track.style.transform = `translateX(-${index * 100}%)`;
-    [...dots].forEach((dot, i) => {
-      dot.className = `w-2 h-2 rounded-full cursor-pointer ${
-        i === index ? 'bg-white' : 'bg-white/60'
-      }`;
-    });
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].classList.toggle('bg-white', i !== index);
+    dots[i].classList.toggle('bg-blue-600', i === index);
   }
+}
 
-  next.onclick = () => {
-    index = (index + 1) % total;
-    updateSlider();
-  };
 
-  prev.onclick = () => {
-    index = (index - 1 + total) % total;
-    updateSlider();
-  };
+document.getElementById('prevSlide').addEventListener('click', () => showSlide(current - 1));
+document.getElementById('nextSlide').addEventListener('click', () => showSlide(current + 1));
 
-  [...dots].forEach((dot, i) => {
-    dot.onclick = () => {
-      index = i;
-      updateSlider();
-    };
-  });
+for (let i = 0; i < dots.length; i++) {
+  dots[i].addEventListener('click', () => showSlide(i));
+}
 
-  // Auto play
-  setInterval(() => {
-    index = (index + 1) % total;
-    updateSlider();
-  }, 4000);
+
+setInterval(() => showSlide(current + 1), 5000);
+
+showSlide(0);
 </script>
