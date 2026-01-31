@@ -175,12 +175,36 @@
   <!-- Main Content Area -->
  <div class="flex-1 flex flex-col gap-4">
 
-    <!-- Slider -->
-    <section>
-      <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-        Image Carousel / Slider Placeholder
-      </div>
-    </section>
+<!-- ================= Slider ================= -->
+<div class="relative w-full h-64 overflow-hidden rounded-lg bg-gray-200" id="slider">
+
+  <!-- Slides -->
+    <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out" id="slider-track">
+      <img src="images/banner/banner1.jpg" class="w-full h-full object-cover flex-shrink-0" />
+      <img src="images/banner/banner2.jpg" class="w-full h-full object-cover flex-shrink-0" />
+      <img src="images/banner/banner3.jpg" class="w-full h-full object-cover flex-shrink-0" />
+    </div>
+
+    <!-- Left Button -->
+    <button id="prevSlide"
+      class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <!-- Right Button -->
+    <button id="nextSlide"
+      class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <!-- Dots -->
+    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2" id="slider-dots">
+      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+      <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+    </div>
+  </div>
+
 
 
     <!-- Limited Time Deals -->
@@ -468,3 +492,47 @@
 
 </body>
 </html>
+
+
+<script>
+  const track = document.getElementById('slider-track');
+  const slides = track.children;
+  const dots = document.getElementById('slider-dots').children;
+  const prev = document.getElementById('prevSlide');
+  const next = document.getElementById('nextSlide');
+
+  let index = 0;
+  const total = slides.length;
+
+  function updateSlider() {
+    track.style.transform = `translateX(-${index * 100}%)`;
+    [...dots].forEach((dot, i) => {
+      dot.className = `w-2 h-2 rounded-full cursor-pointer ${
+        i === index ? 'bg-white' : 'bg-white/60'
+      }`;
+    });
+  }
+
+  next.onclick = () => {
+    index = (index + 1) % total;
+    updateSlider();
+  };
+
+  prev.onclick = () => {
+    index = (index - 1 + total) % total;
+    updateSlider();
+  };
+
+  [...dots].forEach((dot, i) => {
+    dot.onclick = () => {
+      index = i;
+      updateSlider();
+    };
+  });
+
+  // Auto play
+  setInterval(() => {
+    index = (index + 1) % total;
+    updateSlider();
+  }, 4000);
+</script>
