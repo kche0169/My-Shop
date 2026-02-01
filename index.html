@@ -24,7 +24,14 @@
       <!-- Logo -->
       <a href="index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
-
+    <!-- Mobile Category Button -->
+    <div class="xl:hidden flex items-center">
+      <button id="mobile-category-btn" 
+              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
+    </div>
     <!-- Search Box -->
 
     <div class="w-full md:flex-1 md:px-8">
@@ -124,22 +131,8 @@
   </ul>
 </aside>
 
-<!-- ================= JS for Mobile Drawer ================= -->
-<script>
-  const btnOpen = document.getElementById('mobile-category-btn');
-  const btnClose = document.getElementById('mobile-category-close');
-  const drawer = document.getElementById('mobile-category-drawer');
-
-  btnOpen.addEventListener('click', () => {
-    drawer.classList.remove('-translate-x-full');
-  });
-
-  btnClose.addEventListener('click', () => {
-    drawer.classList.add('-translate-x-full');
-  });
-</script>
-  <!-- 浮动 -->
-  <aside class="w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4">
+  <!-- float -->
+  <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
 
     <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
     <ul class="flex flex-col gap-3">
@@ -559,6 +552,32 @@ for (let i = 0; i < dots.length; i++) {
 setInterval(() => showSlide(current + 1), 5000);
 
 showSlide(0);
+</script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnOpen = document.getElementById('mobile-category-btn');
+    const btnClose = document.getElementById('mobile-category-close');
+    const drawer = document.getElementById('mobile-category-drawer');
+
+    if (btnOpen && btnClose && drawer) {
+      btnOpen.addEventListener('click', () => {
+        drawer.classList.remove('-translate-x-full');
+      });
+
+      btnClose.addEventListener('click', () => {
+        drawer.classList.add('-translate-x-full');
+      });
+
+      // 点击遮罩层也关闭（提升体验）
+      drawer.addEventListener('click', (e) => {
+        if (e.target === drawer) {
+          drawer.classList.add('-translate-x-full');
+        }
+      });
+    }
+  });
 </script>
 </body>
 </html>
