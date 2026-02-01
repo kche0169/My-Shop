@@ -1,21 +1,22 @@
-/* 响应式：点击购物清单时显示（通过 checkbox 状态控制） */
-#cart-toggle:checked ~ div {
-    display: block;
+/* ========== Global Layout ========== */
+body {
+  margin: 0;
 }
 
-/* 解决小屏幕下购物清单按钮宽度问题 */
-@media (max-width: 768px) {
-    .product-list .grid {
-        gap: 4px;
-    }
+/* ========== Shopping List ========== */
+.cart-dropdown {
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-/* 自定义产品卡片hover效果（可选优化） */
-.group .product-name {
-    transition: color 0.3s ease;
+/* ========== Product Card Hover ========== */
+.product-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
 
-/* 确保购物清单始终覆盖下层元素（强化 z-index） */
-.z-50 {
-    z-index: 50 !important;
+/* ========== Breadcrumb ========== */
+.breadcrumb {
+  font-size: 0.875rem;
+  color: #6b7280;
 }

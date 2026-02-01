@@ -19,28 +19,134 @@
 <body class="bg-gray-50 font-sans">
 
 <!-- ================= Header ================= -->
-<header class="bg-white shadow-sm sticky top-0 z-40">
-    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
 
-        <!-- Logo and navigation -->
-        <nav class="flex items-center gap-6">
-            <a href="../index.html" class="text-2xl font-bold text-blue-600">
-                ShopEasy
-            </a>
-            <span class="text-gray-600">Category / Electronics</span>
-        </nav>
-
-        <!-- Back to home -->
-        <a href="../index.html"
-           class="text-blue-600 hover:underline flex items-center">
-            <i class="fa-solid fa-house mr-2"></i>
-            Home
-        </a>
+    <!-- Logo -->
+    <div class="flex items-center w-full md:w-auto">
+      <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
+
+    <!-- Search Box -->
+    <div class="w-full md:flex-1 md:px-8">
+      <div class="flex">
+        <input type="text"
+               placeholder="Search products..."
+               class="w-full border rounded-l-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <button class="bg-blue-600 text-white px-4 rounded-r-md hover:bg-blue-700">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= Shopping List ================= -->
+    <div class="relative cart-wrapper w-full md:w-auto group">
+      <input type="checkbox" id="cart-toggle" class="hidden peer">
+
+      <!-- Cart Button -->
+      <label for="cart-toggle"
+             class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
+                    hover:bg-blue-700 transition-colors duration-300 cursor-pointer
+                    w-full md:w-auto justify-center">
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                     flex items-center justify-center text-sm font-medium">
+          2
+        </span>
+      </label>
+
+      <!-- Cart Dropdown -->
+      <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                  border border-gray-200 z-50
+                  opacity-0 invisible translate-y-2 pointer-events-none
+                  transition-all duration-200 ease-in-out
+                  group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+
+        <div class="px-5 py-4 border-b font-semibold text-gray-800">
+          My Shopping List (2 items)
+        </div>
+
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100">
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4 text-sm font-medium">Sports Shoes</div>
+            <input type="number" value="1" min="1" 
+                   class="w-16 px-2 py-1 border rounded text-center text-sm">
+            <div class="font-medium w-20 text-right">$129.99</div>
+          </div>
+
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4 text-sm font-medium">Fitness Tracker</div>
+            <input type="number" value="1" min="1" 
+                   class="w-16 px-2 py-1 border rounded text-center text-sm">
+            <div class="font-medium w-20 text-right">$89.99</div>
+          </div>
+        </div>
+
+        <div class="px-5 py-4 border-t bg-gray-50">
+          <div class="flex justify-between font-bold mb-4">
+            <span>Total</span>
+            <span class="text-blue-700">$219.98</span>
+          </div>
+          <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+            Checkout
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </header>
 
 <!-- ================= Main Content ================= -->
 <main class="container mx-auto px-4 py-8">
+
+    <aside class="w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4">
+
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+        <ul class="flex flex-col gap-3">
+        <li>
+            <a href="electronics.html"
+            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+            Electronics
+            </a>
+        </li>
+        <li>
+            <a href="home.html"
+            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+            Home & Living
+            </a>
+        </li>
+        <li>
+            <a href="sports.html"
+            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+            Sports & Outdoors
+            </a>
+        </li>
+        <li>
+            <a href="fashion.html"
+            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+            Fashion
+            </a>
+        </li>
+        </ul>
+  </aside>
+    <!-- Breadcrumb -->
+    <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2">
+            <li>
+                <a href="../index.html" class="hover:text-blue-600">Home</a>
+            </li>
+            <li>
+                <span class="text-gray-500">&gt;</span>
+            </li>
+            <li>
+                <a href="electronics.html" class="text-gray-800 font-medium hover:text-blue-600">electronics</a>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Category description -->
     <section class="mb-8">
@@ -53,17 +159,21 @@
         </p>
     </section>
 
-    <!-- Product list (grid layout, no table) -->
+    <!-- Product list -->
     <section>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-            <!-- Product card 1 - From your example -->
-            <a href="../products/product1.html" class="block group">
+            <!-- Product card 1 -->
+            <a href="../products/electronics/" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics1.jpg"
-                         alt="Wireless Bluetooth Earphones"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/wireless_blueteeth_headphone/wireless_blueteeth_headphone.jpg"
+                            alt="Wireless Bluetooth Earphones"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
+
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         Wireless Bluetooth Earphones
                     </h3>
@@ -79,13 +189,17 @@
                 </div>
             </a>
 
-            <!-- Product card 2 - From your example -->
-            <a href="../products/product2.html" class="block group">
+            <!-- Product card 2 -->
+            <a href="../products/electronics/product2.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics2.jpg"
-                         alt="Smart Watch"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/smart_watch/smart_watch.jpg"
+                            alt="Smart Watch"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
+
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         Smart Watch
                     </h3>
@@ -101,13 +215,15 @@
                 </div>
             </a>
 
-            <!-- Product card 3 -->
-            <a href="../products/product3.html" class="block group">
+           <!-- Product card 3 -->
+            <a href="../products/electronics/product3.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics3.jpg"
-                         alt="Wireless Noise-Cancelling Headphones"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/Wireless_Noise-Cancelling_Headphones/Wireless_Noise-Cancelling_Headphones.png"
+                            alt="Wireless Noise-Cancelling Headphones"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         Wireless Noise-Cancelling Headphones
                     </h3>
@@ -124,12 +240,14 @@
             </a>
 
             <!-- Product card 4 -->
-            <a href="../products/product4.html" class="block group">
+            <a href="../products/electronics/product4.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics4.jpg"
-                         alt="13-inch Laptop"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/13inch_laptop/13inch_laptop.jpg"
+                            alt="13-inch Ultrabook Laptop"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         13-inch Ultrabook Laptop
                     </h3>
@@ -146,12 +264,14 @@
             </a>
 
             <!-- Product card 5 -->
-            <a href="../products/product5.html" class="block group">
+            <a href="../products/electronics/product5.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics5.jpg"
-                         alt="10.5-inch Tablet"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/10.5-inch_Android_Tablet/10.5-inch_Android_Tablet.jpg"
+                            alt="10.5-inch Android Tablet"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         10.5-inch Android Tablet
                     </h3>
@@ -168,12 +288,14 @@
             </a>
 
             <!-- Product card 6 -->
-            <a href="../products/product6.html" class="block group">
+            <a href="../products/electronics/product6.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics6.jpg"
-                         alt="65W GaN Charger"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger.jpg"
+                            alt="65W GaN Charger"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         65W GaN Fast Charger (3 Ports)
                     </h3>
@@ -190,12 +312,14 @@
             </a>
 
             <!-- Product card 7 -->
-            <a href="../products/product7.html" class="block group">
+            <a href="../products/electronics/product7.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics7.jpg"
-                         alt="4K Action Camera"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/4K_Action_Camera/4K_Action_Camera.jpg"
+                            alt="4K Action Camera"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         4K Action Camera
                     </h3>
@@ -212,12 +336,14 @@
             </a>
 
             <!-- Product card 8 -->
-            <a href="../products/product8.html" class="block group">
+            <a href="../products/electronics/product8.html" class="block group">
                 <div class="bg-white rounded-lg shadow-sm hover:shadow-md
                             transition-shadow duration-300 p-4 h-full flex flex-col">
-                    <img src="../images/thumbnails/electronics8.jpg"
-                         alt="True Wireless Earbuds"
-                         class="w-full h-48 object-cover rounded-md mb-4">
+                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
+                        <img src="../images/electronics/True_Wireless_Earbuds_with_ANC/True_Wireless_Earbuds_with_ANC.jpg"
+                            alt="True Wireless Earbuds"
+                            class="absolute inset-0 w-full h-full object-contain p-2">
+                    </div>
                     <h3 class="text-lg font-medium text-gray-800 mb-2">
                         True Wireless Earbuds with ANC
                     </h3>
@@ -232,7 +358,6 @@
                     </button>
                 </div>
             </a>
-
         </div>
     </section>
 </main>
