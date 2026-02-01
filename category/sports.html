@@ -9,8 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/custom.css">
@@ -48,319 +47,303 @@
       </div>
     </div>
 
-        <!-- ================= Shopping List ================= -->
-        <div class="relative cart-wrapper w-full md:w-auto group">
-            <input type="checkbox" id="cart-toggle" class="hidden peer">
+    <!-- ================= Shopping List ================= -->
+    <div class="relative cart-wrapper w-full md:w-auto group">
+      <input type="checkbox" id="cart-toggle" class="hidden peer">
 
-            <!-- Cart Button -->
-            <label for="cart-toggle"
-                   class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
-                          hover:bg-blue-700 transition-colors duration-300 cursor-pointer
-                          w-full md:w-auto justify-center">
-                <i class="fa-solid fa-cart-shopping mr-2"></i>
-                <span>Shopping List</span>
-                <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                             flex items-center justify-center text-sm font-medium">
-                    2
-                </span>
-            </label>
+      <!-- Cart Button -->
+      <label for="cart-toggle" class="cart-button">
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">
+          2
+        </span>
+      </label>
 
-            <!-- Cart Dropdown -->
-            <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
-                        border border-gray-200 z-50
-                        opacity-0 invisible translate-y-2 pointer-events-none
-                        transition-all duration-200 ease-in-out
-                        group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                        peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+      <!-- Cart Dropdown -->
+      <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                  border border-gray-200 z-50
+                  opacity-0 invisible translate-y-2 pointer-events-none
+                  transition-all duration-200 ease-in-out
+                  group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
 
-                <div class="px-5 py-4 border-b font-semibold text-gray-800">
-                    My Shopping List (2 items)
-                </div>
-
-                <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y">
-                    <div class="flex items-center justify-between py-3">
-                        <div class="flex-1 pr-4 text-sm font-medium">
-                            Sports Shoes
-                        </div>
-                        <input type="number" value="1" min="1"
-                               class="w-16 px-2 py-1 border rounded text-center text-sm">
-                        <div class="font-medium w-20 text-right">$129.99</div>
-                    </div>
-
-                    <div class="flex items-center justify-between py-3">
-                        <div class="flex-1 pr-4 text-sm font-medium">
-                            Fitness Tracker
-                        </div>
-                        <input type="number" value="1" min="1"
-                               class="w-16 px-2 py-1 border rounded text-center text-sm">
-                        <div class="font-medium w-20 text-right">$89.99</div>
-                    </div>
-                </div>
-
-                <div class="px-5 py-4 border-t bg-gray-50">
-                    <div class="flex justify-between font-bold mb-4">
-                        <span>Total</span>
-                        <span class="text-blue-700">$219.98</span>
-                    </div>
-                    <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
-                        Checkout
-                    </button>
-                </div>
-            </div>
+        <div class="px-5 py-4 border-b font-semibold text-gray-800">
+          My Shopping List (2 items)
         </div>
 
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100">
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4 text-sm font-medium">Sports Shoes</div>
+            <input type="number" value="1" min="1" 
+                   class="w-16 px-2 py-1 border rounded text-center text-sm">
+            <div class="font-medium w-20 text-right">$129.99</div>
+          </div>
+
+          <div class="flex items-center justify-between py-3">
+            <div class="flex-1 pr-4 text-sm font-medium">Fitness Tracker</div>
+            <input type="number" value="1" min="1" 
+                   class="w-16 px-2 py-1 border rounded text-center text-sm">
+            <div class="font-medium w-20 text-right">$89.99</div>
+          </div>
+        </div>
+
+        <div class="px-5 py-4 border-t bg-gray-50">
+          <div class="flex justify-between font-bold mb-4">
+            <span>Total</span>
+            <span class="text-blue-700">$219.98</span>
+          </div>
+          <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+            Checkout
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
 </header>
 
-
 <!-- ================= Main Content ================= -->
-
 <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
-        <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
 
-        <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
-        <ul class="flex flex-col gap-3">
-        <li>
-            <a href="electronics.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Electronics
-            </a>
-        </li>
-        <li>
-            <a href="home.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Home & Living
-            </a>
-        </li>
-        <li>
-            <a href="sports.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Sports & Outdoors
-            </a>
-        </li>
-        <li>
-            <a href="fashion.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Fashion
-            </a>
-        </li>
-        </ul>
+  <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+    <ul class="flex flex-col gap-3">
+      <li>
+        <a href="electronics.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Electronics
+        </a>
+      </li>
+      <li>
+        <a href="home.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Home & Living
+        </a>
+      </li>
+      <li>
+        <a href="sports.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Sports & Outdoors
+        </a>
+      </li>
+      <li>
+        <a href="fashion.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Fashion
+        </a>
+      </li>
+    </ul>
   </aside>
 
-    <!-- Breadcrumb -->
-    <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-2">
-            <li>
-                <a href="../index.html" class="hover:text-blue-600">Home</a>
-            </li>
-            <li>
-                <span class="text-gray-500">&gt;</span>
-            </li>
-            <li>
-                <a href="sports.html" class="text-gray-800 font-medium hover:text-blue-600">sports & outdoors</a>
-            </li>
-        </ol>
-    </nav>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+      <li>
+        <a href="../index.html" class="hover:text-blue-600">Home</a>
+      </li>
+      <li>
+        <span class="text-gray-500">&gt;</span>
+      </li>
+      <li>
+        <a href="sports.html" class="text-gray-800 font-medium hover:text-blue-600">sports & outdoors</a>
+      </li>
+    </ol>
+  </nav>
 
-    <!-- Category description -->
-    <section class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            Sports & Outdoors
-        </h1>
-        <p class="text-gray-600">
-            Gear up for adventure with our collection of performance sportswear, fitness accessories, outdoor equipment, and essentials for running, hiking, yoga, and more. 
-            Click on a product to view detailed information.
-        </p>
-    </section>
+  <!-- Category description -->
+  <section class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+      Sports & Outdoors
+    </h1>
+    <p class="text-gray-600">
+      Gear up for adventure with our collection of performance sportswear, fitness accessories, outdoor equipment, and essentials for running, hiking, yoga, and more. 
+      Click on a product to view detailed information.
+    </p>
+  </section>
 
-    <!-- Product list -->
-    <section>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            
-            <!-- Product card 1 -->
-            <a href="../products/sports/product1.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/quick_dry/quick_dry_T_shirt1.png"
-                            alt="Breathable Running T-Shirt"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Breathable Quick-Dry Running T-Shirt
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Lightweight moisture-wicking fabric for intense workouts
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
+  <!-- Product list -->
+  <section>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-            <!-- Product card 2 -->
-            <a href="../products/sports/product2.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/shorts/shorts1.jpg"
-                            alt="High-Performance Running Shorts"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        High-Performance 2-in-1 Running Shorts
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Built-in liner, phone pocket, quick-dry material
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$42.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 3 -->
-            <a href="../products/sports/product3.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/running_shoes/running_shoes1.png"
-                            alt="Cushioned Running Shoes"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Lightweight Cushioned Running Shoes
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Responsive foam midsole, breathable upper
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$119.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 4 -->
-            <a href="../products/sports/product4.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/yoga_mat/yoga_mat1.png"
-                            alt="Yoga Mat with Strap"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Extra Thick Non-Slip Yoga Mat
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        6mm thickness with carrying strap, eco-friendly
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-           <!-- Product card 5 -->
-            <a href="../products/sports/product5.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/backpack/backpack1.png"
-                            alt="Hydration Backpack"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        2L Hydration Backpack with Bladder
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Perfect for trail running, hiking, cycling
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$59.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 6 -->
-            <a href="../products/sports/product6.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/Dumbbells/Dumbbells1.png"
-                            alt="Adjustable Dumbbell Set"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Adjustable Dumbbells (Pair, 5-25kg)
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Space-saving design, quick weight adjustment
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 7 -->
-            <a href="../products/sports/product7.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/Sunglasses/Sunglasses1.png"
-                            alt="Polarized Sports Sunglasses"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        UV400 Polarized Sports Sunglasses
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Wrap-around design, anti-slip & shatterproof lenses
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$44.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 8 -->
-            <a href="../products/sports/product8.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/sports/Lantern/Lantern1.png"
-                            alt="Compact Camping Lantern"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Rechargeable LED Camping Lantern
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        1000 lumens, power bank function, waterproof
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
+      <!-- Product card 1 -->
+      <a href="../products/sports/product1.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/quick_dry/quick_dry_T_shirt1.png"
+                 alt="Breathable Running T-Shirt"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Breathable Quick-Dry Running T-Shirt
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Lightweight moisture-wicking fabric for intense workouts
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
         </div>
-    </section>
-</main>
+      </a>
 
+      <!-- Product card 2 -->
+      <a href="../products/sports/product2.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/shorts/shorts1.jpg"
+                 alt="High-Performance Running Shorts"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            High-Performance 2-in-1 Running Shorts
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Built-in liner, phone pocket, quick-dry material
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$42.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 3 -->
+      <a href="../products/sports/product3.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/running_shoes/running_shoes1.png"
+                 alt="Cushioned Running Shoes"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Lightweight Cushioned Running Shoes
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Responsive foam midsole, breathable upper
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$119.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 4 -->
+      <a href="../products/sports/product4.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/yoga_mat/yoga_mat1.png"
+                 alt="Yoga Mat with Strap"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Extra Thick Non-Slip Yoga Mat
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            6mm thickness with carrying strap, eco-friendly
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 5 -->
+      <a href="../products/sports/product5.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/backpack/backpack1.png"
+                 alt="Hydration Backpack"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            2L Hydration Backpack with Bladder
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Perfect for trail running, hiking, cycling
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$59.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 6 -->
+      <a href="../products/sports/product6.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/Dumbbells/Dumbbells1.png"
+                 alt="Adjustable Dumbbell Set"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Adjustable Dumbbells (Pair, 5-25kg)
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Space-saving design, quick weight adjustment
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 7 -->
+      <a href="../products/sports/product7.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/Sunglasses/Sunglasses1.png"
+                 alt="Polarized Sports Sunglasses"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            UV400 Polarized Sports Sunglasses
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Wrap-around design, anti-slip & shatterproof lenses
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$44.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 8 -->
+      <a href="../products/sports/product8.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/sports/Lantern/Lantern1.png"
+                 alt="Compact Camping Lantern"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Rechargeable LED Camping Lantern
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            1000 lumens, power bank function, waterproof
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+    </div>
+  </section>
+</main>
 
 <!-- Mobile Category Drawer -->
 <aside id="mobile-category-drawer" 
-       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 md:hidden">
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
   <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
     Categories
     <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
@@ -397,46 +380,20 @@
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 flex flex-col md:flex-row
-                justify-between items-center gap-4">
-        <div>
-            <p class="text-lg font-bold">ShopEasy</p>
-            <p class="text-gray-400">
-                © 2026 IEMS5718 Phase 1
-            </p>
-        </div>
-        <div class="flex gap-6">
-            <i class="fa-brands fa-facebook text-gray-400"></i>
-            <i class="fa-brands fa-twitter text-gray-400"></i>
-            <i class="fa-brands fa-instagram text-gray-400"></i>
-        </div>
+  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="text-lg font-bold">ShopEasy</p>
+      <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
+    <div class="flex gap-6">
+      <i class="fa-brands fa-facebook text-gray-400"></i>
+      <i class="fa-brands fa-twitter text-gray-400"></i>
+      <i class="fa-brands fa-instagram text-gray-400"></i>
+    </div>
+  </div>
 </footer>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const btnOpen = document.getElementById('mobile-category-btn');
-    const btnClose = document.getElementById('mobile-category-close');
-    const drawer = document.getElementById('mobile-category-drawer');
-
-    if (btnOpen && btnClose && drawer) {
-      btnOpen.addEventListener('click', () => {
-        drawer.classList.remove('-translate-x-full');
-      });
-
-      btnClose.addEventListener('click', () => {
-        drawer.classList.add('-translate-x-full');
-      });
-
-
-      drawer.addEventListener('click', (e) => {
-        if (e.target === drawer) {
-          drawer.classList.add('-translate-x-full');
-        }
-      });
-    }
-  });
-</script>
-
+<!-- JS -->
+<script src="../js/script.js"></script>
 </body>
 </html>

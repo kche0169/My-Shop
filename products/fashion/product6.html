@@ -5,30 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leather Crossbody Bag - ShopEasy</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- SwiperJS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
+    <link rel="stylesheet" href="../../css/custom.css">
 </head>
 
 <body class="bg-gray-50 font-sans">
 
-<!-- ================= Header ================= -->
 <header class="bg-white shadow-sm sticky top-0 z-50">
   <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
 
-    <!-- Logo -->
     <div class="flex items-center w-full md:w-auto">
       <a href="../../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
-    <!-- Mobile Category Button -->
+
     <div class="xl:hidden flex items-center">
       <button id="mobile-category-btn" 
               class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
@@ -36,7 +28,7 @@
         <span class="font-medium">Categories</span>
       </button>
     </div>
-    <!-- Search Box -->
+
     <div class="w-full md:flex-1 md:px-8">
       <div class="flex">
         <input type="text"
@@ -48,11 +40,9 @@
       </div>
     </div>
 
-    <!-- ================= Shopping List ================= -->
     <div class="relative cart-wrapper w-full md:w-auto group">
         <input type="checkbox" id="cart-toggle" class="hidden peer">
 
-        <!-- Cart Button -->
         <label for="cart-toggle"
                class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
                       hover:bg-blue-700 transition-colors duration-300 cursor-pointer
@@ -63,7 +53,6 @@
                          flex items-center justify-center text-sm font-medium">2</span>
         </label>
 
-        <!-- Cart Dropdown -->
         <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                     border border-gray-200 z-50
                     opacity-0 invisible translate-y-2 pointer-events-none
@@ -110,8 +99,6 @@
   </div>
 </header>
 
-
-<!-- ================= Main ================= -->
 <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
     <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
 
@@ -143,7 +130,7 @@
         </li>
         </ul>
   </aside>
-      <!-- Breadcrumb -->
+
     <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-2">
             <li>
@@ -166,11 +153,9 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-lg shadow-sm">
 
-        <!-- Image Slider -->
         <div class="h-96 w-full">
             <div class="swiper mySwiper h-full">
                 <div class="swiper-wrapper h-full">
-                <!-- Slides -->
                 <div class="swiper-slide flex items-center justify-center bg-gray-100">
                     <img src="../../images/fashion/Bag/bag1.jpg"
                         class="max-h-full object-contain">
@@ -185,17 +170,12 @@
                 </div>
                 </div>
 
-                <!-- Pagination -->
                 <div class="swiper-pagination"></div>
-
-                <!-- Navigation -->
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
 
-
-        <!-- Info -->
         <div>
             <h1 class="text-3xl font-bold mb-4">Leather Crossbody Bag</h1>
             <p class="text-gray-600 mb-4">
@@ -223,9 +203,9 @@
         </div>
     </div>
 </main>
-<!-- Mobile Category Drawer -->
+
 <aside id="mobile-category-drawer" 
-       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 md:hidden">
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
   <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
     Categories
     <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
@@ -259,7 +239,7 @@
     </li>
   </ul>
 </aside>
-<!-- ================= Footer ================= -->
+
 <footer class="bg-gray-800 text-white py-8 mt-12">
     <div class="container mx-auto px-4 text-center">
         <p class="font-bold">ShopEasy</p>
@@ -267,44 +247,6 @@
     </div>
 </footer>
 
-
-<!-- SwiperJS Initialization -->
-<script>
-  const swiper = new Swiper('.mySwiper', {
-    loop: true,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const btnOpen = document.getElementById('mobile-category-btn');
-    const btnClose = document.getElementById('mobile-category-close');
-    const drawer = document.getElementById('mobile-category-drawer');
-
-    if (btnOpen && btnClose && drawer) {
-      btnOpen.addEventListener('click', () => {
-        drawer.classList.remove('-translate-x-full');
-      });
-
-      btnClose.addEventListener('click', () => {
-        drawer.classList.add('-translate-x-full');
-      });
-
-
-      drawer.addEventListener('click', (e) => {
-        if (e.target === drawer) {
-          drawer.classList.add('-translate-x-full');
-        }
-      });
-    }
-  });
-</script>
+<script src="../../js/script1.js"></script>
 </body>
 </html>
