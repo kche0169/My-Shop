@@ -112,7 +112,8 @@
 
 
 <!-- ================= Main ================= -->
-<main class="container mx-auto px-4 py-10">
+<!-- <main class="container mx-auto px-4 py-10"> -->
+  <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
     <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
 
         <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
@@ -270,8 +271,8 @@
 </footer>
 
 
-<!-- SwiperJS Initialization -->
 <script>
+  // Initialize Swiper for product image slider
   const swiper = new Swiper('.mySwiper', {
     loop: true,
     pagination: {
@@ -284,28 +285,39 @@
     },
   });
 
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const btnOpen = document.getElementById('mobile-category-btn');
+  // Mobile category drawer logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnOpen  = document.getElementById('mobile-category-btn');
     const btnClose = document.getElementById('mobile-category-close');
-    const drawer = document.getElementById('mobile-category-drawer');
+    const drawer   = document.getElementById('mobile-category-drawer');
 
-    if (btnOpen && btnClose && drawer) {
-      btnOpen.addEventListener('click', () => {
-        drawer.classList.remove('-translate-x-full');
-      });
+    console.log('Mobile drawer - btnOpen:',  btnOpen  ? 'Found' : 'Not found');
+    console.log('Mobile drawer - btnClose:', btnClose ? 'Found' : 'Not found');
+    console.log('Mobile drawer - drawer:',   drawer   ? 'Found' : 'Not found');
 
-      btnClose.addEventListener('click', () => {
-        drawer.classList.add('-translate-x-full');
-      });
-
-
-      drawer.addEventListener('click', (e) => {
-        if (e.target === drawer) {
-          drawer.classList.add('-translate-x-full');
-        }
-      });
+    if (!btnOpen || !btnClose || !drawer) {
+      console.error('Mobile drawer initialization failed: missing required elements');
+      return;
     }
+
+    console.log('Mobile drawer: all elements found, binding events...');
+
+    btnOpen.addEventListener('click', () => {
+      console.log('Categories button clicked → opening drawer');
+      drawer.classList.remove('-translate-x-full');
+    });
+
+    btnClose.addEventListener('click', () => {
+      console.log('Close button clicked → closing drawer');
+      drawer.classList.add('-translate-x-full');
+    });
+
+    drawer.addEventListener('click', (e) => {
+      if (e.target === drawer) {
+        console.log('Clicked outside drawer → closing');
+        drawer.classList.add('-translate-x-full');
+      }
+    });
   });
 </script>
 </body>
