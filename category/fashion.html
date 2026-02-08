@@ -9,8 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/custom.css">
@@ -20,16 +19,23 @@
 
 <!-- ================= Header ================= -->
 <header class="bg-white shadow-sm sticky top-0 z-50">
-  <div class="container mx-auto px-4 py-3
-              flex flex-col md:flex-row
-              items-center justify-between gap-4">
+  <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
 
     <!-- Logo -->
     <div class="flex items-center w-full md:w-auto">
-      <a href="../index.html"
-         class="text-2xl font-bold text-blue-600">
+      <a href="../index.html" class="text-2xl font-bold text-blue-600">
         ShopEasy
       </a>
+    </div>
+
+    <!-- Mobile Category Button -->
+    <div class="xl:hidden flex items-center relative z-[100]">
+      <button id="mobile-category-btn" 
+              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-4 relative z-[100] active:bg-gray-100"
+              type="button">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
     </div>
 
     <!-- Search Box -->
@@ -49,20 +55,16 @@
       <input type="checkbox" id="cart-toggle" class="hidden peer">
 
       <!-- Cart Button -->
-      <label for="cart-toggle"
-             class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
-                    hover:bg-blue-700 transition-colors duration-300 cursor-pointer
-                    w-full md:w-auto justify-center">
+      <label for="cart-toggle" class="cart-button">
         <i class="fa-solid fa-cart-shopping mr-2"></i>
         <span>Shopping List</span>
-        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                     flex items-center justify-center text-sm font-medium">
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">
           2
         </span>
       </label>
 
-      <!-- Cart Dropdown -->
-      <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+      <!-- Cart Dropdown  -->
+      <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
@@ -109,270 +111,296 @@
   </div>
 </header>
 
-
 <!-- ================= Main Content ================= -->
-<main class="container mx-auto px-4 py-8">
+<main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
 
-
-    <aside class="w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4">
-
-        <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
-        <ul class="flex flex-col gap-3">
-        <li>
-            <a href="electronics.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Electronics
-            </a>
-        </li>
-        <li>
-            <a href="home.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Home & Living
-            </a>
-        </li>
-        <li>
-            <a href="sports.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Sports & Outdoors
-            </a>
-        </li>
-        <li>
-            <a href="fashion.html"
-            class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            Fashion
-            </a>
-        </li>
-        </ul>
+  <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+    <ul class="flex flex-col gap-3">
+      <li>
+        <a href="electronics.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Electronics
+        </a>
+      </li>
+      <li>
+        <a href="home.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Home & Living
+        </a>
+      </li>
+      <li>
+        <a href="sports.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Sports & Outdoors
+        </a>
+      </li>
+      <li>
+        <a href="fashion.html" class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+          Fashion
+        </a>
+      </li>
+    </ul>
   </aside>
 
-    <!-- Breadcrumb -->
-    <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-2">
-            <li>
-                <a href="../index.html" class="hover:text-blue-600">Home</a>
-            </li>
-            <li>
-                <span class="text-gray-500">&gt;</span>
-            </li>
-            <li>
-                <a href="fashion.html" class="text-gray-800 font-medium hover:text-blue-600">fashion</a>
-            </li>
-        </ol>
-    </nav>
+  <!-- Breadcrumb-->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+      <li>
+        <a href="../index.html" class="hover:text-blue-600">Home</a>
+      </li>
+      <li>
+        <span class="text-gray-500">&gt;</span>
+      </li>
+      <li>
+        <a href="fashion.html" class="text-gray-800 font-medium hover:text-blue-600">Fashion</a>
+      </li>
+    </ol>
+  </nav>
 
+  <!-- Category description -->
+  <section class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">
+      Fashion
+    </h1>
+    <p class="text-gray-600">
+      Browse our fashion collection, including clothing, shoes, and accessories.
+      Click on a product to view detailed information.
+    </p>
+  </section>
 
-    <!-- Category description -->
-    <section class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            Fashion
-        </h1>
-        <p class="text-gray-600">
-            Browse our fashion collection, including clothing, shoes, and accessories.
-            Click on a product to view detailed information.
-        </p>
-    </section>
+  <section>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-    <!-- Product list -->
-    <section>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-           <!-- Product card 1 -->
-            <a href="../products/fashion/product1.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/T_shirt/T_shirt1.jpg"
-                            alt="Casual T-Shirt"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Casual T-Shirt
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Comfortable cotton fabric for daily wear
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 2 -->
-            <a href="../products/fashion/product2.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Jacket/jacket1.jpg"
-                            alt="Lightweight Jacket"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Lightweight Jacket
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Stylish and suitable for all seasons
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$89.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 3 -->
-            <a href="../products/fashion/product3.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Jeans/jeans1.jpg"
-                            alt="Denim Jeans"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Denim Jeans
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Classic design with a modern fit
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$69.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 4 -->
-            <a href="../products/fashion/product4.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Sneakers/sneakers1.jpg"
-                            alt="Running Sneakers"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Running Sneakers
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Lightweight and comfortable for daily use
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$129.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 5 -->
-            <a href="../products/fashion/product5.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Watch/watch1.jpg"
-                            alt="Classic Wrist Watch"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Classic Wrist Watch
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Stainless steel band with quartz movement
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$99.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 6 -->
-            <a href="../products/fashion/product6.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Bag/bag1.jpg"
-                            alt="Leather Crossbody Bag"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Leather Crossbody Bag
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Genuine leather with multiple storage pockets
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$79.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 7 -->
-            <a href="../products/fashion/product7.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Scarf/scarf1.jpg"
-                            alt="Printed Silk Scarf"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Printed Silk Scarf
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Soft silk fabric with stylish floral pattern
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
-            <!-- Product card 8 -->
-            <a href="../products/fashion/product8.html" class="block group">
-                <div class="bg-white rounded-lg shadow-sm p-4 h-full flex flex-col">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden rounded-md mb-4 bg-gray-50">
-                        <img src="../images/fashion/Hat/hat1.jpg"
-                            alt="Cotton Baseball Cap"
-                            class="absolute inset-0 w-full h-full object-contain p-4">
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-800 mb-2">
-                        Cotton Baseball Cap
-                    </h3>
-                    <p class="text-gray-600 text-sm mb-4 flex-grow">
-                        Breathable cotton with adjustable back strap
-                    </p>
-                    <p class="text-blue-600 font-bold text-xl mb-4">$19.99</p>
-                    <button class="bg-blue-600 text-white py-2 rounded-md flex items-center justify-center">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i>
-                        Add to Cart
-                    </button>
-                </div>
-            </a>
-
+      <!-- Product card 1 -->
+      <a href="../products/fashion/product1.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/T_shirt/T_shirt1.jpg"
+                 alt="Casual T-Shirt"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Casual T-Shirt
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Comfortable cotton fabric for daily wear
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
         </div>
-    </section>
+      </a>
+
+      <!-- Product card 2 -->
+      <a href="../products/fashion/product2.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Jacket/jacket1.jpg"
+                 alt="Lightweight Jacket"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Lightweight Jacket
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Stylish and suitable for all seasons
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$89.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 3 -->
+      <a href="../products/fashion/product3.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Jeans/jeans1.jpg"
+                 alt="Denim Jeans"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Denim Jeans
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Classic design with a modern fit
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$69.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 4 -->
+      <a href="../products/fashion/product4.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Sneakers/sneakers1.jpg"
+                 alt="Running Sneakers"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Running Sneakers
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Lightweight and comfortable for daily use
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$129.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 5 -->
+      <a href="../products/fashion/product5.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Watch/watch1.jpg"
+                 alt="Classic Wrist Watch"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Classic Wrist Watch
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Stainless steel band with quartz movement
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$99.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 6 -->
+      <a href="../products/fashion/product6.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Bag/bag1.jpg"
+                 alt="Leather Crossbody Bag"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Leather Crossbody Bag
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Genuine leather with multiple storage pockets
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$79.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 7 -->
+      <a href="../products/fashion/product7.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Scarf/scarf1.jpg"
+                 alt="Printed Silk Scarf"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Printed Silk Scarf
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Soft silk fabric with stylish floral pattern
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+      <!-- Product card 8 -->
+      <a href="../products/fashion/product8.html" class="block group">
+        <div class="product-card">
+          <div class="product-image-wrapper">
+            <img src="../images/fashion/Hat/hat1.jpg"
+                 alt="Cotton Baseball Cap"
+                 class="product-image">
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Cotton Baseball Cap
+          </h3>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">
+            Breathable cotton with adjustable back strap
+          </p>
+          <p class="text-blue-600 font-bold text-xl mb-4">$19.99</p>
+          <button class="btn-add-to-cart">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+          </button>
+        </div>
+      </a>
+
+    </div>
+  </section>
 </main>
+
+<!-- Mobile Category Drawer -->
+<aside id="mobile-category-drawer" 
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
+  <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+    Categories
+    <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </h2>
+  <ul class="flex flex-col gap-3">
+    <li>
+      <a href="electronics.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Electronics
+      </a>
+    </li>
+    <li>
+      <a href="home.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Home & Living
+      </a>
+    </li>
+    <li>
+      <a href="sports.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Sports & Outdoors
+      </a>
+    </li>
+    <li>
+      <a href="fashion.html" 
+         class="block px-3 py-2 rounded-md text-blue-700 bg-blue-50 font-medium hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Fashion
+      </a>
+    </li>
+  </ul>
+</aside>
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 flex flex-col md:flex-row
-                justify-between items-center gap-4">
-        <div>
-            <p class="text-lg font-bold">ShopEasy</p>
-            <p class="text-gray-400">
-                © 2026 IEMS5718 Phase 1
-            </p>
-        </div>
-        <div class="flex gap-6">
-            <i class="fa-brands fa-facebook text-gray-400"></i>
-            <i class="fa-brands fa-twitter text-gray-400"></i>
-            <i class="fa-brands fa-instagram text-gray-400"></i>
-        </div>
+  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="text-lg font-bold">ShopEasy</p>
+      <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
+    <div class="flex gap-6">
+      <i class="fa-brands fa-facebook text-gray-400"></i>
+      <i class="fa-brands fa-twitter text-gray-400"></i>
+      <i class="fa-brands fa-instagram text-gray-400"></i>
+    </div>
+  </div>
 </footer>
 
+<script src="../js/script.js"></script>
 </body>
 </html>

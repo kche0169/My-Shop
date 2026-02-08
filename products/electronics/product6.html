@@ -9,13 +9,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <!-- SwiperJS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../css/custom.css">
 </head>
 
 <body class="bg-gray-50 font-sans">
@@ -28,7 +29,15 @@
     <div class="flex items-center w-full md:w-auto">
       <a href="../../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
-
+    
+    <!-- Mobile Category Button -->
+    <div class="xl:hidden flex items-center">
+      <button id="mobile-category-btn" 
+              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
+    </div>
     <!-- Search Box -->
     <div class="w-full md:flex-1 md:px-8">
       <div class="flex">
@@ -46,18 +55,14 @@
         <input type="checkbox" id="cart-toggle" class="hidden peer">
 
         <!-- Cart Button -->
-        <label for="cart-toggle"
-               class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
-                      hover:bg-blue-700 transition-colors duration-300 cursor-pointer
-                      w-full md:w-auto justify-center">
+        <label for="cart-toggle" class="cart-button">
             <i class="fa-solid fa-cart-shopping mr-2"></i>
             <span>Shopping List</span>
-            <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                         flex items-center justify-center text-sm font-medium">2</span>
+            <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium">2</span>
         </label>
 
         <!-- Cart Dropdown -->
-        <div class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+        <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                     border border-gray-200 z-50
                     opacity-0 invisible translate-y-2 pointer-events-none
                     transition-all duration-200 ease-in-out
@@ -104,10 +109,9 @@
 </header>
 
 
-<!-- ================= Main ================= -->
-<main class="container mx-auto px-4 py-10">
-    <aside class="w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4">
-
+<!-- ================= Main Content ================= -->
+<main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
+    <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
         <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
         <ul class="flex flex-col gap-3">
         <li>
@@ -136,29 +140,29 @@
         </li>
         </ul>
   </aside>
-      <!-- Breadcrumb -->
-    <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
-        <ol class="flex items-center space-x-2">
-            <li>
-                <a href="../../index.html" class="hover:text-blue-600">Home</a>
-            </li>
-            <li>
-                <span class="text-gray-500">&gt;</span>
-            </li>
-            <li>
-                <a href="../../category/electronics.html" class="text-gray-800 font-medium hover:text-blue-600">electronics</a>
-            </li>
-            <li>
-                <span class="text-gray-500">&gt;</span>
-            </li>
-            <li>
-                <a href="../../products/electronics/product6.html" class="text-gray-800 font-medium hover:text-blue-600">65W GaN Fast Charger</a>
-            </li>
-        </ol>
-    </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+        <li>
+            <a href="../../index.html" class="hover:text-blue-600">Home</a>
+        </li>
+        <li>
+            <span class="text-gray-500">&gt;</span>
+        </li>
+        <li>
+            <a href="../../category/electronics.html" class="text-gray-800 font-medium hover:text-blue-600">electronics</a>
+        </li>
+        <li>
+            <span class="text-gray-500">&gt;</span>
+        </li>
+        <li>
+            <span class="text-gray-800 font-medium">65W GaN Fast Charger</span>
+        </li>
+    </ol>
+  </nav>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-lg shadow-sm">
-
         <!-- Image Slider -->
         <div class="h-96 w-full">
             <div class="swiper mySwiper h-full">
@@ -166,29 +170,26 @@
                 <!-- Slides -->
                 <div class="swiper-slide flex items-center justify-center bg-gray-100">
                     <img src="../../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger.jpg"
-                        class="max-h-full object-contain">
+                        class="max-h-full object-contain" alt="65W GaN Fast Charger">
                 </div>
                 <div class="swiper-slide flex items-center justify-center bg-gray-100">
-                    <img src="../../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger.jpg"
-                        class="max-h-full object-contain">
+                    <img src="../../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger2.jpg"
+                        class="max-h-full object-contain" alt="65W GaN Fast Charger Ports View">
                 </div>
                 <div class="swiper-slide flex items-center justify-center bg-gray-100">
-                    <img src="../../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger.jpg"
-                        class="max-h-full object-contain">
+                    <img src="../../images/electronics/65W_GaN_Fast_Charger/65W_GaN_Fast_Charger3.jpg"
+                        class="max-h-full object-contain" alt="65W GaN Fast Charger with Cables">
                 </div>
                 </div>
-
                 <!-- Pagination -->
                 <div class="swiper-pagination"></div>
-
                 <!-- Navigation -->
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
             </div>
         </div>
 
-
-        <!-- Info -->
+        <!-- Product Info -->
         <div>
             <h1 class="text-3xl font-bold mb-4">65W GaN Fast Charger</h1>
             <p class="text-gray-600 mb-4">
@@ -202,12 +203,12 @@
                        class="w-20 border rounded text-center">
             </div>
 
-            <button class="bg-blue-600 text-white py-3 w-full rounded-md hover:bg-blue-700 mb-6">
+            <button class="btn-add-to-cart w-full">
                 <i class="fa-solid fa-cart-shopping mr-2"></i>
                 Add to Cart
             </button>
 
-            <div class="border-t pt-4">
+            <div class="border-t pt-4 mt-6">
                 <h2 class="font-bold mb-2">Product Description</h2>
                 <p class="text-gray-600">
                     This 65W GaN fast charger comes with 3 output ports and supports USB-C Power Delivery for high-speed charging. Its compact and lightweight design saves space, and it is widely compatible with laptops, smartphones and tablets including MacBook, iPhone and iPad, perfect for travel and daily charging.
@@ -217,28 +218,59 @@
     </div>
 </main>
 
+<!-- Mobile Category Drawer -->
+<aside id="mobile-category-drawer" 
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
+  <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+    Categories
+    <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </h2>
+  <ul class="flex flex-col gap-3">
+    <li>
+      <a href="../../category/electronics.html" 
+         class="block px-3 py-2 rounded-md text-blue-700 bg-blue-50 font-medium hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Electronics
+      </a>
+    </li>
+    <li>
+      <a href="../../category/home.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Home & Living
+      </a>
+    </li>
+    <li>
+      <a href="../../category/sports.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Sports & Outdoors
+      </a>
+    </li>
+    <li>
+      <a href="../../category/fashion.html" 
+         class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+        Fashion
+      </a>
+    </li>
+  </ul>
+</aside>
+
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
-    <div class="container mx-auto px-4 text-center">
-        <p class="font-bold">ShopEasy</p>
-        <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
+  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="text-lg font-bold">ShopEasy</p>
+      <p class="text-gray-400">© 2026 IEMS5718 Phase 1</p>
     </div>
+    <div class="flex gap-6">
+      <i class="fa-brands fa-facebook text-gray-400"></i>
+      <i class="fa-brands fa-twitter text-gray-400"></i>
+      <i class="fa-brands fa-instagram text-gray-400"></i>
+    </div>
+  </div>
 </footer>
 
-
-<!-- SwiperJS Initialization -->
-<script>
-  const swiper = new Swiper('.mySwiper', {
-    loop: true,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
-</script>
+<!-- JS -->
+<script src="../../js/script1.js"></script>
 </body>
 </html>

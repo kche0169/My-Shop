@@ -1,22 +1,94 @@
-/* ========== Global Layout ========== */
+/* custom.css */
+
+/* Global */
 body {
-  margin: 0;
+  background-color: #f9fafb;
 }
 
-/* ========== Shopping List ========== */
-.cart-dropdown {
-  max-height: 80vh;
-  overflow-y: auto;
+.cart-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2563eb;      /* bg-blue-600 */
+  color: white;                   /* text-white */
+  padding: 0.5rem 1rem;           /* py-2 px-4 */
+  border-radius: 0.375rem;        /* rounded-md */
+  transition: background-color 0.3s ease;  /* transition-colors duration-300 */
+  cursor: pointer;
+  width: 100%;                    /* w-full */
+  gap: 0.5rem;                    /* icon */
 }
 
-/* ========== Product Card Hover ========== */
+@media (min-width: 768px) {
+  .cart-button {
+    width: auto;                  /* md:w-auto */
+  }
+}
+
+.cart-button:hover {
+  background-color: #1d4ed8;      /* hover:bg-blue-700 */
+}
+
+/* Product Card */
+.product-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .product-card:hover {
-  transform: translateY(-2px);
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s ease;
 }
 
-/* ========== Breadcrumb ========== */
+/* Product Image Container */
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  background-color: #f3f4f6;
+}
+
+/* Product Image */
+.product-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 1rem;
+}
+
+/* Add to Cart Button */
+.btn-add-to-cart {
+  background-color: #2563eb;
+  color: white;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Breadcrumb */
 .breadcrumb {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #6b7280;
+  margin-bottom: 0.75rem;
 }
