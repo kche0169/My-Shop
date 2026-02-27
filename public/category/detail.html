@@ -290,7 +290,7 @@
   async function loadCategoryProducts() {
     try {
       // 移植文件A的可靠请求逻辑
-      const res = await axios.get(`${API_BASE_URL}/pro/list?catid=${currentCatId}`);
+      const res = await axios.get(`${API_BASE_URL}/products/list?catid=${currentCatId}`);
       console.log('产品数据：', res.data); // 控制台打印，方便调试
       const products = res.data.data || [];
       const productList = document.getElementById('product-list');

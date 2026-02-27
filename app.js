@@ -42,6 +42,7 @@ try {
   const productsApi = require('./api/productsApi'); // 改成 productsApi.js（带s）
   app.use('/api/cate', cateApi);
   app.use('/api/products', productsApi); // 接口路径改成 /api/products（带s）
+  // app.use('/api/pro', productsApi); 
   console.log('✅ 路由挂载成功：/api/cate、/api/products');
 } catch (err) {
   console.error('❌ 路由挂载失败：', err.message);
