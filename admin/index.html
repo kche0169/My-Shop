@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Phase2B</title>
+  <style>
+    .module { margin: 20px; padding: 20px; border: 1px solid #ccc; }
+    form { margin: 10px 0; }
+    input, select, textarea, button { margin: 5px; padding: 8px; }
+    textarea { width: 300px; height: 100px; }
+    table { border-collapse: collapse; margin: 10px 0; }
+    td, th { border: 1px solid #ccc; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  <!-- 分类管理表单（2分）：增/删/改 -->
+  <div class="module">
+    <h2>1. 分类管理</h2>
+    <!-- 新增分类表单 -->
+    <form id="addCateForm">
+      <input type="text" name="name" placeholder="输入分类名（如Home）" required>
+      <button type="submit">新增分类</button>
+    </form>
+    <!-- 修改分类表单 -->
+    <form id="editCateForm">
+      <input type="hidden" name="catid" id="editCateId">
+      <input type="text" name="name" id="editCateName" placeholder="修改分类名" required>
+      <button type="submit">保存修改</button>
+    </form>
+    <!-- 分类列表（带修改/删除按钮） -->
+    <h3>分类列表</h3>
+    <table id="cateTable">
+      <tr><th>分类ID</th><th>分类名</th><th>操作</th></tr>
+    </table>
+  </div>
+
+  <!-- 产品管理表单（2分）：下拉框+输入框+文本域+图片上传 -->
+  <div class="module">
+    <h2>2. 产品管理</h2>
+    <!-- 新增产品表单：满足所有要求 -->
+    <form id="addProForm" enctype="multipart/form-data">
+      <select name="catid" id="addProCate" required>
+        <option value="">请选择分类</option>
+      </select>
+      <input type="text" name="name" placeholder="产品名（如Mug）" required>
+      <input type="number" name="price" step="0.01" min="0" placeholder="价格（如19.99）" required>
+      <textarea name="description" placeholder="产品描述"></textarea>
+      <!-- 图片上传：限制格式+提示大小≤10MB -->
+      <input type="file" name="proImg" accept="image/jpg,image/jpeg,image/png" title="仅支持jpg/png，大小≤10MB">
+      <button type="submit">新增产品</button>
+    </form>
+    <!-- 修改产品表单（隐藏，点击修改后显示） -->
+    <form id="editProForm" enctype="multipart/form-data" style="display: none;">
+      <input type="hidden" name="pid" id="editProId">
+      <select name="catid" id="editProCate" required></select>
+      <input type="text" name="name" id="editProName" placeholder="产品名" required>
+      <input type="number" name="price" step="0.01" min="0" id="editProPrice" placeholder="价格" required>
+      <textarea name="description" id="editProDesc" placeholder="产品描述"></textarea>
+      <input type="file" name="proImg" accept="image/jpg,image/jpeg,image/png">
+      <button type="submit">保存修改</button>
+      <button type="button" id="cancelEdit">取消</button>
+    </form>
+    <!-- 产品列表（带修改/删除按钮） -->
+    <h3>产品列表</h3>
+    <table id="proTable">
+      <tr><th>产品ID</th><th>分类</th><th>产品名</th><th>价格</th><th>图片</th><th>操作</th></tr>
+    </table>
+  </div>
+
+  <!-- 引入Axios：用于调用后端API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // 接口基础路径：服务器上替换成你的IP（如http://123.45.67.89:3000/api）
+    const baseUrl = 'http://localhost:3000/api';
+
+    // 页面加载时加载分类+产品列表
+    window.onload = () => {
+      getCateList();
+      getProList();
+    };
+
+    // ==================== 分类管理（增删改）====================
+    // 1. 获取所有分类（渲染下拉框+列表）
+    function getCateList() {
+      axios.get(`${baseUrl}/cate/all`).then(res => {
+        const data = res.data.data;
+        const cateTable = document.getElementById('cateTable');
+        const addProCate = document.getElementById('addProCate');
+        const editProCate = document.getElementById('editProCate');
+        
+        // 清空列表和下拉框
+        cateTable.innerHTML = '<tr><th>分类ID</th><th>分类名</th><th>操作</th></tr>';
+        addProCate.innerHTML = '<option value="">请选择分类</option>';
+        editProCate.innerHTML = '<option value="">请选择分类</option>';
+
+        // 渲染分类列表和产品表单的分类下拉框
+        data.forEach(cate => {
+          // 分类列表
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${cate.catid}</td>
+            <td>${cate.name}</td>
+            <td>
+              <button onclick="editCate(${cate.catid}, '${cate.name}')">修改</button>
+              <button onclick="delCate(${cate.catid})">删除</button>
+            </td>
+          `;
+          cateTable.appendChild(tr);
+
+          // 产品表单的分类下拉选项
+          addProCate.innerHTML += `<option value="${cate.catid}">${cate.name}</option>`;
+          editProCate.innerHTML += `<option value="${cate.catid}">${cate.name}</option>`;
+        });
+      }).catch(err => alert('加载分类失败：' + err.message));
+    }
+
+    // 2. 新增分类（表单提交）
+    document.getElementById('addCateForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = e.target.name.value.trim(); // 输入清洗：去除首尾空格
+      axios.post(`${baseUrl}/cate/add`, { name }).then(res => {
+        alert(res.data.msg);
+        e.target.reset();
+        getCateList(); // 刷新分类列表
+        getProList();  // 刷新产品列表
+      }).catch(err => alert(err.response.data.msg)); // 输入验证提示
+    });
+
+    // 3. 编辑分类（赋值到表单）
+    function editCate(catid, name) {
+      document.getElementById('editCateId').value = catid;
+      document.getElementById('editCateName').value = name;
+    }
+
+    // 4. 保存分类修改
+    document.getElementById('editCateForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const catid = e.target.catid.value;
+      const name = e.target.name.value.trim(); // 输入清洗
+      axios.post(`${baseUrl}/cate/edit`, { catid, name }).then(res => {
+        alert(res.data.msg);
+        e.target.reset();
+        getCateList();
+        getProList();
+      }).catch(err => alert(err.response.data.msg));
+    });
+
+    // 5. 删除分类
+    function delCate(catid) {
+      if (confirm('删除分类会同时删除关联产品，确定吗？')) {
+        axios.get(`${baseUrl}/cate/del/${catid}`).then(res => {
+          alert(res.data.msg);
+          getCateList();
+          getProList();
+        }).catch(err => alert(err.response.data.msg));
+      }
+    }
+
+    // ==================== 产品管理（增删改+图片上传）====================
+    // 1. 获取所有产品
+    function getProList() {
+      axios.get(`${baseUrl}/pro/list`).then(res => {
+        const data = res.data.data;
+        const proTable = document.getElementById('proTable');
+        proTable.innerHTML = '<tr><th>产品ID</th><th>分类</th><th>产品名</th><th>价格</th><th>图片</th><th>操作</th></tr>';
+
+        data.forEach(pro => {
+          const tr = document.createElement('tr');
+          // 图片预览（无图片显示“无”）
+          const imgHtml = pro.img_path ? 
+            `<img src="../uploads/${pro.pid}_thumb.${pro.img_path.split('.')[1]}" width="50" height="50">` : 
+            '无图片';
+          
+          tr.innerHTML = `
+            <td>${pro.pid}</td>
+            <td>${pro.cate_name}</td>
+            <td>${pro.name}</td>
+            <td>$${pro.price.toFixed(2)}</td>
+            <td>${imgHtml}</td>
+            <td>
+              <button onclick="editPro(${pro.pid}, ${pro.catid}, '${pro.name}', ${pro.price}, '${pro.description || ''}')">修改</button>
+              <button onclick="delPro(${pro.pid})">删除</button>
+            </td>
+          `;
+          proTable.appendChild(tr);
+        });
+      }).catch(err => alert('加载产品失败：' + err.message));
+    }
+
+    // 2. 新增产品（含图片上传）
+    document.getElementById('addProForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      axios.post(`${baseUrl}/pro/add`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(res => {
+        alert(res.data.msg);
+        e.target.reset();
+        getProList(); // 刷新产品列表
+      }).catch(err => alert(err.response.data.msg));
+    });
+
+    // 3. 编辑产品（赋值到表单）
+    function editPro(pid, catid, name, price, description) {
+      document.getElementById('editProId').value = pid;
+      document.getElementById('editProCate').value = catid;
+      document.getElementById('editProName').value = name;
+      document.getElementById('editProPrice').value = price;
+      document.getElementById('editProDesc').value = description;
+      document.getElementById('editProForm').style.display = 'block';
+    }
+
+    // 4. 取消产品修改
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+      document.getElementById('editProForm').style.display = 'none';
+      document.getElementById('editProForm').reset();
+    });
+
+    // 5. 保存产品修改（含图片更新）
+    document.getElementById('editProForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      axios.post(`${baseUrl}/pro/edit`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(res => {
+        alert(res.data.msg);
+        e.target.reset();
+        document.getElementById('editProForm').style.display = 'none';
+        getProList();
+      }).catch(err => alert(err.response.data.msg));
+    });
+
+    // 6. 删除产品（含图片删除）
+    function delPro(pid) {
+      if (confirm('删除产品会同时删除关联图片，确定吗？')) {
+        axios.get(`${baseUrl}/pro/del/${pid}`).then(res => {
+          alert(res.data.msg);
+          getProList();
+        }).catch(err => alert(err.response.data.msg));
+      }
+    }
+  </script>
+</body>
+</html>

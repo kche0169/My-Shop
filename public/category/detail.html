@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Category</title> <!-- 动态标题，从数据库获取 -->
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Axios (用于调用后端API) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/custom.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+<!-- ================= Header ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+
+    <!-- Logo - 导航兜底：跳转到Home -->
+    <div class="flex items-center w-full md:w-auto">
+      <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
+    </div>
+
+    <!-- Mobile Category Button -->
+    <div class="xl:hidden flex items-center">
+      <button id="mobile-category-btn" 
+              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
+    </div>
+
+    <!-- Search Box - 无跳转，保留样式 -->
+    <div class="w-full md:flex-1 md:px-8">
+      <div class="flex">
+        <input type="text"
+               placeholder="Search products..."
+               class="w-full border rounded-l-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <button class="bg-blue-600 text-white px-4 rounded-r-md hover:bg-blue-700">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= Shopping List ================= -->
+    <div class="relative cart-wrapper w-full md:w-auto group">
+      <input type="checkbox" id="cart-toggle" class="hidden peer">
+
+      <!-- Cart Button -->
+      <label for="cart-toggle" class="cart-button">
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium" id="cart-count">
+          0 <!-- 动态显示购物车数量 -->
+        </span>
+      </label>
+
+      <!-- Cart Dropdown (Phase3 可扩展，暂保留静态样式) -->
+      <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                  border border-gray-200 z-50
+                  opacity-0 invisible translate-y-2 pointer-events-none
+                  transition-all duration-200 ease-in-out
+                  group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+
+        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-title">
+          My Shopping List (0 items)
+        </div>
+
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-items">
+          <!-- 购物车商品动态渲染 (Phase3 实现) -->
+          <div class="text-center text-gray-500 py-4">
+            Your cart is empty
+          </div>
+        </div>
+
+        <div class="px-5 py-4 border-t bg-gray-50">
+          <div class="flex justify-between font-bold mb-4">
+            <span>Total</span>
+            <span class="text-blue-700" id="cart-total">$0.00</span>
+          </div>
+          <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+            Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= Main Content ================= -->
+<main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
+
+  <!-- 动态加载的左侧分类栏 (替换静态分类列表) -->
+  <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
+    <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+    <ul class="flex flex-col gap-3" id="sidebar-cate-list">
+      <!-- 从数据库动态渲染分类列表 -->
+      <li class="text-gray-500">Loading categories...</li>
+    </ul>
+  </aside>
+
+  <!-- 动态面包屑 (替换静态Electronics) -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol class="flex items-center space-x-2">
+      <li>
+        <a href="../index.html" class="hover:text-blue-600">Home</a>
+      </li>
+      <li>
+        <span class="text-gray-500">&gt;</span>
+      </li>
+      <li>
+        <span class="text-gray-800 font-medium" id="breadcrumb-cate-name">Loading...</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- 动态分类标题/描述 (替换静态Electronics) -->
+  <section class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2" id="cate-name">Loading Category...</h1>
+    <p class="text-gray-600" id="cate-desc">
+      Explore our wide range of products in this category. Click on a product to view details and add to cart.
+    </p>
+  </section>
+
+  <!-- 动态产品列表 (替换静态8个产品卡片) -->
+  <section>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-list">
+      <!-- 动态渲染产品卡片 -->
+      <div class="col-span-full text-center text-gray-500 py-8">
+        Loading products...
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 动态移动端分类抽屉 (替换静态分类) -->
+<aside id="mobile-category-drawer" 
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
+  <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+    Categories
+    <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </h2>
+  <ul class="flex flex-col gap-3" id="mobile-cate-list">
+    <!-- 从数据库动态渲染移动端分类 -->
+    <li class="text-gray-500">Loading...</li>
+  </ul>
+</aside>
+
+<!-- ================= Footer ================= -->
+<footer class="bg-gray-800 text-white py-8 mt-12">
+  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <p class="text-lg font-bold">ShopEasy</p>
+      <p class="text-gray-400">© 2026 IEMS5718 Phase 3</p>
+    </div>
+    <div class="flex gap-6">
+      <i class="fa-brands fa-facebook text-gray-400"></i>
+      <i class="fa-brands fa-twitter text-gray-400"></i>
+      <i class="fa-brands fa-instagram text-gray-400"></i>
+    </div>
+  </div>
+</footer>
+
+<!-- JS -->
+<script src="../js/script.js"></script>
+<!-- 动态分类页专属JS - 移植文件A的可靠逻辑 + 保留文件B的样式渲染 -->
+<script>
+  // 核心配置（和后端API一致，移植自文件A）
+  const API_BASE_URL = 'http://localhost:3000/api';
+  const DEFAULT_IMG = '../images/default.png'; // 保留原有默认图片路径
+
+  // 解析catid参数（仅修改：强化参数兜底，避免空参数）
+  const urlParams = new URLSearchParams(window.location.search);
+  let currentCatId = urlParams.get('catid');
+  // 兜底：非数字/空值则设为1，避免加载失败
+  if (!currentCatId || isNaN(currentCatId) || currentCatId < 1) {
+    currentCatId = 1;
+    // 可选：更新URL，优化体验
+    window.history.replaceState({}, document.title, `detail.html?catid=1`);
+  } else {
+    currentCatId = parseInt(currentCatId);
+  }
+
+  // 页面加载主逻辑（保留原有结构，仅确保参数传递正确）
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // 强制检查catid，无效则跳Home（保留原有逻辑）
+      if (!currentCatId || isNaN(currentCatId)) {
+        alert('Invalid category! Redirecting to home...');
+        window.location.href = '../index.html';
+        return;
+      }
+
+      // 按顺序加载数据（保留文件B的功能函数，替换为可靠逻辑）
+      await loadAllCategories();
+      await loadCurrentCategoryInfo();
+      await loadCategoryProducts();
+      initMobileDrawer();
+    } catch (error) {
+      console.error('页面初始化错误：', error);
+      // 加载失败兜底：提示+跳Home
+      document.getElementById('product-list').innerHTML = `
+        <div class="col-span-full text-center text-red-500 py-8">
+          Load failed! Redirecting to home...
+        </div>
+      `;
+      setTimeout(() => window.location.href = '../index.html', 2000);
+    }
+  });
+
+  /**
+   * 加载所有分类（仅修改：分类链接携带正确catid参数，路径层级正确）
+   */
+  async function loadAllCategories() {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/cate/all`);
+      const categories = res.data.data || [];
+
+      if (categories.length === 0) {
+        document.getElementById('sidebar-cate-list').innerHTML = '<li class="text-gray-500">No categories</li>';
+        document.getElementById('mobile-cate-list').innerHTML = '<li class="text-gray-500">No categories</li>';
+        return;
+      }
+
+      // 渲染分类列表（保留文件B的样式，仅修改链接）
+      const sidebarCateList = document.getElementById('sidebar-cate-list');
+      const mobileCateList = document.getElementById('mobile-cate-list');
+      sidebarCateList.innerHTML = '';
+      mobileCateList.innerHTML = '';
+
+      categories.forEach(cate => {
+        // 仅修改：分类链接携带正确catid参数，路径为当前目录的detail.html
+        const liHtml = `
+          <a href="detail.html?catid=${cate.catid}" 
+             class="block px-3 py-2 rounded-md ${cate.catid == currentCatId ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600'} hover:bg-blue-100 hover:text-blue-600 transition-colors">
+            ${cate.name}
+          </a>
+        `;
+        // 侧边栏
+        const sidebarLi = document.createElement('li');
+        sidebarLi.innerHTML = liHtml;
+        sidebarCateList.appendChild(sidebarLi);
+        // 移动端抽屉
+        const mobileLi = document.createElement('li');
+        mobileLi.innerHTML = liHtml;
+        mobileCateList.appendChild(mobileLi);
+      });
+    } catch (error) {
+      console.error('加载分类失败：', error);
+      document.getElementById('sidebar-cate-list').innerHTML = '<li class="text-red-500">Load failed</li>';
+      document.getElementById('mobile-cate-list').innerHTML = '<li class="text-red-500">Load failed</li>';
+    }
+  }
+
+  /**
+   * 加载当前分类信息（保留原有逻辑，无修改）
+   */
+  async function loadCurrentCategoryInfo() {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/cate/all`);
+      const categories = res.data.data || [];
+      const currentCate = categories.find(cate => cate.catid == currentCatId) || { name: 'Unknow Category' };
+
+      // 动态更新页面信息（保留文件B的样式）
+      document.title = `${currentCate.name} - ShopEasy`;
+      document.getElementById('cate-name').textContent = currentCate.name;
+      document.getElementById('breadcrumb-cate-name').textContent = currentCate.name;
+      document.getElementById('cate-desc').textContent = `View all products in ${currentCate.name}`;
+    } catch (error) {
+      console.error('加载分类信息失败：', error);
+      document.getElementById('cate-name').textContent = 'Unknow Category';
+      document.getElementById('breadcrumb-cate-name').textContent = 'Unknow';
+    }
+  }
+
+  /**
+   * 加载分类产品（仅修改：商品卡片跳转链接，携带pid参数，路径层级正确）
+   */
+  async function loadCategoryProducts() {
+    try {
+      // 移植文件A的可靠请求逻辑
+      const res = await axios.get(`${API_BASE_URL}/pro/list?catid=${currentCatId}`);
+      console.log('产品数据：', res.data); // 控制台打印，方便调试
+      const products = res.data.data || [];
+      const productList = document.getElementById('product-list');
+
+      // 无产品
+      if (products.length === 0) {
+        productList.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8">No products in this category</div>`;
+        return;
+      }
+
+      // 渲染产品卡片（仅修改：跳转链接为../products/detail.html?pid=${pro.pid}）
+      productList.innerHTML = '';
+      products.forEach(pro => {
+        // Default image path (place default.png in public/images/)
+        const DEFAULT_IMG = '/images/default.png';
+        // Use database img_path directly (no extra path concatenation)
+        const imgSrc = pro.img_path ? pro.img_path : DEFAULT_IMG;
+        
+        const cardHtml = `
+          <!-- 仅修改：商品链接为../products/detail.html，携带pid参数 -->
+          <a href="../products/detail.html?pid=${pro.pid}" class="block group">
+            <div class="product-card" style="display: flex; flex-direction: column; height: 100%;"> <!-- 关键1：卡片设为flex垂直布局，高度100% -->
+              <div class="product-image-wrapper">
+                <img src="${imgSrc}" alt="${pro.name}" class="product-image" 
+                    style="width: 100%; height: 200px; object-fit: cover;">
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column;"> <!-- 关键2：内容区占满剩余空间 -->
+                <h3 class="text-lg font-medium text-gray-800 mb-2">${pro.name}</h3>
+                <!-- 关键3：描述区固定高度+溢出隐藏，避免行数不一致 -->
+                <p class="text-gray-600 text-sm mb-4" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.5rem;">
+                  ${pro.description || 'No description'}
+                </p>
+                <p class="text-blue-600 font-bold text-xl mb-4">$${Number(pro.price).toFixed(2)}</p>
+              </div>
+              <!-- 关键4：按钮固定在卡片底部 -->
+              <button class="btn-add-to-cart" onclick="addToCart(${pro.pid}, event)" style="margin-top: auto;">
+                <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+              </button>
+            </div>
+          </a>
+        `;
+        productList.innerHTML += cardHtml;
+      });
+    } catch (error) {
+      console.error('加载产品失败：', error);
+      // 失败提示（保留样式）
+      document.getElementById('product-list').innerHTML = `
+        <div class="col-span-full text-center text-red-500 py-8">
+          Failed to load products: ${error.message}
+        </div>
+      `;
+    }
+  }
+
+  /**
+   * 加入购物车（保留原有逻辑，无修改）
+   */
+  function addToCart(pid, e) {
+    e.preventDefault();
+    // 兜底：接口不可用时提示+跳Home（可选）
+    axios.post(`${API_BASE_URL}/cart/add`, {
+      userid: 1,
+      pid: pid,
+      num: 1
+    }).then(res => {
+      alert('Added to cart successfully!');
+      // 可扩展：更新购物车数量
+    }).catch(err => {
+      console.error('加入购物车失败：', err);
+      alert('Failed to add to cart! (Cart API not ready)');
+      // 兜底跳Home（如需）：window.location.href = '../index.html';
+    });
+  }
+
+  /**
+   * 移动端分类抽屉（保留原有逻辑，无修改）
+   */
+  function initMobileDrawer() {
+    const btnOpen = document.getElementById('mobile-category-btn');
+    const btnClose = document.getElementById('mobile-category-close');
+    const drawer = document.getElementById('mobile-category-drawer');
+
+    if (!btnOpen || !btnClose || !drawer) return; // 容错
+
+    btnOpen.onclick = () => drawer.classList.remove('-translate-x-full');
+    btnClose.onclick = () => drawer.classList.add('-translate-x-full');
+    
+    // 点击抽屉外部关闭（优化体验）
+    document.addEventListener('click', (e) => {
+      if (!drawer.contains(e.target) && !btnOpen.contains(e.target)) {
+        drawer.classList.add('-translate-x-full');
+      }
+    });
+  }
+</script>
+</body>
+</html>
