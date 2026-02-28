@@ -44,53 +44,68 @@
       </div>
     </div>
 
+
     <!-- Shopping List -->
-    <div class="relative cart-wrapper w-full md:w-auto group">
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- 新增：核心入口ID，匹配index.js -->
       <input type="checkbox" id="cart-toggle" class="hidden peer">
-      <!-- <label for="cart-toggle" class="flex items-center bg-blue-600 text-white py-2 px-4 rounded-md
-                 hover:bg-blue-700 transition-colors duration-300 cursor-pointer w-full md:w-auto justify-center"> -->
-        <label for="cart-toggle" class="cart-button">
-                 <i class="fa-solid fa-cart-shopping mr-2"></i>
-        <span>Shopping List</span>
-        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                     flex items-center justify-center text-sm font-medium">2</span>
+      <label for="cart-toggle" class="cart-button">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+      <span>Shopping List</span>
+      <!-- 修复1：添加ID=cart-count，移除固定数字2，改为动态0 -->
+      <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                  flex items-center justify-center text-sm font-medium" id="cart-count">
+        0
+      </span>
       </label>
 
-      <!-- Cart Dropdown -->
+      <!-- Cart Dropdown（仅修改ID，适配index.js，样式/结构完全保留） -->
       <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
                   group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- 新增：弹窗核心ID -->
 
-        <div class="px-5 py-4 border-b font-semibold text-gray-800 text-lg">
-          My Shopping List (2 items)
+        <!-- 修复2：修改标题ID为cart-popup-title（区分独立页/弹窗） -->
+        <div class="px-5 py-4 border-b font-semibold text-gray-800 text-lg" id="cart-popup-title">
+          My Shopping List (0 items) <!-- 移除固定数字2，改为动态0 -->
         </div>
 
-        <div class="px-5 py-4 max-h-[320px] overflow-y-auto divide-y divide-gray-100">
-          <div class="flex items-center justify-between py-3">
-            <div class="flex-1 pr-4">
-              <div class="text-gray-800 font-medium">Wireless Bluetooth Earphones</div>
-            </div>
-            <input type="number" value="1" min="1" 
-                   class="w-20 px-3 py-2 border rounded text-center text-sm">
-            <div class="text-right font-medium text-gray-800 min-w-[80px] pl-3">$199.99</div>
+        <!-- 修复3：修改商品列表ID为cart-popup-items（区分独立页/弹窗），移除静态商品行 -->
+        <div class="px-5 py-4 max-h-[320px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items">
+          <!-- 空购物车占位（保留） -->
+          <div class="cart-empty text-center text-gray-500 py-4">
+            Your cart is empty
           </div>
-          <div class="flex items-center justify-between py-3">
-            <div class="flex-1 pr-4">
-              <div class="text-gray-800 font-medium">Smart Watch</div>
+          <!-- 商品行模板（由JS动态渲染，先写死模板结构供JS复用） -->
+          <div class="cart-item-template hidden py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2" data-pid="0">
+            <!-- 商品名称+价格 -->
+            <div class="flex-1">
+              <h4 class="cart-item-name font-medium text-gray-800">Product Name</h4>
+              <p class="cart-item-price text-blue-600 font-bold">$0.00</p>
             </div>
-            <input type="number" value="1" min="1" 
-                   class="w-20 px-3 py-2 border rounded text-center text-sm">
-            <div class="text-right font-medium text-gray-800 min-w-[80px] pl-3">$299.99</div>
+            <!-- 数量调节控件 -->
+            <div class="flex items-center gap-2">
+              <button class="cart-qty-minus w-8 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors" aria-label="Decrease quantity">
+                <i class="fa-solid fa-minus text-sm"></i>
+              </button>
+              <input type="number" class="cart-qty-input w-12 h-8 border border-gray-300 rounded-md text-center text-sm" value="1" min="1">
+              <button class="cart-qty-plus w-8 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors" aria-label="Increase quantity">
+                <i class="fa-solid fa-plus text-sm"></i>
+              </button>
+            </div>
+            <!-- 删除按钮 -->
+            <button class="cart-item-delete text-red-500 hover:text-red-700 transition-colors" aria-label="Delete product">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
           </div>
         </div>
 
         <div class="px-5 py-5 border-t bg-gray-50 rounded-b-lg">
           <div class="flex justify-between items-center mb-4 text-lg font-bold">
             <span class="text-gray-800">Total:</span>
-            <span class="text-blue-700">$499.98</span>
+            <!-- 修复4：修改总价ID为cart-popup-total（区分独立页/弹窗），移除固定总价 -->
+            <span class="text-blue-700" id="cart-popup-total">$0.00</span>
           </div>
           <button class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 flex items-center justify-center">
             <i class="fa-solid fa-arrow-right mr-2"></i>Checkout
@@ -130,10 +145,10 @@
     </button>
   </h2>
   <ul class="flex flex-col gap-3">
-    <li><a href="category/electronics.html" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Electronics</a></li>
-    <li><a href="category/home.html" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Home & Living</a></li>
-    <li><a href="category/sports.html" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Sports & Outdoors</a></li>
-    <li><a href="category/fashion.html" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Fashion</a></li>
+    <li><a href="category/detail.html?catid=1" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Electronics</a></li>
+    <li><a href="category/detail.html?catid=2" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Home & Living</a></li>
+    <li><a href="category/detail.html?catid=3" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Sports & Outdoors</a></li>
+    <li><a href="category/detail.html?catid=4" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Fashion</a></li>
   </ul>
 </aside>
 
@@ -244,7 +259,7 @@
               Bluetooth 5.3 | Noise Cancelling | 24-hour Battery
             </p>
             <p class="text-blue-600 font-bold text-xl mb-4">$199.99</p>
-            <button class="btn-add-to-cart">
+            <button class="btn-add-to-cart" onclick="addToCart(1, event)">
               <i class="fa-solid fa-cart-shopping mr-2"></i>
               Add to Cart
             </button>
@@ -261,7 +276,7 @@
     <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
     <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
     <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
-    <button class="btn-add-to-cart">
+    <button class="btn-add-to-cart" onclick="addToCart(2, event)">
       <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
     </button>
   </div>
@@ -278,9 +293,9 @@
     <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Noise-Cancelling Headphones</h3>
     <p class="text-gray-600 text-sm mb-4 flex-grow">40-hour playtime | Active Noise Cancellation | Touch Controls</p>
     <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(3, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+</button>
   </div>
 </a>
 
@@ -299,10 +314,10 @@
       Intel Core i7 | 16GB RAM | 512GB SSD | 13.3" Retina Display
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$999.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(4, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
       </div>
@@ -316,7 +331,7 @@
 <a href="products/detail.html?pid=25" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
-      <img src="images/sports/quick_dry/quick_dry_T_shirt1.jpg"
+      <img src="images/sports/quick_dry/quick_dry_T_shirt.jpg"
            alt="Breathable Running T-Shirt"
            class="product-image">
     </div>
@@ -327,10 +342,10 @@
       Lightweight moisture-wicking fabric for intense workouts
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(25, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
 
@@ -338,7 +353,7 @@
 <a href="products/detail.html?pid=26" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
-      <img src="images/sports/shorts/shorts1.jpg"
+      <img src="images/sports/shorts/shorts.jpg"
            alt="High-Performance Running Shorts"
            class="product-image">
     </div>
@@ -360,7 +375,7 @@
 <a href="products/detail.html?pid=27" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
-      <img src="images/sports/running_shoes/running_shoes1.jpg"
+      <img src="images/sports/running_shoes/running_shoes.jpg"
            alt="Cushioned Running Shoes"
            class="product-image">
     </div>
@@ -371,10 +386,10 @@
       Responsive foam midsole, breathable upper
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$119.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(27, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
 
@@ -382,7 +397,7 @@
 <a href="products/detail.html?pid=28" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
-      <img src="images/sports/yoga_mat/yoga_mat1.jpg"
+      <img src="images/sports/yoga_mat/yoga_mat.jpg"
            alt="Yoga Mat with Strap"
            class="product-image">
     </div>
@@ -393,10 +408,10 @@
       6mm thickness with carrying strap, eco-friendly
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(28, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
       </div>
@@ -407,7 +422,7 @@
       <h2 class="section-title">New Arrivals</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <!-- Product card 1 -->
-<a href="products/detail.html?pid=17" class="block group">
+<a href="products/detail.html?pid=19" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
       <img src="images/home/Plant/Realistic_Faux_Monstera_Plant.jpg"
@@ -421,15 +436,15 @@
       Low-maintenance greenery for any room
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(19, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
 
           <!-- Product card 2 -->
-<a href="products/detail.html?pid=18" class="block group">
+<a href="products/detail.html?pid=20" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
       <img src="images/home/Pillows/Pillows.jpg"
@@ -443,16 +458,16 @@
       Textured fabric with modern patterns
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(20, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
       
 
         <!-- Product card 3 -->
-<a href="products/detail.html?pid=19" class="block group">
+<a href="products/detail.html?pid=18" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
       <img src="images/home/Candles /Lavender&Vanilla_Scented_Candles_(Set of 3).jpg"
@@ -466,14 +481,14 @@
       Long-burning soy wax for relaxing ambiance
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(18, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
         <!-- Product card 4 -->
-<a href="products/detail.html?pid=20" class="block group">
+<a href="products/detail.html?pid=18" class="block group">
   <div class="product-card">
     <div class="product-image-wrapper">
       <img src="images/home/Cozy_Faux_Fur_Throw_Blanket/Cozy Faux Fur Throw Blanket.jpg"
@@ -487,10 +502,10 @@
       Soft and warm, perfect for sofa or bed layering
     </p>
     <p class="text-blue-600 font-bold text-xl mb-4">$49.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
+<button class="btn-add-to-cart" onclick="addToCart(18, event)">
+  <i class="fa-solid fa-cart-shopping mr-2"></i>
+  Add to Cart
+</button>
   </div>
 </a>
       </div>
@@ -519,7 +534,20 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 
-  <script src="js/main.js"></script>
-</body>
+  <script src="js/script.js"></script>
+
+  <!-- 第三方库 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <!-- 通用配置/工具 -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/common.js"></script>
+  <!-- 购物车 -->
+  <script src="js/cart/core.js"></script>
+  <script src="js/cart/index.js"></script>
+  <!-- 主页专属 -->
+  <script src="js/pages/home.js"></script>
+  </body>
 </html>
 

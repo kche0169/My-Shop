@@ -51,7 +51,8 @@
     </div>
 
     <!-- ================= Shopping List ================= -->
-    <div class="relative cart-wrapper w-full md:w-auto group">
+
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- 新增：核心入口ID，匹配index.js -->
       <input type="checkbox" id="cart-toggle" class="hidden peer">
 
       <!-- Cart Button -->
@@ -59,23 +60,23 @@
         <i class="fa-solid fa-cart-shopping mr-2"></i>
         <span>Shopping List</span>
         <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium" id="cart-count">
-          0 <!-- 动态显示购物车数量 -->
+          0 <!-- 动态显示购物车数量，ID保留无需修改 -->
         </span>
       </label>
 
-      <!-- Cart Dropdown (Phase3 可扩展，暂保留静态样式) -->
+      <!-- Cart Dropdown (适配index.js的弹窗ID，样式/结构完全保留) -->
       <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
                   group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto">
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- 新增：弹窗核心ID，匹配index.js -->
 
-        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-title">
+        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title"> <!-- 修改ID：适配index.js弹窗标题 -->
           My Shopping List (0 items)
         </div>
 
-        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-items">
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items"> <!-- 修改ID：适配index.js弹窗商品列表 -->
           <!-- 购物车商品动态渲染 (Phase3 实现) -->
           <div class="text-center text-gray-500 py-4">
             Your cart is empty
@@ -85,7 +86,7 @@
         <div class="px-5 py-4 border-t bg-gray-50">
           <div class="flex justify-between font-bold mb-4">
             <span>Total</span>
-            <span class="text-blue-700" id="cart-total">$0.00</span>
+            <span class="text-blue-700" id="cart-popup-total">$0.00</span> <!-- 修改ID：适配index.js弹窗总价 -->
           </div>
           <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
             Checkout
@@ -131,13 +132,32 @@
     </p>
   </section>
 
-  <!-- 动态产品列表 (替换静态8个产品卡片) -->
+  <!-- 动态产品列表 (补充产品卡片模板，包含Add to Cart按钮) -->
   <section>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-list">
-      <!-- 动态渲染产品卡片 -->
+      <!-- 动态渲染产品卡片的占位 -->
       <div class="col-span-full text-center text-gray-500 py-8">
         Loading products...
       </div>
+      <!-- 产品卡片模板（动态渲染时复用）：以下是单条产品的HTML结构示例 -->
+      <!-- 👇 注意：此模板会由category.js动态生成，这里仅作为注释示例，实际渲染时删除此注释并生成真实数据 -->
+      <!--
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow" data-pid="PRODUCT_ID">
+        <img src="PRODUCT_IMAGE_URL" alt="PRODUCT_NAME" class="w-full h-48 object-cover">
+        <div class="p-4">
+          <h3 class="font-medium text-gray-800 mb-2 line-clamp-1">PRODUCT_NAME</h3>
+          <p class="text-blue-600 font-bold mb-4">$PRODUCT_PRICE</p>
+          <div class="flex justify-between items-center">
+            <a href="../pages/detail.html?pid=PRODUCT_ID" class="text-gray-600 hover:text-blue-600 text-sm">View Details</a>
+            <!-- Add to Cart按钮：绑定全局addToCart函数 -->
+            <button onclick="addToCart(PRODUCT_ID, event)" 
+                    class="bg-blue-600 text-white py-1 px-3 rounded text-sm hover:bg-blue-700">
+              <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+      -->
     </div>
   </section>
 </main>
@@ -174,217 +194,17 @@
 
 <!-- JS -->
 <script src="../js/script.js"></script>
-<!-- 动态分类页专属JS - 移植文件A的可靠逻辑 + 保留文件B的样式渲染 -->
-<script>
-  // 核心配置（和后端API一致，移植自文件A）
-  const API_BASE_URL = 'http://localhost:3000/api';
-  const DEFAULT_IMG = '../images/default.png'; // 保留原有默认图片路径
 
-  // 解析catid参数（仅修改：强化参数兜底，避免空参数）
-  const urlParams = new URLSearchParams(window.location.search);
-  let currentCatId = urlParams.get('catid');
-  // 兜底：非数字/空值则设为1，避免加载失败
-  if (!currentCatId || isNaN(currentCatId) || currentCatId < 1) {
-    currentCatId = 1;
-    // 可选：更新URL，优化体验
-    window.history.replaceState({}, document.title, `detail.html?catid=1`);
-  } else {
-    currentCatId = parseInt(currentCatId);
-  }
-
-  // 页面加载主逻辑（保留原有结构，仅确保参数传递正确）
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      // 强制检查catid，无效则跳Home（保留原有逻辑）
-      if (!currentCatId || isNaN(currentCatId)) {
-        alert('Invalid category! Redirecting to home...');
-        window.location.href = '../index.html';
-        return;
-      }
-
-      // 按顺序加载数据（保留文件B的功能函数，替换为可靠逻辑）
-      await loadAllCategories();
-      await loadCurrentCategoryInfo();
-      await loadCategoryProducts();
-      initMobileDrawer();
-    } catch (error) {
-      console.error('页面初始化错误：', error);
-      // 加载失败兜底：提示+跳Home
-      document.getElementById('product-list').innerHTML = `
-        <div class="col-span-full text-center text-red-500 py-8">
-          Load failed! Redirecting to home...
-        </div>
-      `;
-      setTimeout(() => window.location.href = '../index.html', 2000);
-    }
-  });
-
-  /**
-   * 加载所有分类（仅修改：分类链接携带正确catid参数，路径层级正确）
-   */
-  async function loadAllCategories() {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/cate/all`);
-      const categories = res.data.data || [];
-
-      if (categories.length === 0) {
-        document.getElementById('sidebar-cate-list').innerHTML = '<li class="text-gray-500">No categories</li>';
-        document.getElementById('mobile-cate-list').innerHTML = '<li class="text-gray-500">No categories</li>';
-        return;
-      }
-
-      // 渲染分类列表（保留文件B的样式，仅修改链接）
-      const sidebarCateList = document.getElementById('sidebar-cate-list');
-      const mobileCateList = document.getElementById('mobile-cate-list');
-      sidebarCateList.innerHTML = '';
-      mobileCateList.innerHTML = '';
-
-      categories.forEach(cate => {
-        // 仅修改：分类链接携带正确catid参数，路径为当前目录的detail.html
-        const liHtml = `
-          <a href="detail.html?catid=${cate.catid}" 
-             class="block px-3 py-2 rounded-md ${cate.catid == currentCatId ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600'} hover:bg-blue-100 hover:text-blue-600 transition-colors">
-            ${cate.name}
-          </a>
-        `;
-        // 侧边栏
-        const sidebarLi = document.createElement('li');
-        sidebarLi.innerHTML = liHtml;
-        sidebarCateList.appendChild(sidebarLi);
-        // 移动端抽屉
-        const mobileLi = document.createElement('li');
-        mobileLi.innerHTML = liHtml;
-        mobileCateList.appendChild(mobileLi);
-      });
-    } catch (error) {
-      console.error('加载分类失败：', error);
-      document.getElementById('sidebar-cate-list').innerHTML = '<li class="text-red-500">Load failed</li>';
-      document.getElementById('mobile-cate-list').innerHTML = '<li class="text-red-500">Load failed</li>';
-    }
-  }
-
-  /**
-   * 加载当前分类信息（保留原有逻辑，无修改）
-   */
-  async function loadCurrentCategoryInfo() {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/cate/all`);
-      const categories = res.data.data || [];
-      const currentCate = categories.find(cate => cate.catid == currentCatId) || { name: 'Unknow Category' };
-
-      // 动态更新页面信息（保留文件B的样式）
-      document.title = `${currentCate.name} - ShopEasy`;
-      document.getElementById('cate-name').textContent = currentCate.name;
-      document.getElementById('breadcrumb-cate-name').textContent = currentCate.name;
-      document.getElementById('cate-desc').textContent = `View all products in ${currentCate.name}`;
-    } catch (error) {
-      console.error('加载分类信息失败：', error);
-      document.getElementById('cate-name').textContent = 'Unknow Category';
-      document.getElementById('breadcrumb-cate-name').textContent = 'Unknow';
-    }
-  }
-
-  /**
-   * 加载分类产品（仅修改：商品卡片跳转链接，携带pid参数，路径层级正确）
-   */
-  async function loadCategoryProducts() {
-    try {
-      // 移植文件A的可靠请求逻辑
-      const res = await axios.get(`${API_BASE_URL}/products/list?catid=${currentCatId}`);
-      console.log('产品数据：', res.data); // 控制台打印，方便调试
-      const products = res.data.data || [];
-      const productList = document.getElementById('product-list');
-
-      // 无产品
-      if (products.length === 0) {
-        productList.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8">No products in this category</div>`;
-        return;
-      }
-
-      // 渲染产品卡片（仅修改：跳转链接为../products/detail.html?pid=${pro.pid}）
-      productList.innerHTML = '';
-      products.forEach(pro => {
-        // Default image path (place default.png in public/images/)
-        const DEFAULT_IMG = '/images/default.png';
-        // Use database img_path directly (no extra path concatenation)
-        const imgSrc = pro.img_path ? pro.img_path : DEFAULT_IMG;
-        
-        const cardHtml = `
-          <!-- 仅修改：商品链接为../products/detail.html，携带pid参数 -->
-          <a href="../products/detail.html?pid=${pro.pid}" class="block group">
-            <div class="product-card" style="display: flex; flex-direction: column; height: 100%;"> <!-- 关键1：卡片设为flex垂直布局，高度100% -->
-              <div class="product-image-wrapper">
-                <img src="${imgSrc}" alt="${pro.name}" class="product-image" 
-                    style="width: 100%; height: 200px; object-fit: cover;">
-              </div>
-              <div style="flex: 1; display: flex; flex-direction: column;"> <!-- 关键2：内容区占满剩余空间 -->
-                <h3 class="text-lg font-medium text-gray-800 mb-2">${pro.name}</h3>
-                <!-- 关键3：描述区固定高度+溢出隐藏，避免行数不一致 -->
-                <p class="text-gray-600 text-sm mb-4" style="flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.5rem;">
-                  ${pro.description || 'No description'}
-                </p>
-                <p class="text-blue-600 font-bold text-xl mb-4">$${Number(pro.price).toFixed(2)}</p>
-              </div>
-              <!-- 关键4：按钮固定在卡片底部 -->
-              <button class="btn-add-to-cart" onclick="addToCart(${pro.pid}, event)" style="margin-top: auto;">
-                <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-              </button>
-            </div>
-          </a>
-        `;
-        productList.innerHTML += cardHtml;
-      });
-    } catch (error) {
-      console.error('加载产品失败：', error);
-      // 失败提示（保留样式）
-      document.getElementById('product-list').innerHTML = `
-        <div class="col-span-full text-center text-red-500 py-8">
-          Failed to load products: ${error.message}
-        </div>
-      `;
-    }
-  }
-
-  /**
-   * 加入购物车（保留原有逻辑，无修改）
-   */
-  function addToCart(pid, e) {
-    e.preventDefault();
-    // 兜底：接口不可用时提示+跳Home（可选）
-    axios.post(`${API_BASE_URL}/cart/add`, {
-      userid: 1,
-      pid: pid,
-      num: 1
-    }).then(res => {
-      alert('Added to cart successfully!');
-      // 可扩展：更新购物车数量
-    }).catch(err => {
-      console.error('加入购物车失败：', err);
-      alert('Failed to add to cart! (Cart API not ready)');
-      // 兜底跳Home（如需）：window.location.href = '../index.html';
-    });
-  }
-
-  /**
-   * 移动端分类抽屉（保留原有逻辑，无修改）
-   */
-  function initMobileDrawer() {
-    const btnOpen = document.getElementById('mobile-category-btn');
-    const btnClose = document.getElementById('mobile-category-close');
-    const drawer = document.getElementById('mobile-category-drawer');
-
-    if (!btnOpen || !btnClose || !drawer) return; // 容错
-
-    btnOpen.onclick = () => drawer.classList.remove('-translate-x-full');
-    btnClose.onclick = () => drawer.classList.add('-translate-x-full');
-    
-    // 点击抽屉外部关闭（优化体验）
-    document.addEventListener('click', (e) => {
-      if (!drawer.contains(e.target) && !btnOpen.contains(e.target)) {
-        drawer.classList.add('-translate-x-full');
-      }
-    });
-  }
-</script>
+<!-- 第三方库 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- 通用配置/工具 -->
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/common.js"></script>
+<!-- 购物车 -->
+<script src="../js/cart/core.js"></script>
+<script src="../js/cart/index.js"></script>
+<!-- 分类页专属：需在category.js中实现动态渲染产品卡片+绑定加购按钮 -->
+<script src="../js/pages/category.js"></script>
 </body>
 </html>
