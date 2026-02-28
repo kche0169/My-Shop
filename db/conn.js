@@ -415,10 +415,10 @@ db.serialize(() => {
     34.99, 
     'Lightweight moisture-wicking fabric for intense workouts',
     'High-performance running t-shirt made from lightweight, quick-dry polyester-spandex blend fabric that wicks moisture away from the skin to keep you dry and comfortable during intense workouts. Breathable mesh panels on the sides and back enhance ventilation, while the flatlock seams reduce chafing and irritation. Reflective details on the chest and back improve visibility in low-light conditions, perfect for early morning or evening runs. Relaxed fit allows for full range of motion, and the crew neck design is comfortable for long wear. Available in black, gray, blue, and red (S-XXL).',
-    '/images/sports/quick_dry/quick_dry_T_shirt1.png',
-    '/images/sports/quick_dry/quick_dry_T_shirt2.png',
-    '/images/sports/quick_dry/quick_dry_T_shirt3.png',
-    '/images/sports/quick_dry/quick_dry_T_shirt4.png',
+    '/images/sports/quick_dry/quick_dry_T_shirt.jpg',
+    '/images/sports/quick_dry/quick_dry_T_shirt2.jpg',
+    '/images/sports/quick_dry/quick_dry_T_shirt3.jpg',
+    '/images/sports/quick_dry/quick_dry_T_shirt4.jpg',
     (err) => { if (err) console.error('Insert product 25 failed:', err.message); }
   );
 
@@ -428,7 +428,7 @@ db.serialize(() => {
     42.99, 
     'Built-in liner, phone pocket, quick-dry material',
     '2-in-1 running shorts featuring a lightweight outer layer and compression liner for support and comfort. Outer layer is made from quick-dry polyester fabric with a relaxed fit, while the inner compression liner reduces muscle fatigue and chafing. Features include a secure zippered phone pocket on the side (fits most smartphones), elastic waistband with drawstring for a customized fit, and reflective details for visibility. Quick-dry and moisture-wicking fabric keeps you dry during intense workouts. Available in black, gray, blue, and green (S-XXL). Perfect for running, gym workouts, or outdoor activities.',
-    '/images/sports/shorts/shorts1.jpg',
+    '/images/sports/shorts/shorts.jpg',
     '/images/sports/shorts/shorts2.jpg',
     '/images/sports/shorts/shorts3.jpg',
     '/images/sports/shorts/shorts4.jpg',
@@ -441,10 +441,10 @@ db.serialize(() => {
     119.99, 
     'Responsive foam midsole, breathable upper',
     'Lightweight running shoes designed for neutral runners, featuring a responsive EVA foam midsole that provides excellent cushioning and energy return for long runs. Breathable mesh upper keeps feet cool and dry, while the padded tongue and collar offer additional comfort. Rubber outsole with multi-directional traction pattern provides grip on various surfaces (road, track, light trail). Low-drop design (8mm) promotes a natural running gait. Weight: only 8.5 oz (men\'s size 9). Available in black/white, gray/blue, and red/black (sizes 7-12). Perfect for daily training or casual wear.',
-    '/images/sports/running_shoes/running_shoes1.png',
-    '/images/sports/running_shoes/running_shoes2.png',
-    '/images/sports/running_shoes/running_shoes3.png',
-    '/images/sports/running_shoes/running_shoes4.png',
+    '/images/sports/running_shoes/running_shoes.jpg',
+    '/images/sports/running_shoes/running_shoes2.jpg',
+    '/images/sports/running_shoes/running_shoes3.jpg',
+    '/images/sports/running_shoes/running_shoes4.jpg',
     (err) => { if (err) console.error('Insert product 27 failed:', err.message); }
   );
 
@@ -454,10 +454,10 @@ db.serialize(() => {
     29.99, 
     '6mm thickness with carrying strap, eco-friendly',
     'Extra thick 6mm yoga mat made from eco-friendly TPE material (free of PVC, latex, and phthalates) that is non-toxic and biodegradable. The thick cushioning provides excellent support for joints during yoga, Pilates, or floor exercises, reducing pressure on knees, elbows, and hips. Non-slip surface on both sides ensures stability on any floor type (wood, tile, carpet), even when sweaty. Textured surface provides grip for hands and feet. Dimensions: 72" x 24" (extra long/wide for tall users or full body coverage). Includes a carrying strap for easy transport to and from yoga class. Available in purple, blue, gray, and pink.',
-    '/images/sports/yoga_mat/yoga_mat1.png',
-    '/images/sports/yoga_mat/yoga_mat2.png',
-    '/images/sports/yoga_mat/yoga_mat3.png',
-    '/images/sports/yoga_mat/yoga_mat4.png',
+    '/images/sports/yoga_mat/yoga_mat.jpg',
+    '/images/sports/yoga_mat/yoga_mat2.jpg',
+    '/images/sports/yoga_mat/yoga_mat3.jpg',
+    '/images/sports/yoga_mat/yoga_mat4.jpg',
     (err) => { if (err) console.error('Insert product 28 failed:', err.message); }
   );
 
@@ -467,10 +467,10 @@ db.serialize(() => {
     59.99, 
     'Perfect for trail running, hiking, cycling',
     '2L hydration backpack designed for outdoor activities such as trail running, hiking, cycling, and camping. Features a 2L BPA-free water bladder with a wide opening for easy filling and cleaning, and a bite valve that seals when not in use to prevent leaks. Lightweight and compact design (only 1.2 lbs empty) with adjustable shoulder and waist straps for a comfortable, secure fit. Multiple pockets for storing essentials (phone, keys, energy bars, small first aid kit). Breathable mesh back panel reduces sweat and keeps you cool. Reflective details improve visibility in low-light conditions. Available in black, blue, and green.',
-    '/images/sports/backpack/backpack1.png',
-    '/images/sports/backpack/backpack2.png',
-    '/images/sports/backpack/backpack3.png',
-    '/images/sports/backpack/backpack4.png',
+    '/images/sports/backpack/backpack.jpg',
+    '/images/sports/backpack/backpack2.jpg',
+    '/images/sports/backpack/backpack3.jpg',
+    '/images/sports/backpack/backpack4.jpg',
     (err) => { if (err) console.error('Insert product 29 failed:', err.message); }
   );
 
@@ -480,10 +480,10 @@ db.serialize(() => {
     149.99, 
     'Space-saving design, quick weight adjustment',
     'Pair of adjustable dumbbells that replace up to 10 sets of traditional dumbbells, saving valuable space in your home gym. Each dumbbell adjusts from 5kg to 25kg in 2.5kg increments with a simple turn of the dial, allowing for quick weight changes between exercises. Made from durable cast iron with a vinyl coating to prevent scratches and noise. Ergonomic contoured handles provide a comfortable, secure grip during workouts. Includes a storage tray for easy organization and storage. Perfect for strength training, muscle building, and toning exercises. No assembly required.',
-    '/images/sports/Dumbbells/Dumbbells1.png',
-    '/images/sports/Dumbbells/Dumbbells2.png',
-    '/images/sports/Dumbbells/Dumbbells3.png',
-    '/images/sports/Dumbbells/Dumbbells4.png',
+    '/images/sports/Dumbbells/Dumbbells.jpg',
+    '/images/sports/Dumbbells/Dumbbells2.jpg',
+    '/images/sports/Dumbbells/Dumbbells3.jpg',
+    '/images/sports/Dumbbells/Dumbbells4.jpg',
     (err) => { if (err) console.error('Insert product 30 failed:', err.message); }
   );
 
@@ -493,10 +493,10 @@ db.serialize(() => {
     44.99, 
     'Wrap-around design, anti-slip & shatterproof lenses',
     'UV400 polarized sports sunglasses designed for outdoor activities such as running, cycling, fishing, and hiking. Polarized lenses reduce glare from water, snow, and pavement, improving visibility and reducing eye strain. 100% UV400 protection blocks all UVA/UVB rays, protecting your eyes from harmful sun damage. Wrap-around design provides a secure fit and full coverage, while the lightweight TR90 frame is durable and flexible. Anti-slip rubber nose pads and temple tips keep the sunglasses in place even when sweating. Shatterproof polycarbonate lenses are impact-resistant for safety. Available in black, gray, and blue frames with various lens colors.',
-    '/images/sports/Sunglasses/Sunglasses1.png',
-    '/images/sports/Sunglasses/Sunglasses2.png',
-    '/images/sports/Sunglasses/Sunglasses3.png',
-    '/images/sports/Sunglasses/Sunglasses4.png',
+    '/images/sports/Sunglasses/Sunglasses.jpg',
+    '/images/sports/Sunglasses/Sunglasses2.jpg',
+    '/images/sports/Sunglasses/Sunglasses3.jpg',
+    '/images/sports/Sunglasses/Sunglasses4.jpg',
     (err) => { if (err) console.error('Insert product 31 failed:', err.message); }
   );
 
@@ -506,10 +506,10 @@ db.serialize(() => {
     39.99, 
     '1000 lumens, power bank function, waterproof',
     'Rechargeable LED camping lantern with 1000 lumens of bright, adjustable light (3 modes: low/medium/high) to illuminate your campsite, tent, or emergency situation. Built-in 4000mAh lithium battery provides up to 20 hours of light on low mode, 8 hours on medium, and 4 hours on high. Doubles as a power bank to charge your phone or other USB devices in an emergency. IPX4 water-resistant design protects against rain and splashes, perfect for outdoor use. Collapsible design for compact storage (folds down to 4" tall). Includes hanging hook for easy suspension in tents or trees. USB-C charging cable included.',
-    '/images/sports/Lantern/Lantern1.png',
-    '/images/sports/Lantern/Lantern2.png',
-    '/images/sports/Lantern/Lantern3.png',
-    '/images/sports/Lantern/Lantern4.png',
+    '/images/sports/Lantern/Lantern.jpg',
+    '/images/sports/Lantern/Lantern2.jpg',
+    '/images/sports/Lantern/Lantern3.jpg',
+    '/images/sports/Lantern/Lantern4.jpg',
     (err) => { if (err) console.error('Insert product 32 failed:', err.message); }
   );
 
