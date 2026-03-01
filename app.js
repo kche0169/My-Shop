@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   }
   next();
 });
-
+app.use(express.static('public'));
 // ===================== 3. Basic Parsing (Unchanged, compliant with standards) =====================
 app.use(express.json({ limit: '10mb' })); // Parse JSON requests (10MB limit for large payloads)
 app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded requests
