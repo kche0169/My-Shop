@@ -208,28 +208,72 @@ function renderProductInfo(product) {
 }
 
 // ===================== 【唯一改动：这里自动拼 origin.jpg，兼容旧逻辑】 =====================
+// function renderProductSlider(product) {
+//   const sliderWrapper = document.getElementById('product-slider');
+//   if (!sliderWrapper) return;
+//   sliderWrapper.innerHTML = '';
+
+//   let imgUrl = AppConfig.DEFAULT_IMG;
+
+//   if (product.img_path) {
+//     // 自动判断：有目录结构就用 origin.jpg，否则保持原来的路径
+//     if (product.img_path.includes('/images/') && !product.img_path.includes('.')) {
+//       imgUrl = `${product.img_path}/origin.jpg`;
+//     } else {
+//       imgUrl = product.img_path;
+//     }
+//   }
+
+//   sliderWrapper.innerHTML = `
+//     <div class="swiper-slide flex items-center justify-center bg-gray-100">
+//       <img src="${imgUrl}" class="max-h-full object-contain" alt="${product.name || 'Product image'}"
+//            onerror="this.src='${AppConfig.DEFAULT_IMG}'">
+//     </div>
+//   `;
+// }
 function renderProductSlider(product) {
   const sliderWrapper = document.getElementById('product-slider');
   if (!sliderWrapper) return;
-  sliderWrapper.innerHTML = '';
+  sliderWrapper.innerHTML = ''; // 先清空
 
-  let imgUrl = AppConfig.DEFAULT_IMG;
-
-  if (product.img_path) {
-    // 自动判断：有目录结构就用 origin.jpg，否则保持原来的路径
-    if (product.img_path.includes('/images/') && !product.img_path.includes('.')) {
-      imgUrl = `${product.img_path}/origin.jpg`;
+  // 如果数据库没有 img_path，就用默认图
+  let baseImgs = [];
+  if (product.img_path && product.img_path.trim() !== '') {
+    const imgPath = product.img_path.trim();
+    const extIndex = imgPath.lastIndexOf('.');
+    if (extIndex !== -1) {
+      const base = imgPath.substring(0, extIndex);  // /images/xxx/xxx
+      const ext = imgPath.substring(extIndex);      // .jpg
+      // 自动生成三张图片的路径（如果只存一张，就假设有 2、3 张同目录同名加后缀）
+      baseImgs = [
+        imgPath,
+        `${base}2${ext}`,
+        `${base}3${ext}`
+      ];
     } else {
-      imgUrl = product.img_path;
+      // 没有扩展名，直接用原路径
+      baseImgs = [imgPath];
     }
+  } else {
+    baseImgs = [AppConfig.DEFAULT_IMG];
   }
 
-  sliderWrapper.innerHTML = `
-    <div class="swiper-slide flex items-center justify-center bg-gray-100">
-      <img src="${imgUrl}" class="max-h-full object-contain" alt="${product.name || 'Product image'}"
-           onerror="this.src='${AppConfig.DEFAULT_IMG}'">
-    </div>
-  `;
+  // 构建 swiper-slide DOM，遇到找不到的图片自动 fallback 默认图
+  baseImgs.forEach(src => {
+    const slide = document.createElement('div');
+    slide.className = 'swiper-slide flex items-center justify-center bg-gray-100';
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = product.name || 'Product image';
+    img.className = 'max-h-full object-contain';
+    img.onerror = function() {
+      this.src = AppConfig.DEFAULT_IMG;
+    };
+
+    slide.appendChild(img);
+    sliderWrapper.appendChild(slide);
+  });
 }
 // ===================== 【改动结束，其他完全不动】 =====================
 
