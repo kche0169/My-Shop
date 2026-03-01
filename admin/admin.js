@@ -1,5 +1,6 @@
 // 接口基础路径：匹配你的app.js端口，无需修改
-const baseUrl = 'http://localhost:3000/api';
+// const baseUrl = 'http://localhost:3000/api';
+const baseUrl = '/api';
 
 // 页面加载时加载分类+产品列表
 window.onload = () => {
