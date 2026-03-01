@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy - Category</title> <!-- 动态标题，从数据库获取 -->
+    <title>ShopEasy - Category</title> <!-- Dynamic title, fetched from database -->
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,7 +11,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Axios (用于调用后端API) -->
+    <!-- Axios (for calling backend API) -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- Custom CSS -->
@@ -24,12 +24,12 @@
 <header class="bg-white shadow-sm sticky top-0 z-50">
   <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
 
-    <!-- Logo - 导航兜底：跳转到Home -->
+    <!-- Logo - Navigation fallback: redirect to Home -->
     <div class="flex items-center w-full md:w-auto">
       <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
 
-    <!-- Mobile Category Button -->
+    <!-- Mobile Category Button (triggers mobile drawer) -->
     <div class="xl:hidden flex items-center">
       <button id="mobile-category-btn" 
               class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
@@ -38,7 +38,7 @@
       </button>
     </div>
 
-    <!-- Search Box - 无跳转，保留样式 -->
+    <!-- Search Box - No redirect, keep styles only -->
     <div class="w-full md:flex-1 md:px-8">
       <div class="flex">
         <input type="text"
@@ -50,9 +50,9 @@
       </div>
     </div>
 
-    <!-- ================= Shopping List ================= -->
+    <!-- ================= Shopping Cart ================= -->
 
-    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- 新增：核心入口ID，匹配index.js -->
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- Added: Core entry ID, match index.js -->
       <input type="checkbox" id="cart-toggle" class="hidden peer">
 
       <!-- Cart Button -->
@@ -60,24 +60,24 @@
         <i class="fa-solid fa-cart-shopping mr-2"></i>
         <span>Shopping List</span>
         <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium" id="cart-count">
-          0 <!-- 动态显示购物车数量，ID保留无需修改 -->
+          0 <!-- Dynamic cart item count, keep ID unchanged -->
         </span>
       </label>
 
-      <!-- Cart Dropdown (适配index.js的弹窗ID，样式/结构完全保留) -->
+      <!-- Cart Dropdown (match index.js popup ID, keep styles/structure) -->
       <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
                   group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- 新增：弹窗核心ID，匹配index.js -->
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- Added: Core popup ID, match index.js -->
 
-        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title"> <!-- 修改ID：适配index.js弹窗标题 -->
+        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title"> <!-- Modified ID: match index.js popup title -->
           My Shopping List (0 items)
         </div>
 
-        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items"> <!-- 修改ID：适配index.js弹窗商品列表 -->
-          <!-- 购物车商品动态渲染 (Phase3 实现) -->
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items"> <!-- Modified ID: match index.js popup item list -->
+          <!-- Cart items rendered dynamically (Implemented in Phase3) -->
           <div class="text-center text-gray-500 py-4">
             Your cart is empty
           </div>
@@ -86,7 +86,7 @@
         <div class="px-5 py-4 border-t bg-gray-50">
           <div class="flex justify-between font-bold mb-4">
             <span>Total</span>
-            <span class="text-blue-700" id="cart-popup-total">$0.00</span> <!-- 修改ID：适配index.js弹窗总价 -->
+            <span class="text-blue-700" id="cart-popup-total">$0.00</span> <!-- Modified ID: match index.js popup total price -->
           </div>
           <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
             Checkout
@@ -100,16 +100,16 @@
 <!-- ================= Main Content ================= -->
 <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
 
-  <!-- 动态加载的左侧分类栏 (替换静态分类列表) -->
+  <!-- Dynamically loaded left category sidebar (replace static category list) -->
   <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
     <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
     <ul class="flex flex-col gap-3" id="sidebar-cate-list">
-      <!-- 从数据库动态渲染分类列表 -->
+      <!-- Category list rendered dynamically from database -->
       <li class="text-gray-500">Loading categories...</li>
     </ul>
   </aside>
 
-  <!-- 动态面包屑 (替换静态Electronics) -->
+  <!-- Dynamic breadcrumb (replace static Electronics) -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="flex items-center space-x-2">
       <li>
@@ -124,7 +124,7 @@
     </ol>
   </nav>
 
-  <!-- 动态分类标题/描述 (替换静态Electronics) -->
+  <!-- Dynamic category title/description (replace static Electronics) -->
   <section class="mb-8">
     <h1 class="text-3xl font-bold text-gray-800 mb-2" id="cate-name">Loading Category...</h1>
     <p class="text-gray-600" id="cate-desc">
@@ -132,15 +132,15 @@
     </p>
   </section>
 
-  <!-- 动态产品列表 (补充产品卡片模板，包含Add to Cart按钮) -->
+  <!-- Dynamic product list (add product card template with Add to Cart button) -->
   <section>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-list">
-      <!-- 动态渲染产品卡片的占位 -->
+      <!-- Placeholder for dynamically rendered product cards -->
       <div class="col-span-full text-center text-gray-500 py-8">
         Loading products...
       </div>
-      <!-- 产品卡片模板（动态渲染时复用）：以下是单条产品的HTML结构示例 -->
-      <!-- 👇 注意：此模板会由category.js动态生成，这里仅作为注释示例，实际渲染时删除此注释并生成真实数据 -->
+      <!-- Product card template (reused for dynamic rendering): Below is an example HTML structure for a single product -->
+      <!-- 👇 Note: This template will be generated dynamically by category.js, remove this comment and generate real data during actual rendering -->
       <!--
       <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow" data-pid="PRODUCT_ID">
         <img src="PRODUCT_IMAGE_URL" alt="PRODUCT_NAME" class="w-full h-48 object-cover">
@@ -149,7 +149,7 @@
           <p class="text-blue-600 font-bold mb-4">$PRODUCT_PRICE</p>
           <div class="flex justify-between items-center">
             <a href="../pages/detail.html?pid=PRODUCT_ID" class="text-gray-600 hover:text-blue-600 text-sm">View Details</a>
-            <!-- Add to Cart按钮：绑定全局addToCart函数 -->
+            <!-- Add to Cart button: bind global addToCart function -->
             <button onclick="addToCart(PRODUCT_ID, event)" 
                     class="bg-blue-600 text-white py-1 px-3 rounded text-sm hover:bg-blue-700">
               <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
@@ -162,7 +162,7 @@
   </section>
 </main>
 
-<!-- 动态移动端分类抽屉 (替换静态分类) -->
+<!-- Dynamic mobile category drawer (replace static categories) -->
 <aside id="mobile-category-drawer" 
        class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
   <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
@@ -172,7 +172,7 @@
     </button>
   </h2>
   <ul class="flex flex-col gap-3" id="mobile-cate-list">
-    <!-- 从数据库动态渲染移动端分类 -->
+    <!-- Mobile category list rendered dynamically from database -->
     <li class="text-gray-500">Loading...</li>
   </ul>
 </aside>
@@ -195,16 +195,16 @@
 <!-- JS -->
 <script src="../js/script.js"></script>
 
-<!-- 第三方库 -->
+<!-- Third-party libraries -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!-- 通用配置/工具 -->
+<!-- Common config/utils -->
 <script src="../js/config.js"></script>
 <script src="../js/utils.js"></script>
 <script src="../js/common.js"></script>
-<!-- 购物车 -->
+<!-- Shopping Cart -->
 <script src="../js/cart/core.js"></script>
 <script src="../js/cart/index.js"></script>
-<!-- 分类页专属：需在category.js中实现动态渲染产品卡片+绑定加购按钮 -->
+<!-- Category page exclusive: Implement dynamic product card rendering + bind add to cart button in category.js -->
 <script src="../js/pages/category.js"></script>
 </body>
 </html>

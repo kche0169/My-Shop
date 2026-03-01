@@ -1,9 +1,8 @@
-
-// ========== 全局常量 & 工具函数（修复：全局挂载+兜底） ==========
-// 1. 全局商品缓存（所有页面共用，修复局部缓存问题）
+// ========== Global Constants & Utility Functions (Fix: Global Mount + Fallback) ==========
+// 1. Global product cache (shared across all pages, fix local cache issue)
 window.productCache = window.productCache || new Map();
 
-// 2. 全局依赖兜底（解决产品页AppUtils/AppConfig加载晚的问题）
+// 2. Global dependency fallback (solve AppUtils/AppConfig late loading issue on product page)
 window.AppUtils = window.AppUtils || {
   formatPrice: function(price) {
     const num = parseFloat(price) || 0;
@@ -16,47 +15,47 @@ window.AppConfig = window.AppConfig || {
   DEFAULT_IMG: 'https://via.placeholder.com/200x200?text=No+Image'
 };
 
-// 3. 全局状态标记（防止重复初始化/事件绑定）
-window.cartInitialized = false;      // 购物车是否已初始化
-window.cartEventsInitialized = false;// 购物车事件是否已绑定
+// 3. Global state flags (prevent duplicate initialization/event binding)
+window.cartInitialized = false;      // Whether cart is initialized
+window.cartEventsInitialized = false;// Whether cart events are bound
 
-// ========== 全局购物车实例初始化（核心修复：全局挂载+校验） ==========
-// 全局cart实例（修复局部变量问题，所有页面可访问）
+// ========== Global Cart Instance Initialization (Core Fix: Global Mount + Validation) ==========
+// Global cart instance (fix local variable issue, accessible to all pages)
 window.cart = window.cart || null;
 
 async function initCartGlobal() {
   try {
-    // 修复5：先校验ShoppingCart类是否存在（核心）
+    // Fix 5: First validate if ShoppingCart class exists (core)
     if (typeof ShoppingCart !== 'function') {
       throw new Error('ShoppingCart class not found! Please load cart/core.js first.');
     }
 
-    // 初始化全局cart实例（只创建一次）
+    // Initialize global cart instance (create only once)
     if (!window.cart) {
       window.cart = new ShoppingCart();
-      // 修复1：强制初始化cart.items为数组，兼容localStorage数据异常
+      // Fix 1: Force initialize cart.items as array, compatible with localStorage data exception
       window.cart.loadFromLocalStorage();
       window.cart.items = Array.isArray(window.cart.items) ? window.cart.items : [];
     }
 
-    // 修复4：事件只绑定一次（避免重复触发）
+    // Fix 4: Bind events only once (avoid duplicate triggering)
     if (!window.cartEventsInitialized) {
       initCartEvents();
       window.cartEventsInitialized = true;
     }
 
-    // 渲染购物车（优先弹窗，再独立页）
+    // Render cart (popup first, then standalone page)
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) {
       await renderCartUI(window.cart);
     }
 
-    // 标记初始化完成
+    // Mark initialization complete
     window.cartInitialized = true;
-    console.log('购物车初始化成功，当前商品数:', window.cart.getTotalItemCount());
+    console.log('Cart initialized successfully, current item count:', window.cart.getTotalItemCount());
   } catch (error) {
-    console.error('购物车初始化失败:', error);
-    // 兜底：强制重置全局cart实例
+    console.error('Cart initialization failed:', error);
+    // Fallback: Force reset global cart instance
     if (typeof ShoppingCart === 'function') {
       window.cart = new ShoppingCart();
       window.cart.items = [];
@@ -69,17 +68,17 @@ async function initCartGlobal() {
   }
 }
 
-// 页面加载时初始化（修复6：避免重复初始化）
+// Initialize on page load (Fix 6: Avoid duplicate initialization)
 document.addEventListener('DOMContentLoaded', async () => {
   if (!window.cartInitialized) {
     await initCartGlobal();
   }
 });
 
-// 页面回退/刷新时只重新渲染（不重置数据）
+// Only re-render on page back/refresh (do not reset data)
 window.addEventListener('pageshow', async () => {
   if (window.cart && window.cartInitialized) {
-    // 仅重新渲染，不重复初始化
+    // Only re-render, no duplicate initialization
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
   } else if (!window.cartInitialized) {
@@ -92,23 +91,23 @@ function initCartPopupControl() {
   const cartPopup = document.getElementById('cart-popup');
   if (!cartEntry || !cartPopup) return;
 
-  // ========== 核心状态管理（仅控制显隐，不碰样式） ==========
-  let isPopupOpen = false; // 初始关闭
+  // ========== Core State Management (Only control show/hide, no style modification) ==========
+  let isPopupOpen = false; // Initially closed
   let hoverCloseTimer = null;
   const HOVER_DELAY = 300;
 
-  // ========== 显隐函数（仅操作原有样式类，不新增行内样式） ==========
-  // 打开弹窗：只操作你原有样式类，和之前逻辑完全一致
+  // ========== Show/Hide Functions (Only operate existing style classes, no inline styles) ==========
+  // Open popup: Only operate your original style classes, same logic as before
   const openPopup = () => {
     clearTimeout(hoverCloseTimer);
-    // 仅恢复你原有样式，不新增任何样式
+    // Only restore your original styles, no new inline styles
     cartPopup.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
     cartPopup.classList.add('opacity-100', 'pointer-events-auto');
     isPopupOpen = true;
-    renderCartPopup(window.cart).catch(err => console.error('渲染弹窗失败:', err));
+    renderCartPopup(window.cart).catch(err => console.error('Failed to render popup:', err));
   };
 
-  // 关闭弹窗：仅操作原有样式类
+  // Close popup: Only operate existing style classes
   const closePopup = () => {
     clearTimeout(hoverCloseTimer);
     cartPopup.classList.add('hidden', 'opacity-0', 'pointer-events-none');
@@ -116,7 +115,7 @@ function initCartPopupControl() {
     isPopupOpen = false;
   };
 
-  // ========== 1. 未显示时：悬停打开（打开后失效） ==========
+  // ========== 1. When closed: Open on hover (disable after opening) ==========
   cartEntry.addEventListener('mouseenter', () => {
     if (!isPopupOpen) openPopup();
   });
@@ -127,7 +126,7 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 2. 点击切换（未开→开，已开→关） ==========
+  // ========== 2. Toggle on click (closed→open, open→closed) ==========
   cartEntry.addEventListener('click', (e) => {
     const isControlBtn = e.target.closest('.cart-qty-minus, .cart-qty-plus, .cart-qty-input, .cart-item-delete');
     if (!isControlBtn) {
@@ -135,8 +134,8 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 3. 关闭按钮（手动加，不自动创建→避免撑大容器） ==========
-  // 仅绑定已有关闭按钮（你手动加在HTML里，不自动创建）
+  // ========== 3. Close button (manual addition only, no auto creation → avoid container expansion) ==========
+  // Only bind existing close button (added manually in HTML, no auto creation)
   const closeBtn = cartPopup.querySelector('.cart-popup-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', (e) => {
@@ -145,7 +144,7 @@ function initCartPopupControl() {
     });
   }
 
-  // ========== 4. 兼容：点击外部/ESC关闭（保留原有逻辑） ==========
+  // ========== 4. Compatibility: Close on outside click/ESC (keep original logic) ==========
   document.addEventListener('click', (e) => {
     if (isPopupOpen && !cartPopup.contains(e.target) && !cartEntry.contains(e.target)) {
       closePopup();
@@ -158,7 +157,7 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 5. 弹窗内停留：屏蔽悬停干扰（仅清定时器，不改样式） ==========
+  // ========== 5. Stay in popup: Block hover interference (only clear timer, no style change) ==========
   cartPopup.addEventListener('mouseenter', () => {
     clearTimeout(hoverCloseTimer);
   });
@@ -169,28 +168,28 @@ function initCartPopupControl() {
   });
 }
 
-// ========== 2. 弹窗UI渲染（核心修复：全局cart+容错） ==========
+// ========== 2. Popup UI Rendering (Core Fix: Global Cart + Fault Tolerance) ==========
 async function renderCartPopup(cart) {
   const popupItems = document.getElementById('cart-popup-items');
   const popupTotal = document.getElementById('cart-popup-total');
   const cartCount = document.getElementById('cart-count');
   const cartTitle = document.getElementById('cart-popup-title');
 
-  // 容错：缺少核心DOM直接返回
+  // Fault tolerance: Return directly if core DOM is missing
   if (!popupItems || !popupTotal || !cartCount) {
-    console.warn('购物车弹窗核心DOM缺失');
+    console.warn('Cart popup core DOM missing');
     return;
   }
 
-  // 修复5：强制确保cart数据有效
+  // Fix 5: Force ensure cart data validity
   const cartItems = Array.isArray(cart.getCartItems()) ? cart.getCartItems() : [];
   const totalItemCount = cartItems.reduce((sum, item) => sum + (item.num || 0), 0);
 
-  // 更新顶部计数和标题
+  // Update top count and title
   cartCount.textContent = totalItemCount;
   if (cartTitle) cartTitle.textContent = `Your Cart (${totalItemCount} items)`;
 
-  // 空购物车处理
+  // Empty cart handling
   if (totalItemCount === 0) {
     popupItems.innerHTML = `
       <div class="text-center text-gray-500 py-6">
@@ -202,38 +201,38 @@ async function renderCartPopup(cart) {
     return;
   }
 
-  // 非空购物车：渲染商品列表
+  // Non-empty cart: Render item list
   popupItems.innerHTML = '';
   const itemTemplate = document.querySelector('.cart-item-template');
 
-  // 修复6：遍历前先过滤无效商品
+  // Fix 6: Filter invalid items before traversal
   const validCartItems = cartItems.filter(item => item && item.pid && item.num > 0);
 
   for (const item of validCartItems) {
     let product = null;
     try {
-      // 优先使用全局缓存，避免重复请求
+      // Prioritize global cache to avoid duplicate requests
       if (window.productCache.has(item.pid)) {
         product = window.productCache.get(item.pid);
       } else {
         const res = await axios.get(`${AppConfig.API_BASE_URL}/products/detail?pid=${item.pid}`);
-        // 修复7：严格校验接口返回格式
+        // Fix 7: Strictly validate interface return format
         if (!res.data || typeof res.data !== 'object') throw new Error('Invalid response format');
         product = res.data.data || {};
-        window.productCache.set(item.pid, product); // 全局缓存
+        window.productCache.set(item.pid, product); // Global cache
       }
 
       const productName = product.name || `Product #${item.pid}`;
       const productPrice = parseFloat(product.price || 0) || 0;
       const formattedPrice = AppUtils.formatPrice(productPrice);
 
-      // 修复8：确保商品项DOM结构完整（无论是否有模板）
+      // Fix 8: Ensure complete product item DOM structure (whether template exists or not)
       let itemEl;
       if (itemTemplate) {
         itemEl = itemTemplate.cloneNode(true);
         itemEl.classList.remove('hidden', 'cart-item-template');
       } else {
-        // 无模板时，手动创建完整结构
+        // Manually create complete structure when no template exists
         itemEl = document.createElement('div');
         itemEl.innerHTML = `
           <div class="cart-item-name font-medium"></div>
@@ -253,11 +252,11 @@ async function renderCartPopup(cart) {
         `;
       }
 
-      // 统一设置样式和数据
+      // Unified style and data setting
       itemEl.dataset.pid = item.pid;
       itemEl.className = 'py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b';
 
-      // 填充商品信息（容错：确保子元素存在）
+      // Fill product info (fault tolerance: ensure child elements exist)
       const nameEl = itemEl.querySelector('.cart-item-name');
       const priceEl = itemEl.querySelector('.cart-item-price');
       const qtyMinus = itemEl.querySelector('.cart-qty-minus');
@@ -278,8 +277,8 @@ async function renderCartPopup(cart) {
 
       popupItems.appendChild(itemEl);
     } catch (error) {
-      console.error(`渲染商品${item.pid}失败:`, error);
-      // 兜底：创建基础商品项，确保不中断渲染
+      console.error(`Failed to render product ${item.pid}:`, error);
+      // Fallback: Create basic product item to ensure rendering is not interrupted
       const fallbackEl = document.createElement('div');
       fallbackEl.className = 'py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b';
       fallbackEl.innerHTML = `
@@ -296,7 +295,7 @@ async function renderCartPopup(cart) {
     }
   }
 
-  // 计算总价（使用全局缓存）
+  // Calculate total price (use global cache)
   const totalPrice = validCartItems.reduce((sum, item) => {
     const product = window.productCache.get(item.pid) || {};
     const price = parseFloat(product.price || 0) || 0;
@@ -305,7 +304,7 @@ async function renderCartPopup(cart) {
   popupTotal.textContent = AppUtils.formatPrice(totalPrice);
 }
 
-// ========== 3. 独立购物车页UI渲染（复用弹窗修复逻辑） ==========
+// ========== 3. Standalone Cart Page UI Rendering (Reuse popup fix logic) ==========
 async function renderCartUI(cart) {
   const cartItemsEl = document.getElementById('cart-items');
   const cartTotalEl = document.getElementById('cart-total');
@@ -379,7 +378,7 @@ async function renderCartUI(cart) {
         </div>
       `;
     } catch (error) {
-      console.error(`渲染独立页商品${item.pid}失败:`, error);
+      console.error(`Failed to render standalone page product ${item.pid}:`, error);
       cartHtml += `
         <div class="flex flex-col md:flex-row items-start md:items-center gap-4 py-4 border-b" data-pid="${item.pid}">
           <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center">
@@ -418,12 +417,12 @@ async function renderCartUI(cart) {
   cartTotalEl.textContent = AppUtils.formatPrice(totalPrice);
 }
 
-// ========== 4. 交互事件初始化（修复：只绑定一次+容错） ==========
+// ========== 4. Interactive Event Initialization (Fix: Bind only once + Fault Tolerance) ==========
 function initCartEvents() {
-  // 先初始化弹窗控制
+  // First initialize popup control
   initCartPopupControl();
 
-  // 数量+按钮
+  // Quantity + button
   document.addEventListener('click', async (e) => {
     const plusBtn = e.target.closest('.cart-plus, .cart-qty-plus');
     if (!plusBtn) return;
@@ -431,7 +430,7 @@ function initCartEvents() {
     const pid = parseInt(plusBtn.dataset.pid);
     if (isNaN(pid)) return;
 
-    // 修复9：验证商品存在后再更新
+    // Fix 9: Update only after verifying product exists
     const currentItem = window.cart.getCartItem(pid);
     if (!currentItem) return;
 
@@ -441,7 +440,7 @@ function initCartEvents() {
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
   });
 
-  // 数量-按钮
+  // Quantity - button
   document.addEventListener('click', async (e) => {
     const minusBtn = e.target.closest('.cart-minus, .cart-qty-minus');
     if (!minusBtn) return;
@@ -458,12 +457,12 @@ function initCartEvents() {
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
   });
 
-  // 数量输入框
+  // Quantity input box
   document.addEventListener('input', async (e) => {
     if (!e.target.classList.contains('cart-num') && !e.target.classList.contains('cart-qty-input')) return;
 
     const pid = parseInt(e.target.dataset.pid);
-    const newNum = Math.max(1, parseInt(e.target.value) || 1); // 确保数量≥1
+    const newNum = Math.max(1, parseInt(e.target.value) || 1); // Ensure quantity ≥1
     if (isNaN(pid)) return;
 
     const currentItem = window.cart.getCartItem(pid);
@@ -475,12 +474,12 @@ function initCartEvents() {
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
   });
 
-  // 删除商品（弹窗+独立页）
+  // Delete product (popup + standalone page)
   document.addEventListener('click', async (e) => {
     const deleteBtn = e.target.closest('.cart-item-delete, .cart-delete');
     if (!deleteBtn) return;
 
-    // 修复10：阻止事件冒泡，避免弹窗关闭
+    // Fix 10: Prevent event bubbling to avoid popup closing
     e.stopPropagation();
 
     const pid = parseInt(deleteBtn.dataset.pid);
@@ -498,17 +497,17 @@ function initCartEvents() {
         return;
       }
 
-      window.productCache.delete(pid); // 清除全局缓存
+      window.productCache.delete(pid); // Clear global cache
       window.cart.saveToLocalStorage();
       await renderCartPopup(window.cart);
       if (document.getElementById('cart-items')) await renderCartUI(window.cart);
     } catch (error) {
-      console.error('删除商品失败:', error);
+      console.error('Failed to delete product:', error);
       alert('Failed to delete product');
     }
   });
 
-  // 清空购物车
+  // Clear cart
   const clearCartBtn = document.getElementById('clear-cart');
   if (clearCartBtn) {
     clearCartBtn.addEventListener('click', async (e) => {
@@ -517,18 +516,18 @@ function initCartEvents() {
 
       try {
         window.cart.clearCart();
-        window.productCache.clear(); // 清空全局缓存
+        window.productCache.clear(); // Clear global cache
         window.cart.saveToLocalStorage();
         await renderCartPopup(window.cart);
         if (document.getElementById('cart-items')) await renderCartUI(window.cart);
 
-        // 重置弹窗状态（修复8：样式兜底）
+        // Reset popup state (Fix 8: Style fallback)
         const cartPopup = document.getElementById('cart-popup');
         if (cartPopup) {
           cartPopup.classList.add('hidden', 'opacity-0', 'pointer-events-none');
         }
       } catch (error) {
-        console.error('清空购物车失败:', error);
+        console.error('Failed to clear cart:', error);
         alert('Failed to clear cart');
       }
     });
@@ -542,75 +541,75 @@ window.addToCart = async function(pid, e) {
     e.preventDefault();
   }
 
-  // 1. 日志：确认传入的PID是否正确
-  console.log('【加购第一步】接收的PID：', pid);
+  // 1. Log: Confirm if incoming PID is correct
+  console.log('[Add to Cart Step 1] Received PID:', pid);
   const validPid = parseInt(pid) || 0;
-  console.log('【加购第二步】转换后的有效PID：', validPid);
+  console.log('[Add to Cart Step 2] Converted valid PID:', validPid);
 
-  // 2. 确保cart初始化
+  // 2. Ensure cart initialization
   if (!window.cart) {
-    console.log('【加购第三步】cart未初始化，开始初始化');
+    console.log('[Add to Cart Step 3] Cart not initialized, start initialization');
     await initCartGlobal();
   }
-  console.log('【加购第四步】cart实例：', window.cart);
-  console.log('【加购第四步】cart当前商品列表：', window.cart.items);
+  console.log('[Add to Cart Step 4] Cart instance:', window.cart);
+  console.log('[Add to Cart Step 4] Current cart item list:', window.cart.items);
 
-  // 3. 校验PID
+  // 3. Validate PID
   if (validPid <= 0) {
     alert('Invalid product ID');
     return;
   }
 
   try {
-    // 4. 尝试获取商品信息（日志验证）
+    // 4. Try to get product info (log verification)
     let product = null;
     if (window.productCache.has(validPid)) {
       product = window.productCache.get(validPid);
-      console.log('【加购第五步】从缓存获取商品：', product);
+      console.log('[Add to Cart Step 5] Get product from cache:', product);
     } else {
-      console.log('【加购第五步】缓存无商品，请求接口');
+      console.log('[Add to Cart Step 5] No product in cache, request interface');
       const res = await axios.get(`${AppConfig.API_BASE_URL}/products/detail?pid=${validPid}`);
       if (!res.data || !res.data.data) {
         alert('Product not found');
-        console.log('【加购失败】接口返回无效数据：', res.data);
+        console.log('[Add to Cart Failed] Invalid data returned by interface:', res.data);
         return;
       }
       product = res.data.data;
       window.productCache.set(validPid, product);
     }
 
-    // 5. 核心：真正向cart添加商品（加日志验证）
+    // 5. Core: Actually add product to cart (add log verification)
     const existingItem = window.cart.getCartItem(validPid);
-    console.log('【加购第六步】是否已有该商品：', existingItem);
+    console.log('[Add to Cart Step 6] Whether product already exists:', existingItem);
     if (existingItem) {
       window.cart.updateNum(validPid, existingItem.num + 1);
-      console.log('【加购第七步】更新商品数量后，cart.items：', window.cart.items);
+      console.log('[Add to Cart Step 7] After updating product quantity, cart.items:', window.cart.items);
     } else {
       window.cart.addToCart(validPid, 1);
-      console.log('【加购第七步】新增商品后，cart.items：', window.cart.items);
+      console.log('[Add to Cart Step 7] After adding new product, cart.items:', window.cart.items);
     }
 
-    // 6. 强制保存到本地存储（关键：避免数据丢失）
+    // 6. Force save to localStorage (key: avoid data loss)
     window.cart.saveToLocalStorage();
-    console.log('【加购第八步】保存后本地存储的cart数据：', localStorage.getItem('shoppingCart'));
+    console.log('[Add to Cart Step 8] Cart data in localStorage after saving:', localStorage.getItem('shoppingCart'));
 
-    // 7. 重新渲染购物车（关键：同步最新数据）
+    // 7. Re-render cart (key: sync latest data)
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
 
-    // 8. 显示成功提示
-    alert(`✅ ${product.name || `Product #${validPid}`} added to cart!`);
-    console.log('【加购成功】最终cart商品数：', window.cart.getTotalItemCount());
+    // 8. Show success prompt
+    alert(`${product.name || `Product #${validPid}`} added to cart!`);
+    console.log('[Add to Cart Success] Final cart item count:', window.cart.getTotalItemCount());
 
-    // 9. 强制显示弹窗
+    // 9. Force show popup
     const cartPopup = document.getElementById('cart-popup');
     if (cartPopup) {
       cartPopup.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
       cartPopup.classList.add('opacity-100', 'pointer-events-auto');
     }
   } catch (error) {
-    console.error('【加购异常】完整错误：', error);
-    // 兜底加购（即使接口失败，也强制加入cart）
+    console.error('[Add to Cart Exception] Complete error:', error);
+    // Fallback add to cart (force add to cart even if interface fails)
     if (validPid > 0) {
       const existingItem = window.cart.getCartItem(validPid);
       if (existingItem) {
@@ -620,10 +619,10 @@ window.addToCart = async function(pid, e) {
       }
       window.cart.saveToLocalStorage();
       await renderCartPopup(window.cart);
-      alert(`✅ Product #${validPid} added to cart (offline mode)!`);
-      console.log('【兜底加购后】cart.items：', window.cart.items);
+      alert(`Product #${validPid} added to cart (offline mode)!`);
+      console.log('[After Fallback Add to Cart] cart.items:', window.cart.items);
     } else {
-      alert('❌ Failed to add product to cart');
+      alert('Failed to add product to cart');
     }
   }
 };

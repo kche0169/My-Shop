@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shopping Cart - ShopEasy</title>
-  <!-- 引入样式（保留你项目里的Tailwind/自定义样式） -->
+  <!-- Import styles (keep Tailwind/custom styles from your project) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="max-w-7xl mx-auto px-4 py-8">
-  <!-- 导航栏（保留你项目的导航，至少加个返回首页/分类页的链接） -->
+  <!-- Navigation bar (keep your project's navigation, at least add links to home/category page) -->
   <nav class="mb-8 flex justify-between items-center">
     <a href="/index.html" class="text-xl font-bold text-blue-600">ShopEasy</a>
     <div class="flex gap-4">
@@ -21,36 +21,36 @@
     </div>
   </nav>
 
-  <!-- ========== 核心：购物车DOM容器（必须加这里） ========== -->
+  <!-- ========== Core: Cart DOM Container (Must be added here) ========== -->
   <div class="cart-container max-w-4xl mx-auto">
-    <!-- 购物车标题 -->
+    <!-- Cart title (dynamic update by JS) -->
     <h2 id="cart-title" class="text-2xl font-bold mb-6">My Shopping Cart (0 items)</h2>
     
-    <!-- 购物车商品列表（核心容器，id=cart-items） -->
+    <!-- Cart item list (core container, id=cart-items) - Items rendered by JS -->
     <div id="cart-items" class="cart-items space-y-4 border-b pb-6 mb-6">
-      <!-- 商品会通过JS渲染到这里 -->
+      <!-- Default empty cart prompt (replaced by JS when items exist) -->
       <div class="text-center text-gray-500 py-8">Your cart is empty</div>
     </div>
     
-    <!-- 购物车总价 -->
+    <!-- Cart total price (dynamic update by JS) -->
     <div class="text-right text-xl font-bold mb-6">
       Total: <span id="cart-total" class="text-blue-600">$0.00</span>
     </div>
     
-    <!-- 清空购物车按钮 -->
+    <!-- Clear cart button (bind click event by JS) -->
     <button id="clear-cart" class="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
       <i class="fa-solid fa-trash mr-2"></i> Clear Cart
     </button>
   </div>
 
-  <!-- ========== 引入JS（顺序不能乱） ========== -->
-  <!-- 1. 第三方库 -->
+  <!-- ========== Import JS (order cannot be changed) ========== -->
+  <!-- 1. Third-party libraries -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <!-- 2. 全局配置/工具 -->
+  <!-- 2. Global config/utils -->
   <script src="/js/config.js"></script>
   <script src="/js/utils.js"></script>
   <script src="/js/common.js"></script>
-  <!-- 3. 购物车核心逻辑（先core后index） -->
+  <!-- 3. Cart core logic (core.js first, then index.js) -->
   <script src="/js/cart/core.js"></script>
   <script src="/js/cart/index.js"></script>
 </body>

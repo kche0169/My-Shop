@@ -12,7 +12,7 @@
   <!-- Swiper CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
   <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/custom.css">   
+  <link rel="stylesheet" href="css/custom.css">   
 </head>
 <body class="bg-gray-50 font-sans">
 
@@ -22,18 +22,19 @@
 
     <!-- Logo -->
     <div class="flex items-center gap-6 w-full md:w-auto">
-      <!-- Logo -->
+      <!-- Logo - Navigation fallback: redirect to home page -->
       <a href="index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
     </div>
-    <!-- Mobile Category Button -->
+    
+    <!-- Mobile Category Button (triggers mobile drawer) -->
     <div class="xl:hidden flex items-center z-50 relative">
-  <button id="mobile-category-btn" class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
-    <i class="fa-solid fa-bars text-xl"></i>
-    <span class="font-medium">Categories</span>
-  </button>
-</div>
-    <!-- Search Box -->
-
+      <button id="mobile-category-btn" class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
+    </div>
+    
+    <!-- Search Box (no redirect, keep styles only) -->
     <div class="w-full md:flex-1 md:px-8">
       <div class="flex">
         <input type="text" placeholder="Search products..."
@@ -44,47 +45,46 @@
       </div>
     </div>
 
-
-    <!-- Shopping List -->
-    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- 新增：核心入口ID，匹配index.js -->
+    <!-- Shopping Cart (core cart popup container) -->
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- Added: Core entry ID, match index.js -->
       <input type="checkbox" id="cart-toggle" class="hidden peer">
       <label for="cart-toggle" class="cart-button">
-              <i class="fa-solid fa-cart-shopping mr-2"></i>
-      <span>Shopping List</span>
-      <!-- 修复1：添加ID=cart-count，移除固定数字2，改为动态0 -->
-      <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
-                  flex items-center justify-center text-sm font-medium" id="cart-count">
-        0
-      </span>
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <!-- Fix 1: Add ID=cart-count, remove fixed number 2, change to dynamic 0 -->
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6
+                    flex items-center justify-center text-sm font-medium" id="cart-count">
+          0
+        </span>
       </label>
 
-      <!-- Cart Dropdown（仅修改ID，适配index.js，样式/结构完全保留） -->
+      <!-- Cart Dropdown (only modify ID to match index.js, keep all styles/structure) -->
       <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
                   group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- 新增：弹窗核心ID -->
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- Added: Core popup ID -->
 
-        <!-- 修复2：修改标题ID为cart-popup-title（区分独立页/弹窗） -->
+        <!-- Fix 2: Modify title ID to cart-popup-title (distinguish popup/standalone page) -->
         <div class="px-5 py-4 border-b font-semibold text-gray-800 text-lg" id="cart-popup-title">
-          My Shopping List (0 items) <!-- 移除固定数字2，改为动态0 -->
+          My Shopping List (0 items) <!-- Remove fixed number 2, change to dynamic 0 -->
         </div>
 
-        <!-- 修复3：修改商品列表ID为cart-popup-items（区分独立页/弹窗），移除静态商品行 -->
+        <!-- Fix 3: Modify item list ID to cart-popup-items (distinguish popup/standalone page), remove static items -->
         <div class="px-5 py-4 max-h-[320px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items">
-          <!-- 空购物车占位（保留） -->
+          <!-- Empty cart placeholder (keep) -->
           <div class="cart-empty text-center text-gray-500 py-4">
             Your cart is empty
           </div>
-          <!-- 商品行模板（由JS动态渲染，先写死模板结构供JS复用） -->
+          <!-- Cart item template (dynamically rendered by JS, keep template structure for reuse) -->
           <div class="cart-item-template hidden py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2" data-pid="0">
-            <!-- 商品名称+价格 -->
+            <!-- Product name + price -->
             <div class="flex-1">
               <h4 class="cart-item-name font-medium text-gray-800">Product Name</h4>
               <p class="cart-item-price text-blue-600 font-bold">$0.00</p>
             </div>
-            <!-- 数量调节控件 -->
+            <!-- Quantity control -->
             <div class="flex items-center gap-2">
               <button class="cart-qty-minus w-8 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors" aria-label="Decrease quantity">
                 <i class="fa-solid fa-minus text-sm"></i>
@@ -94,7 +94,7 @@
                 <i class="fa-solid fa-plus text-sm"></i>
               </button>
             </div>
-            <!-- 删除按钮 -->
+            <!-- Delete button -->
             <button class="cart-item-delete text-red-500 hover:text-red-700 transition-colors" aria-label="Delete product">
               <i class="fa-solid fa-trash-can"></i>
             </button>
@@ -104,7 +104,7 @@
         <div class="px-5 py-5 border-t bg-gray-50 rounded-b-lg">
           <div class="flex justify-between items-center mb-4 text-lg font-bold">
             <span class="text-gray-800">Total:</span>
-            <!-- 修复4：修改总价ID为cart-popup-total（区分独立页/弹窗），移除固定总价 -->
+            <!-- Fix 4: Modify total price ID to cart-popup-total (distinguish popup/standalone page), remove fixed total -->
             <span class="text-blue-700" id="cart-popup-total">$0.00</span>
           </div>
           <button class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 flex items-center justify-center">
@@ -117,13 +117,9 @@
   </div>
 </header>
 
-
-<!-- ================= Main ================= -->
-<!-- <main class="container mx-auto px-4 py-6 flex flex-col gap-4"> -->
+<!-- ================= Main Content ================= -->
 <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
-  <!-- Breadcrumb -->
-  <!-- <nav class="text-xs text-gray-500 mb-3" aria-label="Breadcrumb">
-     -->
+  <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="flex items-center">
       <li>
@@ -132,29 +128,25 @@
     </ol>
   </nav>
 
-<!-- ================= Mobile Drawer Sidebar ================= -->
-<!-- <aside id="mobile-category-drawer" 
-       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 md:hidden">
-        -->
+  <!-- ================= Mobile Category Drawer ================= -->
   <aside id="mobile-category-drawer" 
        class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-[9999] xl:hidden">
-  <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
-    Categories
-    <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  </h2>
-  <ul class="flex flex-col gap-3">
-    <li><a href="category/detail.html?catid=1" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Electronics</a></li>
-    <li><a href="category/detail.html?catid=2" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Home & Living</a></li>
-    <li><a href="category/detail.html?catid=3" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Sports & Outdoors</a></li>
-    <li><a href="category/detail.html?catid=4" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Fashion</a></li>
-  </ul>
-</aside>
+    <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+      Categories
+      <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </h2>
+    <ul class="flex flex-col gap-3">
+      <li><a href="category/detail.html?catid=1" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Electronics</a></li>
+      <li><a href="category/detail.html?catid=2" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Home & Living</a></li>
+      <li><a href="category/detail.html?catid=3" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Sports & Outdoors</a></li>
+      <li><a href="category/detail.html?catid=4" class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">Fashion</a></li>
+    </ul>
+  </aside>
 
-  <!-- float -->
+  <!-- Desktop Fixed Category Sidebar (hidden on mobile/tablet) -->
   <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
-
     <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
     <ul class="flex flex-col gap-3">
       <li>
@@ -184,67 +176,59 @@
     </ul>
   </aside>
 
+  <!-- Main Content Area (flex container for product sections) -->
+  <div class="flex-1 flex flex-col gap-4">
 
-</div>
-  <!-- Main Content Area -->
- <div class="flex-1 flex flex-col gap-4">
+    <!-- ================= Image Slider ================= -->
+    <div class="relative w-full h-64 overflow-hidden rounded-lg bg-gray-200" id="slider">
+      <!-- Slides Container (dynamic slide transition) -->
+      <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out" id="slider-track">
+        <!-- Slide 1 -->
+        <div class="relative w-full flex-shrink-0">
+          <img src="images/carousel/carousel1.jpg"
+               class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+          <img src="images/carousel/carousel1.jpg"
+               class="relative w-full h-full object-contain">
+        </div>
+        <!-- Slide 2 -->
+        <div class="relative w-full flex-shrink-0">
+          <img src="images/carousel/carousel2.jpg"
+               class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+          <img src="images/carousel/carousel2.jpg"
+               class="relative w-full h-full object-contain">
+        </div>
+        <!-- Slide 3 -->
+        <div class="relative w-full flex-shrink-0">
+          <img src="images/carousel/carousel3.jpg"
+               class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
+          <img src="images/carousel/carousel3.jpg"
+               class="relative w-full h-full object-contain">
+        </div>
+      </div>
 
-<!-- ================= Slider ================= -->
-<div class="relative w-full h-64 overflow-hidden rounded-lg bg-gray-200" id="slider">
+      <!-- Slider Navigation Buttons -->
+      <button id="prevSlide"
+        class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button id="nextSlide"
+        class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
 
-  <!-- Slides Container -->
-  <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out" id="slider-track">
-    <!-- Slide 1 -->
-    <div class="relative w-full flex-shrink-0">
-      <img src="images/carousel/carousel1.jpg"
-           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
-      <img src="images/carousel/carousel1.jpg"
-           class="relative w-full h-full object-contain">
+      <!-- Slider Indicator Dots -->
+      <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10" id="slider-dots">
+        <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+        <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+        <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
+      </div>
     </div>
-    <!-- Slide 2 -->
-    <div class="relative w-full flex-shrink-0">
-      <img src="images/carousel/carousel2.jpg"
-           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
-      <img src="images/carousel/carousel2.jpg"
-           class="relative w-full h-full object-contain">
-    </div>
-    <!-- Slide 3 -->
-    <div class="relative w-full flex-shrink-0">
-      <img src="images/carousel/carousel3.jpg"
-           class="absolute inset-0 w-full h-full object-cover scale-110 blur-xl brightness-75">
-      <img src="images/carousel/carousel3.jpg"
-           class="relative w-full h-full object-contain">
-    </div>
-  </div>
 
-  <!-- Left Button -->
-  <button id="prevSlide"
-    class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
-    <i class="fa-solid fa-chevron-left"></i>
-  </button>
-
-  <!-- Right Button -->
-  <button id="nextSlide"
-    class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/60 z-10">
-    <i class="fa-solid fa-chevron-right"></i>
-  </button>
-
-  <!-- Dots -->
-  <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10" id="slider-dots">
-    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
-    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
-    <span class="w-2 h-2 bg-white/60 rounded-full cursor-pointer"></span>
-  </div>
-</div>
-
-
-
-
-
-    <!-- Limited Time Deals -->
+    <!-- Limited Time Deals Section -->
     <section class="bg-white rounded-lg shadow-sm p-4">
       <h2 class="section-title">Limited Time Deals</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Product Card 1 -->
         <a href="products/detail.html?pid=1" class="block group">
           <div class="product-card">
             <div class="product-image-wrapper">
@@ -265,256 +249,255 @@
             </button>
           </div>
         </a>
-                <!-- Product Card 2 -->
-<a href="products/detail.html?pid=2" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/electronics/smart_watch/smart_watch.jpg"
-           alt="Smart Watch"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
-    <button class="btn-add-to-cart" onclick="addToCart(2, event)">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-    </button>
-  </div>
-</a>
+        
+        <!-- Product Card 2 -->
+        <a href="products/detail.html?pid=2" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/electronics/smart_watch/smart_watch.jpg"
+                   alt="Smart Watch"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Smart Watch</h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">Heart Rate | Blood Oxygen | 50m Waterproof</p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$299.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(2, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+            </button>
+          </div>
+        </a>
 
-            <!-- Product card 3 -->
-<a href="products/detail.html?pid=3" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/electronics/Wireless_Noise-Cancelling_Headphones/Wireless_Noise-Cancelling_Headphones.jpg"
-           alt="Wireless Noise-Cancelling Headphones"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Noise-Cancelling Headphones</h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">40-hour playtime | Active Noise Cancellation | Touch Controls</p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(3, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 3 -->
+        <a href="products/detail.html?pid=3" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/electronics/Wireless_Noise-Cancelling_Headphones/Wireless_Noise-Cancelling_Headphones.jpg"
+                   alt="Wireless Noise-Cancelling Headphones"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Wireless Noise-Cancelling Headphones</h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">40-hour playtime | Active Noise Cancellation | Touch Controls</p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$149.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(3, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>Add to Cart
+            </button>
+          </div>
+        </a>
 
-            <!-- Product card 4 -->
-            <a href="products/detail.html?pid=4" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/electronics/13inch_laptop/13inch_laptop.jpg"
-           alt="13-inch Ultrabook Laptop"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      13-inch Ultrabook Laptop
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Intel Core i7 | 16GB RAM | 512GB SSD | 13.3" Retina Display
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$999.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(4, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 4 -->
+        <a href="products/detail.html?pid=4" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/electronics/13inch_laptop/13inch_laptop.jpg"
+                   alt="13-inch Ultrabook Laptop"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              13-inch Ultrabook Laptop
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Intel Core i7 | 16GB RAM | 512GB SSD | 13.3" Retina Display
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$999.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(4, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- Recommended for You -->
+    <!-- Recommended for You Section -->
     <section class="bg-white rounded-lg shadow-sm p-4">
       <h2 class="section-title">Recommended for You</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <!-- Product card 1 -->
-<a href="products/detail.html?pid=25" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/sports/quick_dry/quick_dry_T_shirt.jpg"
-           alt="Breathable Running T-Shirt"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Breathable Quick-Dry Running T-Shirt
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Lightweight moisture-wicking fabric for intense workouts
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(25, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 1 -->
+        <a href="products/detail.html?pid=25" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/sports/quick_dry/quick_dry_T_shirt.jpg"
+                   alt="Breathable Running T-Shirt"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Breathable Quick-Dry Running T-Shirt
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Lightweight moisture-wicking fabric for intense workouts
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(25, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
 
-        <!-- Product card 2 -->
-<a href="products/detail.html?pid=26" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/sports/shorts/shorts.jpg"
-           alt="High-Performance Running Shorts"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      High-Performance 2-in-1 Running Shorts
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Built-in liner, phone pocket, quick-dry material
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$42.99</p>
-    <button class="btn-add-to-cart">
-      <i class="fa-solid fa-cart-shopping mr-2"></i>
-      Add to Cart
-    </button>
-  </div>
-</a>
+        <!-- Product Card 2 -->
+        <a href="products/detail.html?pid=26" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/sports/shorts/shorts.jpg"
+                   alt="High-Performance Running Shorts"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              High-Performance 2-in-1 Running Shorts
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Built-in liner, phone pocket, quick-dry material
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$42.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(26, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
 
-        <!-- Product card 3 -->
-<a href="products/detail.html?pid=27" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/sports/running_shoes/running_shoes.jpg"
-           alt="Cushioned Running Shoes"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Lightweight Cushioned Running Shoes
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Responsive foam midsole, breathable upper
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$119.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(27, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 3 -->
+        <a href="products/detail.html?pid=27" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/sports/running_shoes/running_shoes.jpg"
+                   alt="Cushioned Running Shoes"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Lightweight Cushioned Running Shoes
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Responsive foam midsole, breathable upper
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$119.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(27, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
 
-        <!-- Product card 4 -->
-<a href="products/detail.html?pid=28" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/sports/yoga_mat/yoga_mat.jpg"
-           alt="Yoga Mat with Strap"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Extra Thick Non-Slip Yoga Mat
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      6mm thickness with carrying strap, eco-friendly
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(28, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 4 -->
+        <a href="products/detail.html?pid=28" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/sports/yoga_mat/yoga_mat.jpg"
+                   alt="Yoga Mat with Strap"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Extra Thick Non-Slip Yoga Mat
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              6mm thickness with carrying strap, eco-friendly
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(28, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- New Arrivals -->
+    <!-- New Arrivals Section -->
     <section class="bg-white rounded-lg shadow-sm p-4">
       <h2 class="section-title">New Arrivals</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <!-- Product card 1 -->
-<a href="products/detail.html?pid=19" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/home/Plant/Realistic_Faux_Monstera_Plant.jpg"
-           alt="Faux Potted Plant"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Realistic Faux Monstera Plant
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Low-maintenance greenery for any room
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(19, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 1 -->
+        <a href="products/detail.html?pid=19" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/home/Plant/Realistic_Faux_Monstera_Plant.jpg"
+                   alt="Faux Potted Plant"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Realistic Faux Monstera Plant
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Low-maintenance greenery for any room
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$34.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(19, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
 
-          <!-- Product card 2 -->
-<a href="products/detail.html?pid=20" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/home/Pillows/Pillows.jpg"
-           alt="Decorative Throw Pillows"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Boho Accent Throw Pillows (Set of 2)
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Textured fabric with modern patterns
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(20, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
-      
+        <!-- Product Card 2 -->
+        <a href="products/detail.html?pid=20" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/home/Pillows/Pillows.jpg"
+                   alt="Decorative Throw Pillows"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Boho Accent Throw Pillows (Set of 2)
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Textured fabric with modern patterns
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$39.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(20, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
 
-        <!-- Product card 3 -->
-<a href="products/detail.html?pid=18" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/home/Candles /Lavender&Vanilla_Scented_Candles_(Set of 3).jpg"
-           alt="Scented Candle Set"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Lavender & Vanilla Scented Candles (Set of 3)
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Long-burning soy wax for relaxing ambiance
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(18, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
-        <!-- Product card 4 -->
-<a href="products/detail.html?pid=18" class="block group">
-  <div class="product-card">
-    <div class="product-image-wrapper">
-      <img src="images/home/Cozy_Faux_Fur_Throw_Blanket/Cozy Faux Fur Throw Blanket.jpg"
-           alt="Cozy Throw Blanket"
-           class="product-image">
-    </div>
-    <h3 class="text-lg font-medium text-gray-800 mb-2">
-      Cozy Faux Fur Throw Blanket
-    </h3>
-    <p class="text-gray-600 text-sm mb-4 flex-grow">
-      Soft and warm, perfect for sofa or bed layering
-    </p>
-    <p class="text-blue-600 font-bold text-xl mb-4">$49.99</p>
-<button class="btn-add-to-cart" onclick="addToCart(18, event)">
-  <i class="fa-solid fa-cart-shopping mr-2"></i>
-  Add to Cart
-</button>
-  </div>
-</a>
+        <!-- Product Card 3 -->
+        <a href="products/detail.html?pid=18" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/home/Candles /Lavender&Vanilla_Scented_Candles_(Set of 3).jpg"
+                   alt="Scented Candle Set"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Lavender & Vanilla Scented Candles (Set of 3)
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Long-burning soy wax for relaxing ambiance
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$29.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(18, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
+
+        <!-- Product Card 4 -->
+        <a href="products/detail.html?pid=18" class="block group">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <img src="images/home/Cozy_Faux_Fur_Throw_Blanket/Cozy Faux Fur Throw Blanket.jpg"
+                   alt="Cozy Throw Blanket"
+                   class="product-image">
+            </div>
+            <h3 class="text-lg font-medium text-gray-800 mb-2">
+              Cozy Faux Fur Throw Blanket
+            </h3>
+            <p class="text-gray-600 text-sm mb-4 flex-grow">
+              Soft and warm, perfect for sofa or bed layering
+            </p>
+            <p class="text-blue-600 font-bold text-xl mb-4">$49.99</p>
+            <button class="btn-add-to-cart" onclick="addToCart(18, event)">
+              <i class="fa-solid fa-cart-shopping mr-2"></i>
+              Add to Cart
+            </button>
+          </div>
+        </a>
       </div>
     </section>
-
+    
   </div>
-
 </main>
-
 
 <!-- ================= Footer ================= -->
 <footer class="bg-gray-800 text-white py-8 mt-12">
@@ -530,24 +513,25 @@
     </div>
   </div>
 </footer>
-<!-- Swiper JS -->
+
+<!-- External Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script src="js/script.js"></script>
+
+<!-- Third-party Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
+<!-- Common Config/Utils -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/common.js"></script>
 
-  <script src="js/script.js"></script>
+<!-- Shopping Cart Core Logic -->
+<script src="js/cart/core.js"></script>
+<script src="js/cart/index.js"></script>
 
-  <!-- 第三方库 -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-  <!-- 通用配置/工具 -->
-  <script src="js/config.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/common.js"></script>
-  <!-- 购物车 -->
-  <script src="js/cart/core.js"></script>
-  <script src="js/cart/index.js"></script>
-  <!-- 主页专属 -->
-  <script src="js/pages/home.js"></script>
-  </body>
+<!-- Home Page Exclusive Script -->
+<script src="js/pages/home.js"></script>
+</body>
 </html>
-

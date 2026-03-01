@@ -1,29 +1,29 @@
 /**
- * 购物车核心数据层（OOP设计，独立于UI）
- * 职责：数据存储、数据操作（添加/修改/删除/查询）、localStorage持久化
+ * Shopping Cart Core Data Layer (OOP design, independent of UI)
+ * Responsibility: Data storage, data operations (add/modify/delete/query), localStorage persistence
  */
 class CartItem {
   /**
-   * 单个商品实例
-   * @param {number} pid - 商品ID
-   * @param {number} num - 商品数量（默认1）
+   * Single product instance
+   * @param {number} pid - Product ID
+   * @param {number} num - Product quantity (default 1)
    */
   constructor(pid, num = 1) {
-    this.pid = parseInt(pid, 10); // 强制转为数字，避免字符串ID问题
-    this.num = Math.max(parseInt(num, 10), 1); // 数量最小为1
+    this.pid = parseInt(pid, 10); // Force convert to number to avoid string ID issues
+    this.num = Math.max(parseInt(num, 10), 1); // Quantity minimum is 1
   }
 }
 
 class ShoppingCart {
   constructor() {
-    // 初始化购物车商品列表（存储CartItem实例）
+    // Initialize cart item list (store CartItem instances)
     this.cartItems = [];
   }
 
   /**
-   * 1. 查询单个商品（index.js依赖的核心方法，之前缺失！）
-   * @param {number} pid - 商品ID
-   * @returns {CartItem|null} - 商品实例或null（未找到）
+   * 1. Query single product (core method relied on by index.js, previously missing!)
+   * @param {number} pid - Product ID
+   * @returns {CartItem|null} - Product instance or null (not found)
    */
   getCartItem(pid) {
     const validPid = parseInt(pid, 10);
@@ -31,17 +31,17 @@ class ShoppingCart {
   }
 
   /**
-   * 2. 查询所有商品
-   * @returns {CartItem[]} - 购物车所有商品实例
+   * 2. Query all products
+   * @returns {CartItem[]} - All product instances in cart
    */
   getCartItems() {
-    return [...this.cartItems]; // 返回副本，避免直接修改原数组
+    return [...this.cartItems]; // Return copy to avoid direct modification of original array
   }
 
   /**
-   * 3. 添加商品（已存在则数量累加，不存在则新增）
-   * @param {number} pid - 商品ID
-   * @param {number} num - 新增数量
+   * 3. Add product (accumulate quantity if exists, add new if not)
+   * @param {number} pid - Product ID
+   * @param {number} num - Quantity to add
    */
   addToCart(pid, num = 1) {
     const validPid = parseInt(pid, 10);
@@ -49,19 +49,19 @@ class ShoppingCart {
     const existingItem = this.getCartItem(validPid);
 
     if (existingItem) {
-      // 已存在：累加数量
+      // Exists: accumulate quantity
       existingItem.num += validNum;
     } else {
-      // 不存在：新增CartItem实例
+      // Not exists: add new CartItem instance
       this.cartItems.push(new CartItem(validPid, validNum));
     }
   }
 
   /**
-   * 4. 更新商品数量
-   * @param {number} pid - 商品ID
-   * @param {number} newNum - 新数量（最小为1）
-   * @returns {boolean} - 更新成功返回true，商品不存在返回false
+   * 4. Update product quantity
+   * @param {number} pid - Product ID
+   * @param {number} newNum - New quantity (minimum 1)
+   * @returns {boolean} - Return true if updated, false if product not found
    */
   updateNum(pid, newNum) {
     const validPid = parseInt(pid, 10);
@@ -76,9 +76,9 @@ class ShoppingCart {
   }
 
   /**
-   * 5. 从购物车移除商品
-   * @param {number} pid - 商品ID
-   * @returns {boolean} - 移除成功返回true，商品不存在返回false
+   * 5. Remove product from cart
+   * @param {number} pid - Product ID
+   * @returns {boolean} - Return true if removed, false if product not found
    */
   removeFromCart(pid) {
     const validPid = parseInt(pid, 10);
@@ -88,26 +88,26 @@ class ShoppingCart {
   }
 
   /**
-   * 6. 清空购物车
+   * 6. Clear cart
    */
   clearCart() {
     this.cartItems = [];
   }
 
   /**
-   * 7. 获取购物车商品总数（所有商品数量累加）
-   * @returns {number} - 商品总数
+   * 7. Get total item count (sum of all product quantities)
+   * @returns {number} - Total item count
    */
   getTotalItemCount() {
     return this.cartItems.reduce((total, item) => total + item.num, 0);
   }
 
   /**
-   * 8. 从localStorage加载购物车数据（页面刷新后恢复）
+   * 8. Load cart data from localStorage (restore after page refresh)
    */
   loadFromLocalStorage() {
     try {
-      // 新增：先测试localStorage是否可用（避免阻止导致报错）
+      // Add: Test localStorage availability first (avoid error from block)
       const testKey = '__cart_test__';
       localStorage.setItem(testKey, 'test');
       localStorage.removeItem(testKey);
@@ -115,36 +115,36 @@ class ShoppingCart {
       const storedData = localStorage.getItem('shoppingCart');
       if (storedData) {
         const parsedData = JSON.parse(storedData);
-        // 转换为CartItem实例（确保方法可调用）
+        // Convert to CartItem instances (ensure method callability)
         this.cartItems = parsedData.map(item => new CartItem(item.pid, item.num));
       }
     } catch (error) {
       console.error('Failed to load cart from localStorage:', error);
-      this.cartItems = []; // 加载失败时初始化空购物车
+      this.cartItems = []; // Initialize empty cart when load fails
     }
   }
 
   /**
-   * 9. 保存购物车数据到localStorage（持久化）
+   * 9. Save cart data to localStorage (persistence)
    */
   saveToLocalStorage() {
     try {
-      // 新增：先测试localStorage是否可用（避免阻止导致报错）
+      // Add: Test localStorage availability first (avoid error from block)
       const testKey = '__cart_test__';
       localStorage.setItem(testKey, 'test');
       localStorage.removeItem(testKey);
       
-      // 只存储必要数据（pid和num），避免冗余
+      // Store only necessary data (pid and num) to avoid redundancy
       const dataToStore = this.cartItems.map(item => ({
         pid: item.pid,
         num: item.num
       }));
       localStorage.setItem('shoppingCart', JSON.stringify(dataToStore));
     } catch (error) {
-      // 仅打印警告，不修改内存数据（核心：cartItems仍保留）
-      console.warn('Failed to save cart to localStorage (浏览器阻止存储)：', error);
+      // Only print warning, do not modify in-memory data (core: cartItems remains)
+      console.warn('Failed to save cart to localStorage (blocked by browser)：', error);
     }
   }
 }
-// 暴露类供index.js引入（确保全局可访问）
+// Expose class for index.js import (ensure global accessibility)
 window.ShoppingCart = ShoppingCart;
