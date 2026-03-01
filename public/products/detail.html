@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - ShopEasy</title>
+
+    <!-- Basic resources (import once only) -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SwiperJS (styles only, JS imported at bottom) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    <!-- Axios (import once only) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../css/custom.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+
+<!-- ================= Header ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+
+    <!-- Logo (path adapted to root directory) -->
+    <div class="flex items-center w-full md:w-auto">
+      <a href="../../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
+    </div>
+    
+    <!-- Mobile Category Button -->
+    <div class="xl:hidden flex items-center">
+      <button id="mobile-category-btn" 
+              class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3">
+        <i class="fa-solid fa-bars text-xl"></i>
+        <span class="font-medium">Categories</span>
+      </button>
+    </div>
+
+    <!-- Search Box -->
+    <div class="w-full md:flex-1 md:px-8">
+      <div class="flex">
+        <input type="text"
+               placeholder="Search products..."
+               class="w-full border rounded-l-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <button class="bg-blue-600 text-white px-4 rounded-r-md hover:bg-blue-700">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Shopping List (ID fully matches index.js, no modification needed) -->
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry">
+      <input type="checkbox" id="cart-toggle" class="hidden peer">
+
+      <!-- Cart Button -->
+      <label for="cart-toggle" class="cart-button">
+        <i class="fa-solid fa-cart-shopping mr-2"></i>
+        <span>Shopping List</span>
+        <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium" id="cart-count">
+          0 <!-- Dynamically display cart quantity -->
+        </span>
+      </label>
+
+      <!-- Cart Dropdown (ID matches index.js, style/structure retained) -->
+      <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
+                  border border-gray-200 z-50
+                  opacity-0 invisible translate-y-2 pointer-events-none
+                  transition-all duration-200 ease-in-out
+                  group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup">
+
+        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title">
+          My Shopping List (0 items)
+        </div>
+
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items">
+          <!-- Cart items dynamically rendered (Phase3 implementation) -->
+          <div class="text-center text-gray-500 py-4">
+            Your cart is empty
+          </div>
+        </div>
+
+        <div class="px-5 py-4 border-t bg-gray-50">
+          <div class="flex justify-between font-bold mb-4">
+            <span>Total</span>
+            <span class="text-blue-700" id="cart-popup-total">$0.00</span>
+          </div>
+          <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+            Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ================= Main Content ================= -->
+<main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
+    <!-- Sidebar category list -->
+    <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
+        <ul class="flex flex-col gap-3" id="sidebar-cate-list">
+            <li class="text-gray-500">Loading categories...</li>
+        </ul>
+    </aside>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2">
+            <li>
+                <a href="../../index.html" class="hover:text-blue-600">Home</a>
+            </li>
+            <li>
+                <span class="text-gray-500">&gt;</span>
+            </li>
+            <li>
+                <a id="breadcrumb-cate-link" href="#" class="text-gray-800 font-medium hover:text-blue-600">Loading...</a>
+            </li>
+            <li>
+                <span class="text-gray-500">&gt;</span>
+            </li>
+            <li>
+                <span class="text-gray-800 font-medium" id="breadcrumb-pro-name">Loading...</span>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Product Detail Main -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-lg shadow-sm">
+        <!-- Product Carousel -->
+        <div class="h-96 w-full">
+            <div class="swiper mySwiper h-full">
+                <div class="swiper-wrapper h-full" id="product-slider">
+                    <!-- Dynamically render carousel images -->
+                    <div class="swiper-slide flex items-center justify-center bg-gray-100">
+                        <img src="../../images/default.png" class="max-h-full object-contain" alt="Loading product image...">
+                    </div>
+                </div>
+                <!-- Swiper Controls -->
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next swiper-button-white"></div>
+                <div class="swiper-button-prev swiper-button-white"></div>
+            </div>
+        </div>
+
+        <!-- Product Info Area -->
+        <div>
+            <h1 class="text-3xl font-bold mb-4" id="product-name">Loading...</h1>
+            <p class="text-gray-600 mb-4" id="product-short-desc">Loading...</p>
+            <p class="text-blue-600 text-3xl font-bold mb-6" id="product-price">$0.00</p>
+
+            <!-- Quantity Selector (unique ID for JS access) -->
+            <div class="flex items-center gap-4 mb-6">
+                <label class="font-medium">Quantity:</label>
+                <input type="number" id="product-quantity" value="1" min="1"
+                       class="w-20 border rounded text-center focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+
+            <!-- Add to Cart Button (fixed: remove undefined pid, get from data attribute, intercept default behavior) -->
+            <button 
+            class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors" 
+            id="add-to-cart-btn">
+            <i class="fa-solid fa-cart-shopping mr-2"></i>
+            Add to Cart
+            </button>
+            <!-- Product Description -->
+            <div class="border-t pt-4 mt-6">
+                <h2 class="font-bold mb-2 text-lg">Product Description</h2>
+                <p class="text-gray-600" id="product-desc">Loading...</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Mobile Category Drawer -->
+<aside id="mobile-category-drawer" 
+       class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
+    <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
+        Categories
+        <button id="mobile-category-close" class="text-gray-500 hover:text-gray-800">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </h2>
+    <ul class="flex flex-col gap-3" id="mobile-cate-list">
+        <li class="text-gray-500">Loading...</li>
+    </ul>
+</aside>
+
+<!-- ================= Footer ================= -->
+<footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <p class="text-lg font-bold">ShopEasy</p>
+            <p class="text-gray-400">© 2026 IEMS5718 Phase 3</p>
+        </div>
+        <div class="flex gap-6">
+            <i class="fa-brands fa-facebook text-gray-400"></i>
+            <i class="fa-brands fa-twitter text-gray-400"></i>
+            <i class="fa-brands fa-instagram text-gray-400"></i>
+        </div>
+    </div>
+</footer>
+
+<!-- JS Imports (fixed path: from ../js/ to ../../js/, remove duplicate imports) -->
+<!-- Common config/utils -->
+<script src="../../js/config.js"></script>
+<script src="../../js/utils.js"></script>
+<script src="../../js/common.js"></script>
+<!-- Cart core -->
+<script src="../../js/cart/core.js"></script>
+<script src="../../js/cart/index.js"></script>
+<!-- Swiper (import once only) -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<!-- Product detail exclusive logic -->
+<script src="../../js/pages/details.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Phase2B</title>
+  <link rel="stylesheet" href="admin.css"> 
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+  <!-- Category Management Form (2 points): Add/Delete/Edit -->
+  <div class="module">
+    <h2>1. Category Management</h2>
+    <!-- Add New Category Form -->
+    <form id="addCateForm">
+      <input type="text" name="name" placeholder="Enter category name (e.g. Home)" required>
+      <button type="submit">Add Category</button>
+    </form>
+    <!-- Edit Category Form -->
+    <form id="editCateForm">
+      <input type="hidden" name="catid" id="editCateId">
+      <input type="text" name="name" id="editCateName" placeholder="Modify category name" required>
+      <button type="submit">Save Changes</button>
+    </form>
+    <!-- Category List (with Edit/Delete Buttons) -->
+    <h3>Category List</h3>
+    <table id="cateTable">
+      <tr><th>Category ID</th><th>Category Name</th><th>Actions</th></tr>
+    </table>
+  </div>
+
+  <!-- Product Management Form (2 points): Dropdown + Input + Textarea + Image Upload -->
+  <div class="module">
+    <h2>2. Product Management</h2>
+    <!-- Add New Product Form: Meet all requirements -->
+    <form id="addProForm" enctype="multipart/form-data">
+      <select name="catid" id="addProCate" required>
+        <option value="">Select Category</option>
+      </select>
+      <input type="text" name="name" placeholder="Product Name (e.g. Mug)" required>
+      <input type="number" name="price" step="0.01" min="0" placeholder="Price (e.g. 19.99)" required>
+      <textarea name="description" placeholder="Product Description"></textarea>
+      <!-- Image Upload: Restrict format + Prompt size ≤10MB -->
+      <input type="file" name="proImg" accept="image/jpg,image/jpeg,image/png" title="Only jpg/png supported, size ≤ 10MB">
+      <button type="submit">Add Product</button>
+    </form>
+    <!-- Edit Product Form (Hidden, show when edit is clicked) -->
+    <form id="editProForm" enctype="multipart/form-data" style="display: none;">
+      <input type="hidden" name="pid" id="editProId">
+      <select name="catid" id="editProCate" required></select>
+      <input type="text" name="name" id="editProName" placeholder="Product Name" required>
+      <input type="number" name="price" step="0.01" min="0" id="editProPrice" placeholder="Price" required>
+      <textarea name="description" id="editProDesc" placeholder="Product Description"></textarea>
+      <input type="file" name="proImg" accept="image/jpg,image/jpeg,image/png">
+      <button type="submit">Save Changes</button>
+      <button type="button" id="cancelEdit">Cancel</button>
+    </form>
+    <!-- Product List (with Edit/Delete Buttons) -->
+    <h3>Product List</h3>
+    <table id="proTable">
+      <tr><th>Product ID</th><th>Category</th><th>Product Name</th><th>Price</th><th>Image</th><th>Actions</th></tr>
+    </table>
+  </div>
+
+  <!-- Import Axios: Used to call backend API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
