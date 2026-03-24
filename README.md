@@ -71,5 +71,38 @@ npm install nodemon --save-dev
 
 All requirements for Phase 2B (backend API + admin panel) and Phase 3 (frontend integration + shopping cart) have been fully implemented, with no missing core features. The project can be run directly via `node app.js` (or `nodemon app.js` for development) and accessed at `http://localhost:3000`.
 
+### Phase 4: Admin Authentication, Security Hardening & Service Completion
+#### Overview
+This phase focuses on building a secure admin authentication system, implementing role-based access control, hardening backend security, and ensuring the stable operation of the e-commerce Node.js service. All planned tasks are fully completed and verified to meet the requirements.
 
-### Phase 4 
+---
+
+#### Task List & Completion Status
+| Task Description | Completion Status | Verification Details |
+| :--- | :--- | :--- |
+| 1. Implement unified SQLite database connection management, including graceful shutdown mechanism to avoid connection leaks | ✅ Fully Completed | SQLite database `shop.db` connects successfully on service startup; the connection is closed gracefully on `SIGINT` signal; no connection leak issues are detected. |
+| 2. Build user & admin data schema, with industry-standard secure password storage | ✅ Fully Completed | `users` table is created with core fields: `userid`, `email`, `password`, `admin`; passwords are stored in salt+hash format using `pbkdf2Sync` (10000 iterations, SHA256 algorithm), no plaintext passwords are stored. Pre-configured admin account `admin@shop.com` and normal user account are available. |
+| 3. Implement secure authentication based on HttpOnly Cookie | ✅ Fully Completed | The login API issues a `user` cookie with full security attributes: `httpOnly: true`, `sameSite: Strict`, and a `secure` flag that auto-adapts to development/production environments; the cookie has a valid period of 3 days. |
+| 4. Develop full login & logout API endpoints for identity management | ✅ Fully Completed | - `POST /api/login`: Validates user credentials, returns login status and admin role flag, uses parameterized SQL queries to prevent SQL injection;<br>- `GET /api/logout`: Clears the authentication cookie to complete secure logout. |
+| 5. Implement role-based access control (RBAC) middleware to protect admin routes | ✅ Fully Completed | `requireAdmin` middleware is built and mounted to the `/admin` route; unauthenticated users or non-admin users are blocked with 401/403 status codes, and cannot access any admin page content. |
+| 6. Configure standard CORS policy for compliant cross-origin request handling | ✅ Fully Completed | CORS headers are set globally for all requests, supporting standard `GET, POST, PUT, DELETE, OPTIONS` methods; preflight OPTIONS requests are handled properly with a 200 response. |
+| 7. Add security response headers for XSS, MIME-sniffing and content security protection | ✅ Fully Completed | Security headers are added to all responses: `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and a standard `Content-Security-Policy` for frontend resource control. |
+| 8. Mount and retain all original business API routes (category & product) | ✅ Fully Completed | `/api/cate` and `/api/products` routes are mounted successfully; all original product and category query functions work normally, with no functional impact from the authentication system. |
+| 9. Complete local development environment debugging and service availability verification | ✅ Fully Completed | The service runs stably in the WSL development environment; it can be accessed normally via WSL IP + port; the frontend page loads correctly; all APIs respond with expected data. |
+| 10. Adapt the service for both local HTTP development and server HTTPS deployment | ✅ Fully Completed | The code is compatible with both local development and production HTTPS deployment; only the `secure` flag of the cookie needs to be adjusted for different environments, with no other code changes required. |
+
+---
+
+#### Final Verification Results
+All core functions have been end-to-end tested and validated:
+1. Unauthenticated access to `/admin` is blocked with a 401 response
+2. Admin login with correct credentials returns a success response and sets a valid authentication cookie
+3. Authenticated admin users can access the full `/admin` page normally
+4. All product and category business APIs return correct and complete data
+5. Security cookie attributes are set correctly to mitigate XSS and CSRF risks
+6. All database queries use parameterized statements to eliminate SQL injection vulnerabilities
+
+---
+
+#### Final Status
+**All tasks in Phase 4 are 100% fully completed, meeting all functional, security and compliance requirements.** The backend service is stable, secure, and ready for production deployment.
