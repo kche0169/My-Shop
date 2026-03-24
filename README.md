@@ -70,3 +70,6 @@ npm install nodemon --save-dev
 | Static Resource Hosting | ✅ Completed | `app.js` hosts `public/` (original `images/`/`css/`/`js/`), `admin/`; frontend accesses static resources via HTTP |
 
 All requirements for Phase 2B (backend API + admin panel) and Phase 3 (frontend integration + shopping cart) have been fully implemented, with no missing core features. The project can be run directly via `node app.js` (or `nodemon app.js` for development) and accessed at `http://localhost:3000`.
+
+
+### Phase 4 
