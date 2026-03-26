@@ -1,61 +1,109 @@
 /**
- * Final Version app.js - Adapted for products folder + Best Practice Optimization
+ * app.js - Local Debug Version with Enhanced Startup Logs
+ * All original features retained | Adapted for local HTTP environment
  */
+
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
+
 const app = express();
 const port = 3000;
 
-// ===================== 1. Database Connection (Unified instance for reuse in other files) =====================
+// ===================== 1. Database Connection =====================
 const db = new sqlite3.Database('./shop.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-  if (err) {
-    console.error('[ERROR] Database connection failed:', err.message);
-  } else {
-    console.log('[SUCCESS] SQLite database connected successfully!');
-  }
+  if (err) console.error('[ERROR] Database connection failed:', err.message);
+  else console.log('[SUCCESS] SQLite database connected successfully!');
 });
 
-// Mount db instance to app for reuse in other route files (avoid duplicate connections)
 app.set('db', db);
 
-// ===================== 2. CORS Configuration (Unchanged, compliant with standards) =====================
+// ===================== 2. CORS Configuration =====================
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
   next();
 });
-app.use(express.static('public'));
-// ===================== 3. Basic Parsing (Unchanged, compliant with standards) =====================
-app.use(express.json({ limit: '10mb' })); // Parse JSON requests (10MB limit for large payloads)
-app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-encoded requests
 
-// ===================== 4. Static Resource Hosting (Optimization: Remove redundant /uploads config) =====================
-app.use(express.static(path.join(__dirname, 'public'))); // Core: Host public folder (contains images)
-app.use('/admin', express.static(path.join(__dirname, 'admin'))); // Host admin page
+// ===================== 3. Security Headers =====================
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+});
 
-// ===================== 5. Route Mounting (Optimization: Unified log format + More detailed error capture) =====================
+// ===================== 4. Parsing Middleware =====================
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
+
+// ===================== 5. Static Files =====================
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ===================== 6. Admin Authentication Middleware =====================
+const requireAdmin = (req, res, next) => {
+  const userId = req.cookies.user;
+  if (!userId) return res.status(401).send('Access Denied: Login Required');
+  
+  const db = req.app.get('db');
+  db.get('SELECT * FROM users WHERE userid = ?', [userId], (err, user) => {
+    if (err || !user || user.admin !== 1) return res.status(403).send('Access Denied: Admin Only');
+    req.user = user;
+    next();
+  });
+};
+
+// Protected admin route
+app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin')));
+
+// ===================== 7. Login API =====================
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  const db = req.app.get('db');
+  
+  db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+    if (err || !user) return res.json({ success: false, msg: 'User not found' });
+    
+    const [salt, key] = user.password.split(':');
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+    
+    if (hash !== key) return res.json({ success: false, msg: 'Password error' });
+    
+    res.cookie('user', user.userid, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+      maxAge: 3 * 24 * 60 * 60 * 1000
+    });
+    
+    res.json({ success: true });
+  });
+});
+
+// ===================== 8. Logout API =====================
+app.get('/api/logout', (req, res) => {
+  res.clearCookie('user');
+  res.send('Logout success');
+});
+
+// ===================== 9. Business Routes =====================
 try {
   const cateApi = require('./api/categoryApi');
   const productsApi = require('./api/productsApi');
   
-  app.use('/api/cate', cateApi); // Mount category API routes
-  app.use('/api/products', productsApi); // Mount products API routes
+  app.use('/api/cate', cateApi);
+  app.use('/api/products', productsApi);
   
   console.log('[SUCCESS] Routes mounted successfully: /api/cate, /api/products');
 } catch (err) {
   console.error('[ERROR] Route mounting failed:', err.message);
-  console.error('[TIPS] Please check:');
-  console.error('  1. Whether categoryApi.js and productsApi.js exist in the api folder;');
-  console.error('  2. Whether module.exports = router; is exported in the files;');
-  console.error('  3. Whether there are syntax errors (e.g., missing semicolons, mismatched brackets);');
 }
 
-// ===================== 6. Start Server (Optimization: Unified log format + Clearer prompts) =====================
+// ===================== 10. Start Server with Detailed Logs =====================
 app.listen(port, '0.0.0.0', () => {
   console.log('[SUCCESS] Node server started successfully!');
   console.log(`[INFO] Server address: http://localhost:${port}`);
@@ -67,14 +115,11 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`[TEST] Frontend page: http://localhost:${port}`);
 });
 
-// ===================== 7. New: Graceful Database Connection Shutdown (Avoid process leaks) =====================
+// ===================== 11. Graceful Shutdown =====================
 process.on('SIGINT', () => {
   db.close((err) => {
-    if (err) {
-      console.error('[ERROR] Database disconnection failed:', err.message);
-    } else {
-      console.log('[SUCCESS] SQLite database connection closed');
-    }
+    if (err) console.error('[ERROR] Database disconnection failed:', err.message);
+    else console.log('[SUCCESS] SQLite database connection closed');
     process.exit(0);
   });
 });
