@@ -7,6 +7,29 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
+// ==========================================
+// [NEW] Add Admin Authentication Check Logic
+// ==========================================
+const requireAdmin = (req, res, next) => {
+  // Get session store from app
+  const sessionStore = req.app.get('sessionStore');
+  const sessionToken = req.cookies.user;
+  
+  if (!sessionToken) return res.status(401).json({ code: -1, msg: 'Access Denied: Login Required' });
+  
+  const userId = sessionStore.get(sessionToken);
+  if (!userId) return res.status(401).json({ code: -1, msg: 'Access Denied: Invalid Session' });
+  
+  const db = req.app.get('db');
+  db.get('SELECT * FROM users WHERE userid = ?', [userId], (err, user) => {
+    if (err || !user || user.admin !== 1) {
+      return res.status(403).json({ code: -1, msg: 'Access Denied: Admin Only' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
 // ===================== Image Upload Configuration (Adapt to public/images structure) =====================
 // Fix: Unified upload root directory (public/images)
 const UPLOAD_ROOT = path.resolve(__dirname, '../public/images');
@@ -172,8 +195,8 @@ router.get('/detail', (req, res) => {
   });
 });
 
-// ===================== Add Product (Adapt to category directory) =====================
-router.post('/add', (req, res, next) => {
+// ===================== Add Product (PROTECTED) =====================
+router.post('/add', requireAdmin, (req, res, next) => {
   upload(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ 
@@ -218,8 +241,8 @@ router.post('/add', (req, res, next) => {
   });
 });
 
-// ===================== Edit Product (Adapt to category directory) =====================
-router.post('/edit', (req, res, next) => {
+// ===================== Edit Product (PROTECTED) =====================
+router.post('/edit', requireAdmin, (req, res, next) => {
   upload(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ 
@@ -278,8 +301,8 @@ router.post('/edit', (req, res, next) => {
   });
 });
 
-// ===================== Delete Product (Adapt to category directory) =====================
-router.get('/del/:pid', [
+// ===================== Delete Product (PROTECTED) =====================
+router.get('/del/:pid', requireAdmin, [
   param('pid').isNumeric().withMessage('Product ID must be a number').custom(val => val >= 1).withMessage('Product ID must be greater than 0')
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -347,7 +370,7 @@ router.get('/del/:pid', [
   }
 });
 
-// ===================== Cart API (Unchanged) =====================
+// ===================== Cart API (Unchanged - User Feature) =====================
 router.post('/cart/add', [
   body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0'),
   body('pid').isNumeric().withMessage('Product ID must be a number').custom(val => val >= 1).withMessage('Product ID must be greater than 0'),
