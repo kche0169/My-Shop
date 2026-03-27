@@ -199,5 +199,61 @@ process.on('SIGINT', () => {
   });
 });
 
+// ===================== 14. Change Password API =====================
+// Verify current password, update to new password, then force logout
+app.post('/api/change-password', (req, res) => {
+  // Get session token from cookie
+  const sessionToken = req.cookies.user;
+  if (!sessionToken) {
+    return res.status(401).json({ success: false, message: 'Please login first' });
+  }
+
+  // Get user ID from session store
+  const userId = sessionStore.get(sessionToken);
+  if (!userId) {
+    return res.status(401).json({ success: false, message: 'Invalid session, please login again' });
+  }
+
+  // Get input data
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+
+  // Get user from database
+  const db = req.app.get('db');
+  db.get('SELECT * FROM users WHERE userid = ?', [userId], (err, user) => {
+    if (err || !user) {
+      return res.status(500).json({ success: false, message: 'User not found' });
+    }
+
+    // Verify current password
+    const [salt, key] = user.password.split(':');
+    const currentHash = crypto.pbkdf2Sync(currentPassword, salt, 10000, 64, 'sha256').toString('hex');
+
+    if (currentHash !== key) {
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+    }
+
+    // Generate new hashed password
+    const newSalt = crypto.randomBytes(16).toString('hex');
+    const newHash = crypto.pbkdf2Sync(newPassword, newSalt, 10000, 64, 'sha256').toString('hex');
+    const newPasswordHash = `${newSalt}:${newHash}`;
+
+    // Update password in database
+    db.run('UPDATE users SET password = ? WHERE userid = ?', [newPasswordHash, userId], function (err) {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Failed to update password' });
+      }
+
+      // Destroy session after password change
+      sessionStore.delete(sessionToken);
+      res.clearCookie('user');
+
+      return res.json({ success: true, message: 'Password updated successfully. Please login again.' });
+    });
+  });
+});
+
 module.exports = { app, db };
 app.set('sessionStore', sessionStore);

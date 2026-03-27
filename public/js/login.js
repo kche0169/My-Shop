@@ -120,19 +120,11 @@ document.getElementById('login-form').addEventListener('submit', async function(
 
 
 // 整个 user icon 区域点击跳转逻辑
-document.getElementById('userIconWrapper').addEventListener('click', () => {
-  // 获取当前显示的角色
-  const currentRole = document.getElementById('roleTag').textContent.trim();
-  
-  // 根据角色跳转不同页面
-  if (currentRole === 'Guest' || !currentRole) {
-    // Guest 或没显示角色 → 跳登录页
-    window.location.href = '/login';
-  } else if (currentRole === 'Admin') {
-    // Admin → 跳后台
-    window.location.href = '/admin';
-  } else {
-    // 普通 User → 跳首页
-    window.location.href = '/';
-  }
+wrapper.addEventListener('click', async () => {
+  let currentRole = localStorage.getItem('userRole') || 'Guest';
+  console.log('click, role=', currentRole);
+
+  if (currentRole === 'Guest') window.location.href = '/login';
+  else if (currentRole === 'Admin') window.location.href = '/admin';
+  else window.location.href = '/';
 });
