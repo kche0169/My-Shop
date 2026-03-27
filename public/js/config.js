@@ -3,7 +3,7 @@
  */
 window.AppConfig = {
   // 后端API基础地址
-  API_BASE_URL: 'http://localhost:3000/api',
+  API_BASE_URL: '/api',
   // 默认图片（加载失败时兜底）
   DEFAULT_IMG: '/images/default.png',
   // 轮播配置

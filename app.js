@@ -9,6 +9,9 @@ const sqlite3 = require('sqlite3').verbose();
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 
+// [NEW] In-memory session store: Maps random session tokens to user IDs
+const sessionStore = new Map();
+
 const app = express();
 const port = 3000;
 
@@ -44,10 +47,25 @@ app.use(cookieParser());
 // ===================== 5. Static Files =====================
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ===================== 6. Admin Authentication Middleware =====================
+// ===================== 6. Page Routes =====================
+// Serve login page
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Serve register page
+app.get('/register', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
+});
+
+// ===================== 7. Admin Authentication Middleware =====================
 const requireAdmin = (req, res, next) => {
-  const userId = req.cookies.user;
-  if (!userId) return res.status(401).send('Access Denied: Login Required');
+  const sessionToken = req.cookies.user;
+  if (!sessionToken) return res.status(401).send('Access Denied: Login Required');
+  
+  // [FIX] Get real user ID from in-memory session store
+  const userId = sessionStore.get(sessionToken);
+  if (!userId) return res.status(401).send('Access Denied: Invalid Session');
   
   const db = req.app.get('db');
   db.get('SELECT * FROM users WHERE userid = ?', [userId], (err, user) => {
@@ -60,37 +78,92 @@ const requireAdmin = (req, res, next) => {
 // Protected admin route
 app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin')));
 
-// ===================== 7. Login API =====================
+// ===================== 8. Register API =====================
+app.post('/api/register', (req, res) => {
+  const { email, password } = req.body;
+  const db = req.app.get('db');
+  
+  // Check if email already exists
+  db.get('SELECT userid FROM users WHERE email = ?', [email], (err, existingUser) => {
+    if (err) return res.json({ success: false, message: 'Database error' });
+    if (existingUser) return res.json({ success: false, message: 'Email already registered' });
+    
+    // Generate salt and hash password (same method as existing users)
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+    const storedPassword = `${salt}:${hash}`;
+    
+    // Insert new user (default to non-admin)
+    db.run('INSERT INTO users (email, password, admin) VALUES (?, ?, 0)', [email, storedPassword], function(err) {
+      if (err) return res.json({ success: false, message: 'Registration failed' });
+      res.json({ success: true });
+    });
+  });
+});
+
+// ===================== 9. Login API =====================
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
   const db = req.app.get('db');
   
   db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
-    if (err || !user) return res.json({ success: false, msg: 'User not found' });
+    if (err || !user) return res.json({ success: false, message: 'User not found' });
     
     const [salt, key] = user.password.split(':');
     const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
     
-    if (hash !== key) return res.json({ success: false, msg: 'Password error' });
+    if (hash !== key) return res.json({ success: false, message: 'Password error' });
     
-    res.cookie('user', user.userid, {
+    // [FIX 1] Generate cryptographically random session ID to prevent session fixation
+    const randomSessionId = crypto.randomBytes(32).toString('hex');
+    // [FIX 2] Map random session ID to real user ID in memory
+    sessionStore.set(randomSessionId, user.userid);
+    
+    const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    // [FIX 3] Store random session ID in cookie instead of raw database user ID
+    res.cookie('user', randomSessionId, {
       httpOnly: true,
-      secure: true,
+      secure: isHttps, // Only set secure on HTTPS connections
       sameSite: 'Strict',
       maxAge: 3 * 24 * 60 * 60 * 1000
     });
     
-    res.json({ success: true });
+    // Determine user role and redirect URL
+    const userRole = user.admin === 1 ? 'Admin' : 'User';
+    const redirectUrl = user.admin === 1 ? '/admin' : '/';
+    res.json({ success: true, redirectUrl: redirectUrl, role: userRole });
   });
 });
 
-// ===================== 8. Logout API =====================
+// ===================== 9.5. 获取当前登录用户信息 API =====================
+app.get('/api/userinfo', (req, res) => {
+  const sessionToken = req.cookies.user;
+  if (!sessionToken) return res.json({ isLogin: false, role: 'Guest' });
+  
+  // [FIX] Get real user ID from in-memory session store
+  const userId = sessionStore.get(sessionToken);
+  if (!userId) return res.json({ isLogin: false, role: 'Guest' });
+  
+  const db = req.app.get('db');
+  db.get('SELECT * FROM users WHERE userid = ?', [userId], (err, user) => {
+    if (err || !user) return res.json({ isLogin: false, role: 'Guest' });
+    const userRole = user.admin === 1 ? 'Admin' : 'User';
+    res.json({ isLogin: true, role: userRole, userId: user.userid, email: user.email });
+  });
+});
+
+// ===================== 10. Logout API =====================
 app.get('/api/logout', (req, res) => {
+  const sessionToken = req.cookies.user;
+  if (sessionToken) {
+    // [FIX] Remove session from in-memory store on logout
+    sessionStore.delete(sessionToken);
+  }
   res.clearCookie('user');
   res.send('Logout success');
 });
 
-// ===================== 9. Business Routes =====================
+// ===================== 11. Business Routes =====================
 try {
   const cateApi = require('./api/categoryApi');
   const productsApi = require('./api/productsApi');
@@ -103,7 +176,7 @@ try {
   console.error('[ERROR] Route mounting failed:', err.message);
 }
 
-// ===================== 10. Start Server with Detailed Logs =====================
+// ===================== 12. Start Server with Detailed Logs =====================
 app.listen(port, '0.0.0.0', () => {
   console.log('[SUCCESS] Node server started successfully!');
   console.log(`[INFO] Server address: http://localhost:${port}`);
@@ -113,9 +186,11 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`[TEST] Product detail: http://localhost:${port}/api/products/detail?pid=1`);
   console.log(`[TEST] Admin page: http://localhost:${port}/admin`);
   console.log(`[TEST] Frontend page: http://localhost:${port}`);
+  console.log(`[TEST] Login page: http://localhost:${port}/login`);
+  console.log(`[TEST] Register page: http://localhost:${port}/register`);
 });
 
-// ===================== 11. Graceful Shutdown =====================
+// ===================== 13. Graceful Shutdown =====================
 process.on('SIGINT', () => {
   db.close((err) => {
     if (err) console.error('[ERROR] Database disconnection failed:', err.message);
@@ -125,3 +200,4 @@ process.on('SIGINT', () => {
 });
 
 module.exports = { app, db };
+app.set('sessionStore', sessionStore);
