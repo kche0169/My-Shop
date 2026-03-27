@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tooltipRole = document.getElementById('tooltipRole');
   const userMenuItems = document.getElementById('userMenuItems');
 
-  // 获取登录状态
   const res = await fetch('/api/userinfo', { cache: 'no-store', credentials: 'include' });
   const user = await res.json();
 
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     roleTag.classList.add('bg-gray-100');
   }
 
-  // 渲染菜单
   if (!user.isLogin) {
     userMenuItems.innerHTML = `
       <a href="/login.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
@@ -25,14 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       </a>
     `;
   } else {
-    // ================== 已登录菜单（新增修改密码） ==================
     userMenuItems.innerHTML = `
       <a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-user-shield w-4 text-center"></i>
         <span class="text-sm">Admin Panel</span>
       </a>
 
-      <!-- 👉 修改密码 新加入 -->
       <a href="javascript:showChangePasswordModal()" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-lock w-4 text-center"></i>
         <span class="text-sm">Change Password</span>
@@ -51,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       </button>
     `;
 
-    // 登出逻辑（完全按你的风格）
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
         await axios.get('/api/logout');
@@ -65,29 +60,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// ==============================================
-// 【新增】修改密码弹窗 + 密码长度 >=6 位校验
-// ==============================================
 function showChangePasswordModal() {
-  const oldPwd = prompt("Please enter current password:");
+  const oldPwd = prompt("Enter current password:");
   if (!oldPwd) return;
 
-  const newPwd = prompt("Please enter new password (at least 6 digits):");
+  const newPwd = prompt("Enter new password (min 6 characters):");
   if (!newPwd) return;
 
-  // ✅ 核心：密码长度必须 >=6 位
   if (newPwd.length < 6) {
     alert("Password must be at least 6 characters long!");
     return;
   }
 
-  const confirmPwd = prompt("Please confirm new password:");
+  const confirmPwd = prompt("Confirm new password:");
   if (confirmPwd !== newPwd) {
-    alert("Two passwords do not match!");
+    alert("Passwords do not match!");
     return;
   }
 
-  // 调用后端修改密码接口
   axios.post('/api/change-password', {
     currentPassword: oldPwd,
     newPassword: newPwd
@@ -100,6 +90,6 @@ function showChangePasswordModal() {
       alert("Failed: " + res.data.message);
     }
   }).catch(err => {
-    alert("Current password error or server error");
+    alert("Current password incorrect or server error");
   });
 }

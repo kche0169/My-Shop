@@ -238,7 +238,6 @@ function delPro(pid) {
   }
 }
 
-// Log Out 按钮点击事件【已修复：清除 localStorage 缓存】
 // Log Out 按钮点击事件
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   try {
