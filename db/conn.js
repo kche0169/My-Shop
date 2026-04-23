@@ -54,6 +54,26 @@ db.serialize(() => {
     else console.log('Products table created successfully (with multi-img + long desc)!');
   });
 
+
+    // ===================== 4. 【新增】Create orders table (完全符合作业要求) =====================
+  db.run(`CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userid INTEGER NOT NULL,
+    paypal_order_id TEXT UNIQUE,           -- PayPal 订单 ID
+    items_json TEXT NOT NULL,              -- 存 [{pid, num, price}] 的 JSON
+    total_price REAL NOT NULL,             -- 订单总价
+    currency TEXT DEFAULT 'USD',           -- 货币 (作业要求)
+    digest TEXT NOT NULL,                  -- 摘要 H(order, salt) (作业核心要求)
+    status TEXT DEFAULT 'PENDING',         -- 订单状态: PENDING/PAID/FAILED/CANCELLED
+    merchant_email TEXT,                   -- 商家邮箱 (作业要求)
+    salt TEXT NOT NULL,                    -- 随机盐值 (作业要求，用于生成 digest)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    paid_at DATETIME,                      -- 支付成功时间
+    paypal_transaction_id TEXT             -- PayPal 交易 ID (Webhook 返回后更新)
+  )`, (err) => {
+    if (err) console.error('Create orders table failed:', err.message);
+    else console.log('✅ Orders table created successfully (with digest & PayPal fields)!');
+  });
   // Clear existing data (double protection)
   db.run('DELETE FROM products', (err) => {
     if (err) console.error('Clear products data failed:', err.message);

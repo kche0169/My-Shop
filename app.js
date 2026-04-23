@@ -42,9 +42,11 @@ app.use('/admin', express.static(path.join(__dirname, 'admin'))); // Host admin 
 try {
   const cateApi = require('./api/categoryApi');
   const productsApi = require('./api/productsApi');
+  const ordersApi = require('./api/ordersApi');
   
   app.use('/api/cate', cateApi); // Mount category API routes
   app.use('/api/products', productsApi); // Mount products API routes
+  app.use('/api/orders', ordersApi);
   
   console.log('[SUCCESS] Routes mounted successfully: /api/cate, /api/products');
 } catch (err) {
