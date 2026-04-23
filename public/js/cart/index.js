@@ -1,5 +1,7 @@
 // ========== Global Constants & Utility Functions (Fix: Global Mount + Fallback) ==========
 // 1. Global product cache (shared across all pages, fix local cache issue)
+// public/js/index.js
+
 window.productCache = window.productCache || new Map();
 
 // 2. Global dependency fallback (solve AppUtils/AppConfig late loading issue on product page)
@@ -20,66 +22,64 @@ window.AppConfig = window.AppConfig || {
 window.cartInitialized = false;      // Whether cart is initialized
 window.cartEventsInitialized = false;// Whether cart events are bound
 
-// ========== Global Cart Instance Initialization (Core Fix: Global Mount + Validation) ==========
+// ========== Global Cart Instance Initialization (Core Fix: UserID + Async Load) ==========
 // Global cart instance (fix local variable issue, accessible to all pages)
 window.cart = window.cart || null;
 
+// TODO: Replace this with your actual user ID retrieval logic (e.g., from login session/JWT)
+function getCurrentUserId() {
+  // Example: Try to get from localStorage, default to 1 for demo
+  const storedId = localStorage.getItem('current_userid');
+  return storedId ? parseInt(storedId, 10) : 1;
+}
+
 async function initCartGlobal() {
   try {
-    // Fix 5: First validate if ShoppingCart class exists (core)
+    // Fix 1: Validate if ShoppingCart class exists
     if (typeof ShoppingCart !== 'function') {
       throw new Error('ShoppingCart class not found! Please load cart/core.js first.');
     }
 
     // Initialize global cart instance (create only once)
     if (!window.cart) {
-      window.cart = new ShoppingCart();
-      // Fix 1: Force initialize cart.items as array, compatible with localStorage data exception
-      window.cart.loadFromLocalStorage();
-      window.cart.items = Array.isArray(window.cart.items) ? window.cart.items : [];
+      const userid = getCurrentUserId();
+      console.log('[initCartGlobal] Initializing cart with userid:', userid);
+      window.cart = new ShoppingCart(userid);
     }
 
-    // Fix 4: Bind events only once (avoid duplicate triggering)
+    // Fix 2: Async load from server (with localStorage fallback)
+    await window.cart.load();
+
+    // Fix 3: Bind events only once
     if (!window.cartEventsInitialized) {
       initCartEvents();
       window.cartEventsInitialized = true;
     }
 
-    // Render cart (popup first, then standalone page)
+    // Render cart
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) {
       await renderCartUI(window.cart);
     }
 
-    // Mark initialization complete
     window.cartInitialized = true;
-    console.log('Cart initialized successfully, current item count:', window.cart.getTotalItemCount());
+    console.log('[initCartGlobal] Cart initialized successfully, item count:', window.cart.getTotalItemCount());
   } catch (error) {
-    console.error('Cart initialization failed:', error);
-    // Fallback: Force reset global cart instance
-    if (typeof ShoppingCart === 'function') {
-      window.cart = new ShoppingCart();
-      window.cart.items = [];
-      window.cart.saveToLocalStorage();
-      await renderCartPopup(window.cart);
-      window.cartInitialized = true;
-    } else {
-      alert('Cart initialization failed: Missing core cart class!');
-    }
+    console.error('[initCartGlobal] Cart initialization failed:', error);
+    alert('Cart initialization failed: ' + error.message);
   }
 }
 
-// Initialize on page load (Fix 6: Avoid duplicate initialization)
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
   if (!window.cartInitialized) {
     await initCartGlobal();
   }
 });
 
-// Only re-render on page back/refresh (do not reset data)
+// Only re-render on page back/refresh
 window.addEventListener('pageshow', async () => {
   if (window.cart && window.cartInitialized) {
-    // Only re-render, no duplicate initialization
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
   } else if (!window.cartInitialized) {
@@ -92,23 +92,18 @@ function initCartPopupControl() {
   const cartPopup = document.getElementById('cart-popup');
   if (!cartEntry || !cartPopup) return;
 
-  // ========== Core State Management (Only control show/hide, no style modification) ==========
-  let isPopupOpen = false; // Initially closed
+  let isPopupOpen = false;
   let hoverCloseTimer = null;
   const HOVER_DELAY = 300;
 
-  // ========== Show/Hide Functions (Only operate existing style classes, no inline styles) ==========
-  // Open popup: Only operate your original style classes, same logic as before
   const openPopup = () => {
     clearTimeout(hoverCloseTimer);
-    // Only restore your original styles, no new inline styles
     cartPopup.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
     cartPopup.classList.add('opacity-100', 'pointer-events-auto');
     isPopupOpen = true;
     renderCartPopup(window.cart).catch(err => console.error('Failed to render popup:', err));
   };
 
-  // Close popup: Only operate existing style classes
   const closePopup = () => {
     clearTimeout(hoverCloseTimer);
     cartPopup.classList.add('hidden', 'opacity-0', 'pointer-events-none');
@@ -116,7 +111,6 @@ function initCartPopupControl() {
     isPopupOpen = false;
   };
 
-  // ========== 1. When closed: Open on hover (disable after opening) ==========
   cartEntry.addEventListener('mouseenter', () => {
     if (!isPopupOpen) openPopup();
   });
@@ -127,7 +121,6 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 2. Toggle on click (closed→open, open→closed) ==========
   cartEntry.addEventListener('click', (e) => {
     const isControlBtn = e.target.closest('.cart-qty-minus, .cart-qty-plus, .cart-qty-input, .cart-item-delete');
     if (!isControlBtn) {
@@ -135,8 +128,6 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 3. Close button (manual addition only, no auto creation → avoid container expansion) ==========
-  // Only bind existing close button (added manually in HTML, no auto creation)
   const closeBtn = cartPopup.querySelector('.cart-popup-close');
   if (closeBtn) {
     closeBtn.addEventListener('click', (e) => {
@@ -145,7 +136,6 @@ function initCartPopupControl() {
     });
   }
 
-  // ========== 4. Compatibility: Close on outside click/ESC (keep original logic) ==========
   document.addEventListener('click', (e) => {
     if (isPopupOpen && !cartPopup.contains(e.target) && !cartEntry.contains(e.target)) {
       closePopup();
@@ -158,7 +148,6 @@ function initCartPopupControl() {
     }
   });
 
-  // ========== 5. Stay in popup: Block hover interference (only clear timer, no style change) ==========
   cartPopup.addEventListener('mouseenter', () => {
     clearTimeout(hoverCloseTimer);
   });
@@ -169,28 +158,25 @@ function initCartPopupControl() {
   });
 }
 
-// ========== 2. Popup UI Rendering (Core Fix: Global Cart + Fault Tolerance) ==========
+// ========== 2. Popup UI Rendering (Core Fix: Remove direct items access) ==========
 async function renderCartPopup(cart) {
   const popupItems = document.getElementById('cart-popup-items');
   const popupTotal = document.getElementById('cart-popup-total');
   const cartCount = document.getElementById('cart-count');
   const cartTitle = document.getElementById('cart-popup-title');
 
-  // Fault tolerance: Return directly if core DOM is missing
   if (!popupItems || !popupTotal || !cartCount) {
     console.warn('Cart popup core DOM missing');
     return;
   }
 
-  // Fix 5: Force ensure cart data validity
+  // Fix 4: Use getCartItems() instead of direct access
   const cartItems = Array.isArray(cart.getCartItems()) ? cart.getCartItems() : [];
   const totalItemCount = cartItems.reduce((sum, item) => sum + (item.num || 0), 0);
 
-  // Update top count and title
   cartCount.textContent = totalItemCount;
   if (cartTitle) cartTitle.textContent = `Your Cart (${totalItemCount} items)`;
 
-  // Empty cart handling
   if (totalItemCount === 0) {
     popupItems.innerHTML = `
       <div class="text-center text-gray-500 py-6">
@@ -202,38 +188,31 @@ async function renderCartPopup(cart) {
     return;
   }
 
-  // Non-empty cart: Render item list
   popupItems.innerHTML = '';
   const itemTemplate = document.querySelector('.cart-item-template');
-
-  // Fix 6: Filter invalid items before traversal
   const validCartItems = cartItems.filter(item => item && item.pid && item.num > 0);
 
   for (const item of validCartItems) {
     let product = null;
     try {
-      // Prioritize global cache to avoid duplicate requests
       if (window.productCache.has(item.pid)) {
         product = window.productCache.get(item.pid);
       } else {
         const res = await axios.get(`${AppConfig.API_BASE_URL}/products/detail?pid=${item.pid}`);
-        // Fix 7: Strictly validate interface return format
         if (!res.data || typeof res.data !== 'object') throw new Error('Invalid response format');
         product = res.data.data || {};
-        window.productCache.set(item.pid, product); // Global cache
+        window.productCache.set(item.pid, product);
       }
 
       const productName = product.name || `Product #${item.pid}`;
       const productPrice = parseFloat(product.price || 0) || 0;
       const formattedPrice = AppUtils.formatPrice(productPrice);
 
-      // Fix 8: Ensure complete product item DOM structure (whether template exists or not)
       let itemEl;
       if (itemTemplate) {
         itemEl = itemTemplate.cloneNode(true);
         itemEl.classList.remove('hidden', 'cart-item-template');
       } else {
-        // Manually create complete structure when no template exists
         itemEl = document.createElement('div');
         itemEl.innerHTML = `
           <div class="cart-item-name font-medium"></div>
@@ -253,11 +232,9 @@ async function renderCartPopup(cart) {
         `;
       }
 
-      // Unified style and data setting
       itemEl.dataset.pid = item.pid;
       itemEl.className = 'py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b';
 
-      // Fill product info (fault tolerance: ensure child elements exist)
       const nameEl = itemEl.querySelector('.cart-item-name');
       const priceEl = itemEl.querySelector('.cart-item-price');
       const qtyMinus = itemEl.querySelector('.cart-qty-minus');
@@ -279,7 +256,6 @@ async function renderCartPopup(cart) {
       popupItems.appendChild(itemEl);
     } catch (error) {
       console.error(`Failed to render product ${item.pid}:`, error);
-      // Fallback: Create basic product item to ensure rendering is not interrupted
       const fallbackEl = document.createElement('div');
       fallbackEl.className = 'py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b';
       fallbackEl.innerHTML = `
@@ -296,7 +272,6 @@ async function renderCartPopup(cart) {
     }
   }
 
-  // Calculate total price (use global cache)
   const totalPrice = validCartItems.reduce((sum, item) => {
     const product = window.productCache.get(item.pid) || {};
     const price = parseFloat(product.price || 0) || 0;
@@ -305,7 +280,7 @@ async function renderCartPopup(cart) {
   popupTotal.textContent = AppUtils.formatPrice(totalPrice);
 }
 
-// ========== 3. Standalone Cart Page UI Rendering (Reuse popup fix logic) ==========
+// ========== 3. Standalone Cart Page UI Rendering (Remove direct items access) ==========
 async function renderCartUI(cart) {
   const cartItemsEl = document.getElementById('cart-items');
   const cartTotalEl = document.getElementById('cart-total');
@@ -314,6 +289,7 @@ async function renderCartUI(cart) {
 
   if (!cartItemsEl || !cartTotalEl || !cartTitleEl) return;
 
+  // Fix 5: Use getCartItems()
   const cartItems = Array.isArray(cart.getCartItems()) ? cart.getCartItems() : [];
   const validCartItems = cartItems.filter(item => item && item.pid && item.num > 0);
   const totalItemCount = validCartItems.reduce((sum, item) => sum + (item.num || 0), 0);
@@ -418,9 +394,8 @@ async function renderCartUI(cart) {
   cartTotalEl.textContent = AppUtils.formatPrice(totalPrice);
 }
 
-// ========== 4. Interactive Event Initialization (Fix: Bind only once + Fault Tolerance) ==========
+// ========== 4. Interactive Event Initialization (Core Fix: Async/Await + Error Handling) ==========
 function initCartEvents() {
-  // First initialize popup control
   initCartPopupControl();
 
   // Quantity + button
@@ -431,14 +406,18 @@ function initCartEvents() {
     const pid = parseInt(plusBtn.dataset.pid);
     if (isNaN(pid)) return;
 
-    // Fix 9: Update only after verifying product exists
     const currentItem = window.cart.getCartItem(pid);
     if (!currentItem) return;
 
-    window.cart.updateNum(pid, currentItem.num + 1);
-    window.cart.saveToLocalStorage();
-    await renderCartPopup(window.cart);
-    if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    try {
+      // Fix 6: Async updateNum
+      await window.cart.updateNum(pid, currentItem.num + 1);
+      await renderCartPopup(window.cart);
+      if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    } catch (error) {
+      console.error('Failed to increase quantity:', error);
+      alert('Failed to update quantity: ' + error.message);
+    }
   });
 
   // Quantity - button
@@ -452,10 +431,14 @@ function initCartEvents() {
     const currentItem = window.cart.getCartItem(pid);
     if (!currentItem || currentItem.num <= 1) return;
 
-    window.cart.updateNum(pid, currentItem.num - 1);
-    window.cart.saveToLocalStorage();
-    await renderCartPopup(window.cart);
-    if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    try {
+      await window.cart.updateNum(pid, currentItem.num - 1);
+      await renderCartPopup(window.cart);
+      if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    } catch (error) {
+      console.error('Failed to decrease quantity:', error);
+      alert('Failed to update quantity: ' + error.message);
+    }
   });
 
   // Quantity input box
@@ -463,26 +446,28 @@ function initCartEvents() {
     if (!e.target.classList.contains('cart-num') && !e.target.classList.contains('cart-qty-input')) return;
 
     const pid = parseInt(e.target.dataset.pid);
-    const newNum = Math.max(1, parseInt(e.target.value) || 1); // Ensure quantity ≥1
+    const newNum = Math.max(1, parseInt(e.target.value) || 1);
     if (isNaN(pid)) return;
 
     const currentItem = window.cart.getCartItem(pid);
     if (!currentItem) return;
 
-    window.cart.updateNum(pid, newNum);
-    window.cart.saveToLocalStorage();
-    await renderCartPopup(window.cart);
-    if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    try {
+      await window.cart.updateNum(pid, newNum);
+      await renderCartPopup(window.cart);
+      if (document.getElementById('cart-items')) await renderCartUI(window.cart);
+    } catch (error) {
+      console.error('Failed to update quantity via input:', error);
+      alert('Failed to update quantity: ' + error.message);
+    }
   });
 
-  // Delete product (popup + standalone page)
+  // Delete product
   document.addEventListener('click', async (e) => {
     const deleteBtn = e.target.closest('.cart-item-delete, .cart-delete');
     if (!deleteBtn) return;
 
-    // Fix 10: Prevent event bubbling to avoid popup closing
     e.stopPropagation();
-
     const pid = parseInt(deleteBtn.dataset.pid);
     if (isNaN(pid) || pid <= 0) {
       alert('Invalid product ID');
@@ -492,19 +477,19 @@ function initCartEvents() {
     if (!confirm('Are you sure you want to remove this item?')) return;
 
     try {
-      const deleteSuccess = window.cart.removeFromCart(pid);
+      // Fix 7: Async removeFromCart
+      const deleteSuccess = await window.cart.removeFromCart(pid);
       if (!deleteSuccess) {
         alert('Product not in cart');
         return;
       }
 
-      window.productCache.delete(pid); // Clear global cache
-      window.cart.saveToLocalStorage();
+      window.productCache.delete(pid);
       await renderCartPopup(window.cart);
       if (document.getElementById('cart-items')) await renderCartUI(window.cart);
     } catch (error) {
       console.error('Failed to delete product:', error);
-      alert('Failed to delete product');
+      alert('Failed to delete product: ' + error.message);
     }
   });
 
@@ -516,114 +501,73 @@ function initCartEvents() {
       if (!confirm('Are you sure you want to clear your cart?')) return;
 
       try {
-        window.cart.clearCart();
-        window.productCache.clear(); // Clear global cache
-        window.cart.saveToLocalStorage();
+        // Fix 8: Async clearCart
+        await window.cart.clearCart();
+        window.productCache.clear();
         await renderCartPopup(window.cart);
         if (document.getElementById('cart-items')) await renderCartUI(window.cart);
 
-        // Reset popup state (Fix 8: Style fallback)
         const cartPopup = document.getElementById('cart-popup');
         if (cartPopup) {
           cartPopup.classList.add('hidden', 'opacity-0', 'pointer-events-none');
         }
       } catch (error) {
         console.error('Failed to clear cart:', error);
-        alert('Failed to clear cart');
+        alert('Failed to clear cart: ' + error.message);
       }
     });
   }
 }
 
-
+// ========== Add to Cart (Core Fix: Async + Server Sync) ==========
 window.addToCart = async function(pid, e) {
   if (e) {
     e.stopPropagation();
     e.preventDefault();
   }
 
-  // 1. Log: Confirm if incoming PID is correct
-  console.log('[Add to Cart Step 1] Received PID:', pid);
+  console.log('[Add to Cart] Received PID:', pid);
   const validPid = parseInt(pid) || 0;
-  console.log('[Add to Cart Step 2] Converted valid PID:', validPid);
 
-  // 2. Ensure cart initialization
   if (!window.cart) {
-    console.log('[Add to Cart Step 3] Cart not initialized, start initialization');
+    console.log('[Add to Cart] Cart not initialized, initializing...');
     await initCartGlobal();
   }
-  console.log('[Add to Cart Step 4] Cart instance:', window.cart);
-  console.log('[Add to Cart Step 4] Current cart item list:', window.cart.items);
 
-  // 3. Validate PID
   if (validPid <= 0) {
     alert('Invalid product ID');
     return;
   }
 
   try {
-    // 4. Try to get product info (log verification)
     let product = null;
     if (window.productCache.has(validPid)) {
       product = window.productCache.get(validPid);
-      console.log('[Add to Cart Step 5] Get product from cache:', product);
     } else {
-      console.log('[Add to Cart Step 5] No product in cache, request interface');
       const res = await axios.get(`${AppConfig.API_BASE_URL}/products/detail?pid=${validPid}`);
       if (!res.data || !res.data.data) {
         alert('Product not found');
-        console.log('[Add to Cart Failed] Invalid data returned by interface:', res.data);
         return;
       }
       product = res.data.data;
       window.productCache.set(validPid, product);
     }
 
-    // 5. Core: Actually add product to cart (add log verification)
-    const existingItem = window.cart.getCartItem(validPid);
-    console.log('[Add to Cart Step 6] Whether product already exists:', existingItem);
-    if (existingItem) {
-      window.cart.updateNum(validPid, existingItem.num + 1);
-      console.log('[Add to Cart Step 7] After updating product quantity, cart.items:', window.cart.items);
-    } else {
-      window.cart.addToCart(validPid, 1);
-      console.log('[Add to Cart Step 7] After adding new product, cart.items:', window.cart.items);
-    }
+    // Fix 9: Async addToCart (server sync inside core.js)
+    await window.cart.addToCart(validPid, 1);
 
-    // 6. Force save to localStorage (key: avoid data loss)
-    window.cart.saveToLocalStorage();
-    console.log('[Add to Cart Step 8] Cart data in localStorage after saving:', localStorage.getItem('shoppingCart'));
-
-    // 7. Re-render cart (key: sync latest data)
     await renderCartPopup(window.cart);
     if (document.getElementById('cart-items')) await renderCartUI(window.cart);
 
-    // 8. Show success prompt
     alert(`${product.name || `Product #${validPid}`} added to cart!`);
-    console.log('[Add to Cart Success] Final cart item count:', window.cart.getTotalItemCount());
 
-    // 9. Force show popup
     const cartPopup = document.getElementById('cart-popup');
     if (cartPopup) {
       cartPopup.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
       cartPopup.classList.add('opacity-100', 'pointer-events-auto');
     }
   } catch (error) {
-    console.error('[Add to Cart Exception] Complete error:', error);
-    // Fallback add to cart (force add to cart even if interface fails)
-    if (validPid > 0) {
-      const existingItem = window.cart.getCartItem(validPid);
-      if (existingItem) {
-        window.cart.updateNum(validPid, existingItem.num + 1);
-      } else {
-        window.cart.addToCart(validPid, 1);
-      }
-      window.cart.saveToLocalStorage();
-      await renderCartPopup(window.cart);
-      alert(`Product #${validPid} added to cart (offline mode)!`);
-      console.log('[After Fallback Add to Cart] cart.items:', window.cart.items);
-    } else {
-      alert('Failed to add product to cart');
-    }
+    console.error('[Add to Cart] Failed:', error);
+    alert('Failed to add product to cart: ' + error.message);
   }
 };
