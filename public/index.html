@@ -44,6 +44,38 @@
         </button>
       </div>
     </div>
+  <!-- user icon -->
+  <!-- <div class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3 cursor-pointer relative group" id="userIconWrapper">
+    <a href="/login.html" id="loginLink">
+      <i class="fa-solid fa-user text-xl"></i>
+    <span class="text-sm font-medium px-2 py-0.5 rounded-full" id="roleTag"></span>
+
+    <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" id="tooltip">
+      <span id="tooltipRole"></span>
+    </div>
+    </a>
+  </div> -->
+<div class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3 cursor-pointer relative group" id="userIconWrapper">
+  <div class="flex items-center gap-2">
+    <i class="fa-solid fa-user text-xl"></i>
+    <span class="text-sm font-medium px-2 py-0.5 rounded-full bg-gray-100" id="roleTag">Loading...</span>
+  </div>
+
+  <!-- 提示框 -->
+  <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1.5 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap" id="tooltip">
+    <span id="tooltipRole">Account</span>
+  </div>
+
+  <!-- 下拉菜单 -->
+  <div class="absolute top-full right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-[9999]
+              opacity-0 invisible translate-y-1 pointer-events-none
+              transition-all duration-200 ease-out
+              group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto">
+    <div class="p-2 flex flex-col gap-1" id="userMenuItems"></div>
+  </div>
+</div>
+
+<script src="js/user.js"></script>
 
     <!-- Shopping Cart (core cart popup container) -->
     <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- Added: Core entry ID, match index.js -->
@@ -533,5 +565,10 @@
 
 <!-- Home Page Exclusive Script -->
 <script src="js/pages/home.js"></script>
+
+
+<script src="js/login.js"></script>
+
+
 </body>
 </html>

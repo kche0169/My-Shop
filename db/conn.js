@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const crypto = require('crypto'); // Password
 
 // Connect to shop.db in project root directory (auto-created if not exists)
 const dbPath = path.join(__dirname, '../shop.db');
@@ -16,8 +17,58 @@ const db = new sqlite3.Database(
   }
 );
 
+const hashPassword = (password) => {
+
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+  return `${salt}:${hash}`;
+};
+
 // Create tables and initialize test data
 db.serialize(() => {
+
+
+  db.run('DROP TABLE IF EXISTS users', (err) => {
+    if (err) console.error('Drop users table failed:', err.message);
+  });
+
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    userid INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE, 
+    password TEXT NOT NULL,     
+    admin INTEGER NOT NULL DEFAULT 0, -- 0 = user, 1 = admin
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`, (err) => {
+    if (err) console.error('Create users table failed:', err.message);
+    else console.log('Users table created successfully (for admin auth)!');
+  });
+
+  db.run('DELETE FROM users', (err) => {
+    if (err) console.error('Clear users data failed:', err.message);
+  });
+
+  // init
+  const insertUser = db.prepare('INSERT OR IGNORE INTO users (email, password, admin) VALUES (?, ?, ?)');
+  
+  // admin
+  const adminPasswordHash = hashPassword('Admin123!');
+  insertUser.run('admin@shop.com', adminPasswordHash, 1, (err) => {
+    if (err) console.error('Insert admin user failed:', err.message);
+    else console.log('Admin user created: admin@shop.com (password: Admin123!)');
+  });
+
+  // user
+  const userPasswordHash = hashPassword('User123!');
+  insertUser.run('user@shop.com', userPasswordHash, 0, (err) => {
+    if (err) console.error('Insert normal user failed:', err.message);
+    else console.log('Normal user created: user@shop.com (password: User123!)');
+  });
+
+  insertUser.finalize((err) => {
+    if (err) console.error('Finalize user insertion failed:', err.message);
+    else console.log('2 users inserted successfully (1 admin + 1 normal)!');
+  });
+
   // Drop existing tables (products first as it references categories)
   db.run('DROP TABLE IF EXISTS products', (err) => {
     if (err) console.error('Drop products table failed:', err.message);
@@ -554,9 +605,26 @@ db.serialize(() => {
     }
   });
 
+  // 
+  db.all('SELECT userid, email, admin FROM users', (err, rows) => {
+    if (err) console.error('Query users table failed:', err.message);
+    else {
+      console.log('\n✅ Users Table Data:');
+      rows.forEach(row => {
+        console.log(`UserID: ${row.userid}, Email: ${row.email}, Admin: ${row.admin === 1 ? 'Yes' : 'No'}`);
+      });
+    }
+  });
+
   // Final confirmation message
   console.log('\n✅ Table creation + test data insertion completed!');
   console.log('🔑 Key Updates:');
+  console.log('→ Added users table (userid/email/password/admin) for admin authentication');
+  console.log('→ Passwords are stored as salt+hash (not plain text)');
+  console.log('→ Products table: kept img_path2/img_path3/img_path4 + long_description');
+  console.log('→ Category ID: 1=Electronics, 2=Fashion, 3=Home, 4=Sports');
+  console.log('→ Admin user: admin@shop.com (password: Admin123!)');
+  console.log('→ Normal user: user@shop.com (password: User123!)');
   console.log('→ Products table: added img_path2/img_path3/img_path4 + long_description');
   console.log('→ All products have multi-image paths and detailed long descriptions');
   console.log('→ Category ID: 1=Electronics, 2=Fashion, 3=Home, 4=Sports');

@@ -237,3 +237,18 @@ function delPro(pid) {
     });
   }
 }
+
+// Log Out 按钮点击事件
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  try {
+    // 调用后端登出接口，清除 Cookie
+    await axios.get('/api/logout');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  } finally {
+    // 清除 localStorage 里的角色缓存
+    localStorage.removeItem('userRole');
+    // 强制跳转到首页
+    window.location.replace('/');
+  }
+});

@@ -31,7 +31,7 @@ window.hideLoading = function() {
 // ===================== Step 2: Global config/utils fallback (prevent dependency missing) =====================
 // Global config (adapt to actual project path, adjust according to your deployment)
 window.AppConfig = window.AppConfig || {
-  API_BASE_URL: 'http://localhost:3000/api', // Backend API address
+  API_BASE_URL: '/api', // Backend API address
   DEFAULT_IMG: 'https://via.placeholder.com/200x200?text=No+Image', // Default product image
   PAGE_PATHS: {
     CATEGORY_DETAIL: '/pages/category/detail.html', // Category page path (relative to root)
