@@ -1,6 +1,7 @@
 /**
+ * js/cart/core.js
  * Shopping Cart Core Data Layer (OOP design, independent of UI)
- * Responsibility: Data storage, data operations (add/modify/delete/query), localStorage persistence
+ * Responsibility: Data storage, data operations (add/modify/delete/query), Server + localStorage persistence
  */
 class CartItem {
   /**
@@ -15,13 +16,50 @@ class CartItem {
 }
 
 class ShoppingCart {
-  constructor() {
+  /**
+   * @param {number} userid - Current user ID (required for backend API)
+   */
+  constructor(userid) {
+    if (!userid || isNaN(Number(userid)) || Number(userid) < 1) {
+      throw new Error('ShoppingCart requires a valid userid (number >= 1)');
+    }
+    
     // Initialize cart item list (store CartItem instances)
     this.cartItems = [];
+    this.userid = Number(userid);
+    this.apiBase = '/api/products/cart';
   }
 
   /**
-   * 1. Query single product (core method relied on by index.js, previously missing!)
+   * 0. Internal helper: Send AJAX request (unified handling)
+   * @param {string} endpoint - API endpoint (e.g., '/add')
+   * @param {object} data - Request body data (without userid)
+   * @returns {Promise<object>} - Response data
+   * @private
+   */
+  async _request(endpoint, data = {}) {
+    try {
+      const response = await fetch(`${this.apiBase}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userid: this.userid, ...data })
+      });
+
+      const result = await response.json();
+      
+      if (result.code !== 0) {
+        throw new Error(result.msg || 'Request failed');
+      }
+      
+      return result.data;
+    } catch (error) {
+      console.error(`[ShoppingCart API Error] ${endpoint}:`, error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * 1. Query single product (core method relied on by index.js)
    * @param {number} pid - Product ID
    * @returns {CartItem|null} - Product instance or null (not found)
    */
@@ -36,25 +74,30 @@ class ShoppingCart {
    */
   getCartItems() {
     return [...this.cartItems]; // Return copy to avoid direct modification of original array
-  }
+   }
 
   /**
    * 3. Add product (accumulate quantity if exists, add new if not)
    * @param {number} pid - Product ID
    * @param {number} num - Quantity to add
    */
-  addToCart(pid, num = 1) {
+  async addToCart(pid, num = 1) {
     const validPid = parseInt(pid, 10);
     const validNum = Math.max(parseInt(num, 10), 1);
-    const existingItem = this.getCartItem(validPid);
 
+    // 1. Send request to backend first
+    await this._request('/add', { pid: validPid, num: validNum });
+
+    // 2. Update local memory only after server success
+    const existingItem = this.getCartItem(validPid);
     if (existingItem) {
-      // Exists: accumulate quantity
       existingItem.num += validNum;
     } else {
-      // Not exists: add new CartItem instance
       this.cartItems.push(new CartItem(validPid, validNum));
     }
+
+    // 3. Save to localStorage as backup
+    this._saveToLocalStorage();
   }
 
   /**
@@ -63,16 +106,24 @@ class ShoppingCart {
    * @param {number} newNum - New quantity (minimum 1)
    * @returns {boolean} - Return true if updated, false if product not found
    */
-  updateNum(pid, newNum) {
+  async updateNum(pid, newNum) {
     const validPid = parseInt(pid, 10);
     const validNum = Math.max(parseInt(newNum, 10), 1);
     const item = this.getCartItem(validPid);
 
-    if (item) {
-      item.num = validNum;
-      return true;
+    if (!item) {
+      return false;
     }
-    return false;
+
+    // 1. Send request to backend
+    await this._request('/update', { pid: validPid, num: validNum });
+
+    // 2. Update local memory
+    item.num = validNum;
+
+    // 3. Save backup
+    this._saveToLocalStorage();
+    return true;
   }
 
   /**
@@ -80,18 +131,33 @@ class ShoppingCart {
    * @param {number} pid - Product ID
    * @returns {boolean} - Return true if removed, false if product not found
    */
-  removeFromCart(pid) {
+  async removeFromCart(pid) {
     const validPid = parseInt(pid, 10);
     const initialLength = this.cartItems.length;
+
+    // 1. Send request to backend
+    await this._request('/delete', { pid: validPid });
+
+    // 2. Update local memory
     this.cartItems = this.cartItems.filter(item => item.pid !== validPid);
+
+    // 3. Save backup
+    this._saveToLocalStorage();
     return this.cartItems.length < initialLength;
   }
 
   /**
    * 6. Clear cart
    */
-  clearCart() {
+  async clearCart() {
+    // 1. Send request to backend
+    await this._request('/clear');
+
+    // 2. Update local memory
     this.cartItems = [];
+
+    // 3. Save backup
+    this._saveToLocalStorage();
   }
 
   /**
@@ -103,11 +169,27 @@ class ShoppingCart {
   }
 
   /**
-   * 8. Load cart data from localStorage (restore after page refresh)
+   * 8. Load cart data from Server (primary) + localStorage (fallback)
    */
-  loadFromLocalStorage() {
+  async load() {
     try {
-      // Add: Test localStorage availability first (avoid error from block)
+      // 1. Try to load from server first
+      const serverData = await this._request('/list');
+      this.cartItems = (serverData || []).map(item => new CartItem(item.pid, item.num));
+      this._saveToLocalStorage(); // Sync server data to local
+    } catch (error) {
+      console.warn('[ShoppingCart] Failed to load from server, falling back to localStorage');
+      // 2. Fallback to localStorage if server fails
+      this._loadFromLocalStorage();
+    }
+  }
+
+  /**
+   * 9. Internal: Load cart data from localStorage (fallback only)
+   * @private
+   */
+  _loadFromLocalStorage() {
+    try {
       const testKey = '__cart_test__';
       localStorage.setItem(testKey, 'test');
       localStorage.removeItem(testKey);
@@ -115,36 +197,34 @@ class ShoppingCart {
       const storedData = localStorage.getItem('shoppingCart');
       if (storedData) {
         const parsedData = JSON.parse(storedData);
-        // Convert to CartItem instances (ensure method callability)
         this.cartItems = parsedData.map(item => new CartItem(item.pid, item.num));
       }
     } catch (error) {
       console.error('Failed to load cart from localStorage:', error);
-      this.cartItems = []; // Initialize empty cart when load fails
+      this.cartItems = [];
     }
   }
 
   /**
-   * 9. Save cart data to localStorage (persistence)
+   * 10. Internal: Save cart data to localStorage (backup only)
+   * @private
    */
-  saveToLocalStorage() {
+  _saveToLocalStorage() {
     try {
-      // Add: Test localStorage availability first (avoid error from block)
       const testKey = '__cart_test__';
       localStorage.setItem(testKey, 'test');
       localStorage.removeItem(testKey);
       
-      // Store only necessary data (pid and num) to avoid redundancy
       const dataToStore = this.cartItems.map(item => ({
         pid: item.pid,
         num: item.num
       }));
       localStorage.setItem('shoppingCart', JSON.stringify(dataToStore));
     } catch (error) {
-      // Only print warning, do not modify in-memory data (core: cartItems remains)
       console.warn('Failed to save cart to localStorage (blocked by browser)：', error);
     }
   }
 }
+
 // Expose class for index.js import (ensure global accessibility)
 window.ShoppingCart = ShoppingCart;
