@@ -1,4 +1,3 @@
-<!-- archive
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,54 +7,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
-  <link rel="stylesheet" href="css/custom.css">
-  <link rel="stylesheet" href="css/common.css">
-
-  <style>
-    .user-panel {
-      width: 100%;
-      max-width: 320px;
-      margin: 2rem 0;
-      background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .user-panel .btn {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      color: #374151;
-      text-align: left;
-      background: transparent;
-      border: none;
-      border-left: 3px solid transparent;
-      transition: all 0.2s ease;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .user-panel .btn i {
-      width: 20px;
-      margin-right: 0.75rem;
-      color: #6b7280;
-    }
-
-    .user-panel .btn.active {
-      border-left-color: #2563eb;
-      color: #2563eb;
-      font-weight: 500;
-    }
-    .user-panel .btn.active i {
-      color: #2563eb;
-    }
-
-    .user-panel .btn:hover:not(.active) {
-      background-color: #f9fafb;
-    }
-  </style>
+  <link rel="stylesheet" href="css/user.css"> 
 </head>
 
 <body class="bg-gray-50 font-sans">
@@ -68,26 +20,103 @@
   </div>
 </header>
 
-<div class="container mx-auto px-4">
-  <div class="user-panel" id="userPanelWrapper">
-    <button class="btn active" id="loginBtn">
-      <i class="fa-solid fa-user"></i> Public profile
-    </button>
-    <button class="btn" id="changePwdBtn">
-      <i class="fa-solid fa-gear"></i> Account
-    </button>
-    <button class="btn">
-      <i class="fa-solid fa-paintbrush"></i> Appearance
-    </button>
-    <button class="btn">
-      <i class="fa-solid fa-person-cane"></i> Accessibility
-    </button>
-    <button class="btn">
-      <i class="fa-solid fa-bell"></i> Notifications
-    </button>
-    <button class="btn btn-danger" id="logoutBtn">
-      <i class="fa-solid fa-right-from-bracket"></i> Logout
-    </button>
+<div class="container mx-auto px-4 py-8">
+  <!-- 主要布局容器：左侧侧边栏 + 右侧内容区 -->
+  <div class="flex flex-col md:flex-row gap-8 items-start">
+    
+    <!-- 左侧：侧边栏 -->
+    <div class="user-sidebar w-full md:w-64" id="userSidebar">
+      <button class="btn active" data-target="profile-content">
+        <i class="fa-solid fa-user"></i> Public Profile
+      </button>
+      <button class="btn" data-target="account-content">
+        <i class="fa-solid fa-gear"></i> Account Settings
+      </button>
+      <button class="btn" data-target="orders-content">
+        <i class="fa-solid fa-box-archive"></i> My Orders
+      </button>
+      <button class="btn" data-target="appearance-content">
+        <i class="fa-solid fa-paintbrush"></i> Appearance
+      </button>
+      <div class="border-t border-gray-100 my-2"></div>
+      <button class="btn text-red-600 hover:bg-red-50" id="logoutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+
+    <!-- 右侧：内容展示区 -->
+    <div class="flex-1 w-full bg-white p-6 md:p-8 rounded-lg shadow-sm min-h-[500px]">
+      
+      <!-- 1. 个人资料内容 -->
+      <div id="profile-content" class="content-area active">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Public Profile</h2>
+        <div class="flex flex-col sm:flex-row gap-6 items-start">
+          <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold shrink-0">
+            JD
+          </div>
+          <div class="space-y-4 w-full">
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Display Name</label>
+              <p class="text-lg font-medium">User</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-500">Bio</label>
+              <p class="text-gray-600">Love shopping here! 🛍️</p>
+            </div>
+            <button class="text-blue-600 hover:underline text-sm font-medium">Edit Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 账户设置内容 -->
+      <div id="account-content" class="content-area">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Account Settings</h2>
+        <form class="space-y-6 max-w-lg">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <input type="email" value="user@shop.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" value="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <p class="text-sm text-gray-500 mt-1">Last changed 3 months ago</p>
+          </div>
+          <button type="button" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Update Settings</button>
+        </form>
+      </div>
+
+      <!-- 3. 我的订单内容 (这是你要的 Orders 页面) -->
+    <div id="orders-content" class="content-area">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">My Recent Orders</h2>
+      <div id="realOrdersList" class="space-y-4"></div>
+    </div>
+
+
+      <!-- 4. 外观设置内容 -->
+      <div id="appearance-content" class="content-area">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Appearance</h2>
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Theme Mode</label>
+            <div class="grid grid-cols-3 gap-4">
+              <button class="border-2 border-blue-500 bg-blue-50 rounded-lg p-4 text-center">
+                <i class="fa-solid fa-sun text-xl text-gray-800 mb-2 block"></i>
+                <span class="text-sm font-medium">Light</span>
+              </button>
+              <button class="border-2 border-gray-200 hover:border-gray-300 rounded-lg p-4 text-center">
+                <i class="fa-solid fa-moon text-xl text-gray-800 mb-2 block"></i>
+                <span class="text-sm font-medium">Dark</span>
+              </button>
+              <button class="border-2 border-gray-200 hover:border-gray-300 rounded-lg p-4 text-center">
+                <i class="fa-solid fa-desktop text-xl text-gray-800 mb-2 block"></i>
+                <span class="text-sm font-medium">System</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -105,6 +134,88 @@
   </div>
 </footer>
 
-<script src="js/user-panel.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有按钮和内容区域
+    const buttons = document.querySelectorAll('.user-sidebar .btn[data-target]');
+    const contentAreas = document.querySelectorAll('.content-area');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        // 1. 移除所有按钮的 active 状态
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        // 2. 给当前点击的按钮添加 active 状态
+        this.classList.add('active');
+        
+        // 3. 获取要显示的内容区域 ID
+        const targetId = this.getAttribute('data-target');
+        
+        // 4. 隐藏所有内容区域
+        contentAreas.forEach(area => area.classList.remove('active'));
+        
+        // 5. 显示目标内容区域
+        const targetArea = document.getElementById(targetId);
+        if (targetArea) {
+          targetArea.classList.add('active');
+        }
+      });
+    });
+  });
+
+  async function loadUserRealOrders() {
+  const listEl = document.getElementById('realOrdersList');
+  try {
+    const res = await fetch('/api/orders/user/recent');
+    const result = await res.json();
+
+    if (result.code !== 0 || !result.data || result.data.length === 0) {
+      listEl.innerHTML = `<p class="text-gray-500">You have no orders yet.</p>`;
+      return;
+    }
+
+    let html = '';
+    result.data.forEach(order => {
+      // 解析订单里的商品
+      let items = [];
+      try {
+        items = JSON.parse(order.items_json);
+      } catch (e) {}
+
+      const itemText = items.map(i => `Product #${i.pid} × ${i.num}`).join(', ');
+
+      html += `
+      <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <span class="text-sm text-gray-500">Order #${order.id}</span>
+            <p class="font-medium">Total: ${order.currency} ${order.total_price}</p>
+          </div>
+          <span class="px-2 py-1 rounded text-xs font-medium ${
+            order.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }">
+            ${order.status}
+          </span>
+        </div>
+        <div class="text-sm text-gray-600">
+          <p>${itemText || 'No items'}</p>
+        </div>
+      </div>
+      `;
+    });
+
+    listEl.innerHTML = html;
+  } catch (err) {
+    listEl.innerHTML = `<p class="text-red-500">Failed to load orders</p>`;
+  }
+}
+
+// 当页面切换到订单标签时自动加载
+document.querySelector('[data-target="orders-content"]').addEventListener('click', () => {
+  setTimeout(loadUserRealOrders, 100);
+});
+
+
+</script>
 </body>
-</html> -->
+</html>

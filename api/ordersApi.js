@@ -1,6 +1,6 @@
 /**
  * api/ordersApi.js
- * 独立的订单接口文件 (不修改 productsApi.js)
+ * 独立的订单接口文件
  */
 const express = require('express');
 const router = express.Router();
@@ -34,6 +34,7 @@ function generateDigest({ currency, merchantEmail, salt, items, totalPrice }) {
   return crypto.createHash('sha256').update(rawString).digest('hex');
 }
 
+// ===================== 已修改：作业任务5 - 加自动跳转链接 =====================
 async function createPayPalOrder(totalPrice, currency) {
   const request = new paypal.orders.OrdersCreateRequest();
   request.prefer('return=representation');
@@ -44,7 +45,11 @@ async function createPayPalOrder(totalPrice, currency) {
         currency_code: currency,
         value: totalPrice.toFixed(2)
       }
-    }]
+    }],
+    application_context: {
+      return_url: `http://localhost:3000/api/orders/paypal/success`,
+      cancel_url: `http://localhost:3000/index.html`
+    }
   });
 
   const order = await paypalClient.execute(request);
@@ -125,13 +130,17 @@ router.post('/create', [
       });
     });
 
+    // 5. 把 paypalOrderId 拼到 approvalLink 里供跳转使用
+    const approvalLink = paypalOrder.links.find(l => l.rel === 'approve')?.href;
+    const finalApprovalLink = approvalLink ? `${approvalLink}&paypalOrderId=${paypalOrder.id}` : null;
+
     res.json({
       code: 0,
       msg: 'Order created',
       data: {
         orderId,
         paypalOrderId: paypalOrder.id,
-        approvalLink: paypalOrder.links.find(l => l.rel === 'approve')?.href
+        approvalLink: finalApprovalLink
       }
     });
 
@@ -229,5 +238,52 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   }
 });
 
+// ===================== 新增：作业任务5 - PayPal支付后自动跳回商店 =====================
+router.get('/paypal/success', async (req, res) => {
+  const { paypalOrderId } = req.query;
+  const db = req.app.get('db');
+
+  if (paypalOrderId) {
+    await new Promise((resolve, reject) => {
+      db.run(`UPDATE orders SET status = 'PAID' WHERE paypal_order_id = ?`, [paypalOrderId], (err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+  }
+
+  // 自动跳回商店首页
+  res.redirect('/index.html');
+});
+
+// ===================== 新增：作业任务6 - 管理员面板显示所有订单 =====================
+router.get('/admin/all', async (req, res) => {
+  const db = req.app.get('db');
+  db.all(`SELECT * FROM orders ORDER BY created_at DESC`, (err, rows) => {
+    if (err) return res.json({ code: -1, msg: 'Failed to fetch orders' });
+    res.json({ code: 0, data: rows });
+  });
+});
+
+// ===================== 新增：作业任务7 - 会员查看最近5条订单 =====================
+router.get('/user/recent', async (req, res) => {
+  const sessionToken = req.cookies.user;
+  if (!sessionToken) return res.status(401).json({ code: -1, msg: 'Please login first' });
+
+  const sessionStore = req.app.get('sessionStore');
+  const userId = sessionStore.get(sessionToken);
+  if (!userId) return res.status(401).json({ code: -1, msg: 'Invalid session' });
+
+  const db = req.app.get('db');
+  db.all(`
+    SELECT * FROM orders 
+    WHERE userid = ? 
+    ORDER BY created_at DESC 
+    LIMIT 5
+  `, [userId], (err, rows) => {
+    if (err) return res.json({ code: -1, msg: 'Failed to fetch orders' });
+    res.json({ code: 0, data: rows });
+  });
+});
 
 module.exports = router;

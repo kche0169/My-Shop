@@ -1,0 +1,58 @@
+    .user-sidebar {
+      width: 100%;
+      max-width: 280px;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .user-sidebar .btn {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      color: #374151;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .user-sidebar .btn i {
+      width: 20px;
+      margin-right: 0.75rem;
+      color: #6b7280;
+    }
+
+    .user-sidebar .btn.active {
+      border-left-color: #2563eb;
+      color: #2563eb;
+      font-weight: 500;
+      background-color: #eff6ff;
+    }
+    .user-sidebar .btn.active i {
+      color: #2563eb;
+    }
+
+    .user-sidebar .btn:hover:not(.active) {
+      background-color: #f9fafb;
+    }
+
+    /* 右侧内容区域样式 */
+    .content-area {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .content-area.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
