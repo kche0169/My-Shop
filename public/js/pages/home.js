@@ -57,7 +57,17 @@ async function loadSectionProducts(sectionTitle, catid) {
     showLoading();
     const res = await axios.get(`${AppConfig.API_BASE_URL}/products/list?catid=${catid}`);
     const products = res.data.data || [];
-    const sectionEl = document.querySelector(`section:has(h2:contains("${sectionTitle}")) .grid`);
+    
+    // 🔴 修复：替换 jQuery 风格选择器，使用原生 JS 遍历查找
+    let sectionEl = null;
+    const allSections = document.querySelectorAll('section');
+    for (const sec of allSections) {
+      const h2 = sec.querySelector('h2');
+      if (h2 && h2.textContent.trim().includes(sectionTitle)) {
+        sectionEl = sec.querySelector('.grid');
+        break;
+      }
+    }
 
     if (!sectionEl || products.length === 0) {
       hideLoading();
@@ -169,43 +179,49 @@ function renderCategoryList() {
     const mobileCateList = document.getElementById('mobile-cate-list');
     const desktopCateList = document.getElementById('desktop-cate-list');
     
-    // Clear existing content
-    mobileCateList.innerHTML = '';
-    desktopCateList.innerHTML = '';
-
-    // Show prompt when no categories
-    if (cateList.length === 0) {
-      mobileCateList.innerHTML = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
-      desktopCateList.innerHTML = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
-      return;
+    // 🔴 修复：仅在元素存在时执行后续操作
+    if (mobileCateList) {
+      mobileCateList.innerHTML = '';
+      if (cateList.length === 0) {
+        mobileCateList.innerHTML = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
+      } else {
+        cateList.forEach(cate => {
+          const mobileLi = document.createElement('li');
+          mobileLi.innerHTML = `
+            <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cate.catid}" 
+               class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">
+              ${cate.name}
+            </a>
+          `;
+          mobileCateList.appendChild(mobileLi);
+        });
+      }
     }
 
-    // Traverse categories to generate list items
-    cateList.forEach(cate => {
-      // Mobile category item
-      const mobileLi = document.createElement('li');
-      mobileLi.innerHTML = `
-        <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cate.catid}" 
-           class="block px-3 py-2 rounded-md hover:bg-blue-100 hover:text-blue-600 transition-colors">
-          ${cate.name}
-        </a>
-      `;
-      mobileCateList.appendChild(mobileLi);
-
-      // Desktop category item
-      const desktopLi = document.createElement('li');
-      desktopLi.innerHTML = `
-        <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cate.catid}"
-           class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
-          ${cate.name}
-        </a>
-      `;
-      desktopCateList.appendChild(desktopLi);
-    });
+    if (desktopCateList) {
+      desktopCateList.innerHTML = '';
+      if (cateList.length === 0) {
+        desktopCateList.innerHTML = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
+      } else {
+        cateList.forEach(cate => {
+          const desktopLi = document.createElement('li');
+          desktopLi.innerHTML = `
+            <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cate.catid}"
+               class="block px-3 py-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600 transition-colors">
+              ${cate.name}
+            </a>
+          `;
+          desktopCateList.appendChild(desktopLi);
+        });
+      }
+    }
   }).catch(err => {
     console.error('Failed to load category list：', err);
-    document.getElementById('mobile-cate-list').innerHTML = '<li class="text-red-500 px-3 py-2">Failed to load categories</li>';
-    document.getElementById('desktop-cate-list').innerHTML = '<li class="text-red-500 px-3 py-2">Failed to load categories</li>';
+    // 🔴 修复：同样先判断元素存在
+    const mobileCateList = document.getElementById('mobile-cate-list');
+    const desktopCateList = document.getElementById('desktop-cate-list');
+    if (mobileCateList) mobileCateList.innerHTML = '<li class="text-red-500 px-3 py-2">Failed to load categories</li>';
+    if (desktopCateList) desktopCateList.innerHTML = '<li class="text-red-500 px-3 py-2">Failed to load categories</li>';
   });
 }
 
