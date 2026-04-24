@@ -252,3 +252,37 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
     window.location.replace('/');
   }
 });
+
+// Back 按钮点击事件：直接回首页
+document.getElementById('backBtn').addEventListener('click', () => {
+  window.location.replace('/index.html');
+});
+
+// Orders 按钮点击事件：导航到管理员订单页
+document.getElementById('ordersBtn').addEventListener('click', () => {
+  window.location.replace('/admin/orders.html');
+});
+
+async function loadOrders() {
+  const r = await fetch('/api/orders/admin/all');
+  const data = await r.json();
+  const list = document.getElementById('order-list');
+
+  if (data.code !== 0) {
+    list.innerHTML = '<p class="text-red-500">Failed to load orders</p>';
+    return;
+  }
+
+  data.data.forEach(o => {
+    list.innerHTML += `
+      <div class="border p-4 rounded-lg shadow">
+        <p><strong>Order ID:</strong> ${o.id}</p>
+        <p><strong>User ID:</strong> ${o.userid}</p>
+        <p><strong>Total:</strong> ${o.currency} ${o.total_price.toFixed(2)}</p>
+        <p><strong>Status:</strong> <span class="px-2 py-1 rounded ${o.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${o.status}</span></p>
+        <p><strong>Items:</strong> ${o.items_json}</p>
+      </div>
+    `;
+  });
+}
+loadOrders();
