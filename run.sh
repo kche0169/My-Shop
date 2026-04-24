@@ -1,2 +1,1 @@
-node db/conn.js
-node app.js
+pm2 start app.js
