@@ -169,21 +169,23 @@ class ShoppingCart {
   }
 
   /**
-   * 8. Load cart data from Server (primary) + localStorage (fallback)
+   * 8. Load cart data (临时修改：只用 localStorage，绕过 404)
    */
   async load() {
     try {
-      // 1. Try to load from server first
-      const serverData = await this._request('/list');
-      this.cartItems = (serverData || []).map(item => new CartItem(item.pid, item.num));
-      this._saveToLocalStorage(); // Sync server data to local
+      // 【临时注释掉】先不请求服务器，避免 404 报错
+      // const serverData = await this._request('/list');
+      // this.cartItems = (serverData || []).map(item => new CartItem(item.pid, item.num));
+      // this._saveToLocalStorage();
+
+      // 【临时方案】直接用本地存储
+      console.log('[ShoppingCart] 临时使用本地存储加载');
+      this._loadFromLocalStorage();
     } catch (error) {
-      console.warn('[ShoppingCart] Failed to load from server, falling back to localStorage');
-      // 2. Fallback to localStorage if server fails
+      console.warn('[ShoppingCart] Load failed, using localStorage');
       this._loadFromLocalStorage();
     }
   }
-
   /**
    * 9. Internal: Load cart data from localStorage (fallback only)
    * @private

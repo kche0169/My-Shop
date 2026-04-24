@@ -65,3 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// document.addEventListener('DOMContentLoaded', function() {
+//   // 绑定 checkout 按钮（自动找 id="checkout-btn"）
+//   if (window.Checkout) {
+//     Checkout.initCheckoutButton('checkout-btn', 1);
+//   }
+// });

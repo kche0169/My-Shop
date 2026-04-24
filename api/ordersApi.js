@@ -11,7 +11,7 @@ const paypalConfig = require('../config/paypal');
 
 // 初始化 PayPal 环境
 let environment = paypalConfig.mode === 'sandbox'
-  ? new paypal.core.SandboxEnvironment(paypalConfig.clientId, paypalConfig.clientSecret)
+  ? new paypal.core.SandEnvironment(paypalConfig.clientId, paypalConfig.clientSecret)
   : new paypal.core.LiveEnvironment(paypalConfig.clientId, paypalConfig.clientSecret);
 let paypalClient = new paypal.core.PayPalHttpClient(environment);
 
@@ -141,10 +141,93 @@ router.post('/create', [
   }
 });
 
-// ===================== 核心接口 2: Webhook (占位) =====================
-router.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
-  console.log('[PayPal Webhook] Received:', req.body);
-  res.sendStatus(200);
+// ===================== 核心接口 2: PayPal Webhook =====================
+router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const db = req.app.get('db');
+  
+  try {
+    console.log('[PayPal Webhook] 收到通知');
+    
+    // 1. 解析 PayPal 发送的事件
+    const event = JSON.parse(req.body.toString());
+    console.log('[PayPal Webhook] 事件类型:', event.event_type);
+
+    // 只处理支付成功相关的事件
+    if (event.event_type !== 'CHECKOUT.ORDER.APPROVED' && event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') {
+      return res.sendStatus(200);
+    }
+
+    // 2. 获取 PayPal 订单 ID
+    const paypalOrderId = event.resource.id || event.resource.order_id;
+    if (!paypalOrderId) {
+      return res.sendStatus(200);
+    }
+
+    console.log('[PayPal Webhook] 处理订单:', paypalOrderId);
+
+    // 3. 从数据库查订单
+    const order = await new Promise((resolve, reject) => {
+      db.get('SELECT * FROM orders WHERE paypal_order_id = ?', [paypalOrderId], (err, row) => {
+        if (err) reject(err);
+        resolve(row);
+      });
+    });
+
+    if (!order) {
+      console.log('[PayPal Webhook] 数据库里没找到这个订单');
+      return res.sendStatus(200);
+    }
+
+    // 4. 检查是否已处理过
+    if (order.status === 'PAID') {
+      console.log('[PayPal Webhook] 这个订单已经付过款了');
+      return res.sendStatus(200);
+    }
+
+    // 5. 重新生成 Digest 并验证
+    const items = JSON.parse(order.items_json);
+    const itemsString = items.map(item => `${item.pid}|${item.num}|${item.price}`).join('|');
+    const rawString = [
+      order.currency,
+      order.merchant_email,
+      order.salt,
+      itemsString,
+      order.total_price.toFixed(2)
+    ].join('|');
+    
+    const regeneratedDigest = crypto.createHash('sha256').update(rawString).digest('hex');
+
+    console.log('[PayPal Webhook] 数据库存的 digest:', order.digest);
+    console.log('[PayPal Webhook] 重新生成的 digest:', regeneratedDigest);
+
+    // 对比验证
+    if (regeneratedDigest !== order.digest) {
+      console.error('[PayPal Webhook] ❌ Digest 不匹配！数据可能被篡改');
+      return res.sendStatus(400);
+    }
+
+    console.log('[PayPal Webhook] ✅ Digest 验证成功！');
+
+    // 6. 更新订单状态为 PAID（作业要求）
+    await new Promise((resolve, reject) => {
+      db.run(`
+        UPDATE orders 
+        SET status = 'PAID', paid_at = CURRENT_TIMESTAMP, paypal_transaction_id = ?
+        WHERE id = ?
+      `, [event.resource.id || paypalOrderId, order.id], (err) => {
+        if (err) reject(err);
+        resolve();
+      });
+    });
+
+    console.log('[PayPal Webhook] ✅ 订单状态已更新为 PAID！');
+    res.sendStatus(200);
+
+  } catch (err) {
+    console.error('[PayPal Webhook 错误]', err);
+    res.sendStatus(500);
+  }
 });
+
 
 module.exports = router;
