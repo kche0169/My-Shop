@@ -15,6 +15,14 @@ const sessionStore = new Map();
 const app = express();
 const port = 3000;
 
+process.on('uncaughtException', (err) => {
+  console.error('🔥 uncaughtException:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('🔥 unhandledRejection:', err);
+});
+
 // ===================== 1. Database Connection =====================
 const db = new sqlite3.Database('./shop.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
   if (err) console.error('[ERROR] Database connection failed:', err.message);
