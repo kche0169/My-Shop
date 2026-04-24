@@ -11,7 +11,7 @@ const paypalConfig = require('../config/paypal');
 
 // 初始化 PayPal 环境
 let environment = paypalConfig.mode === 'sandbox'
-  ? new paypal.core.SandEnvironment(paypalConfig.clientId, paypalConfig.clientSecret)
+  ? new paypal.core.SandboxEnvironment(paypalConfig.clientId, paypalConfig.clientSecret)
   : new paypal.core.LiveEnvironment(paypalConfig.clientId, paypalConfig.clientSecret);
 let paypalClient = new paypal.core.PayPalHttpClient(environment);
 

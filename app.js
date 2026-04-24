@@ -265,5 +265,6 @@ app.post('/api/change-password', (req, res) => {
   });
 });
 
-module.exports = { app, db };
+
 app.set('sessionStore', sessionStore);
+module.exports = { app, db };
