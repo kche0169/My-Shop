@@ -23,11 +23,35 @@ document.addEventListener('DOMContentLoaded', async () => {
       </a>
     `;
   } else {
-    userMenuItems.innerHTML = `
+    // ==============================================
+    // 核心修改：根据角色自动切换菜单（保留你所有原有代码）
+    // ==============================================
+    let roleMenu = '';
+    if (user.role === 'admin') {
+      // 管理员：显示管理面板
+      roleMenu = `
       <a href="/admin" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-user-shield w-4 text-center"></i>
         <span class="text-sm">Admin Panel</span>
       </a>
+      `;
+    } else {
+      // 普通用户：显示用户面板 + 我的订单
+      roleMenu = `
+      <a href="/user-panel.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+        <i class="fa-solid fa-user w-4 text-center"></i>
+        <span class="text-sm">User Panel</span>
+      </a>
+      <a href="/user-panel.html#orders-content" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+        <i class="fa-solid fa-box w-4 text-center"></i>
+        <span class="text-sm">My Orders</span>
+      </a>
+      `;
+    }
+
+    // 渲染最终菜单（保留你原来的 改密码/重登/登出）
+    userMenuItems.innerHTML = `
+      ${roleMenu}
 
       <a href="javascript:showChangePasswordModal()" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-lock w-4 text-center"></i>
@@ -59,6 +83,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+function showChangePasswordModal() {
+  const oldPwd = prompt("Enter current password:");
+  if (!oldPwd) return;
+
+  const newPwd = prompt("Enter new password (min 6 characters):");
+  if (!newPwd) return;
+
+  if (newPwd.length < 6) {
+    alert("Password must be at least 6 characters long!");
+    return;
+  }
+
+  const confirmPwd = prompt("Confirm new password:");
+  if (confirmPwd !== newPwd) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  axios.post('/api/change-password', {
+    currentPassword: oldPwd,
+    newPassword: newPwd
+  }).then(res => {
+    if (res.data.success) {
+      alert("Password changed successfully! Please login again.");
+      localStorage.removeItem('userRole');
+      window.location.replace('/login.html');
+    } else {
+      alert("Failed: " + res.data.message);
+    }
+  }).catch(err => {
+    alert("Current password incorrect or server error");
+  });
+}
 
 function showChangePasswordModal() {
   const oldPwd = prompt("Enter current password:");
