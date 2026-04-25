@@ -47,8 +47,10 @@ async function createPayPalOrder(totalPrice, currency) {
       }
     }],
     application_context: {
-      return_url: `http://localhost:3000/api/orders/paypal/success`,
-      cancel_url: `http://localhost:3000/index.html`
+      return_url: `https://s66.iems5718.iecuhk.cc/api/orders/paypal/success`, // ✅ 改这里！
+      cancel_url: `https://s66.iems5718.iecuhk.cc/index.html`, // ✅ 改这里！
+      shipping_preference: "NO_SHIPPING", // 建议加上这个，避免物流地址问题
+      user_action: "PAY_NOW" // 建议加上这个，强制显示付款按钮
     }
   });
 
