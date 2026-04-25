@@ -27,7 +27,7 @@ class ShoppingCart {
     // Initialize cart item list (store CartItem instances)
     this.cartItems = [];
     this.userid = Number(userid);
-    this.apiBase = '/api/products/cart';
+    this.apiBase = '/api/cart'; // ✅ 修复1：修正接口路径（解决404）
   }
 
   /**
@@ -225,6 +225,11 @@ class ShoppingCart {
     } catch (error) {
       console.warn('Failed to save cart to localStorage (blocked by browser)：', error);
     }
+  }
+
+  // ✅ 修复2：添加公开方法（解决 saveToLocalStorage is not a function 报错）
+  saveToLocalStorage() {
+    this._saveToLocalStorage();
   }
 }
 

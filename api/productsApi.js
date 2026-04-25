@@ -370,7 +370,8 @@ router.get('/del/:pid', requireAdmin, [
   }
 });
 
-// ===================== Cart API (Unchanged - User Feature) =====================
+// ===================== Cart API (Complete Full Set - User Feature) =====================
+// 1. Add to cart (Original)
 router.post('/cart/add', [
   body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0'),
   body('pid').isNumeric().withMessage('Product ID must be a number').custom(val => val >= 1).withMessage('Product ID must be greater than 0'),
@@ -399,6 +400,100 @@ router.post('/cart/add', [
       }
       res.json({ code: 0, msg: 'Added to cart successfully', data: { cartId: this.lastID } });
     });
+  });
+});
+
+// 2. Get cart list (New Added)
+router.post('/cart/list', [
+  body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ code: -1, msg: errors.array()[0].msg });
+  }
+
+  const { userid } = req.body;
+  const query = `
+    SELECT c.*, p.name, p.price, p.img_path 
+    FROM cart c 
+    LEFT JOIN products p ON c.pid = p.pid 
+    WHERE c.userid = ?
+  `;
+  db.all(query, [Number(userid)], (err, rows) => {
+    if (err) {
+      console.error('Get cart list failed:', err.message);
+      return res.status(500).json({ code: -1, msg: 'Server error: ' + err.message });
+    }
+    res.json({ code: 0, msg: 'Get cart success', data: rows });
+  });
+});
+
+// 3. Update cart quantity (New Added)
+router.post('/cart/update', [
+  body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0'),
+  body('pid').isNumeric().withMessage('Product ID must be a number').custom(val => val >= 1).withMessage('Product ID must be greater than 0'),
+  body('num').isNumeric().withMessage('Quantity must be a number').custom(val => val >= 1).withMessage('Quantity must be greater than 0')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ code: -1, msg: errors.array()[0].msg });
+  }
+
+  const { userid, pid, num } = req.body;
+  db.run(`UPDATE cart SET num = ? WHERE userid = ? AND pid = ?`, 
+    [Number(num), Number(userid), Number(pid)], 
+    function(err) {
+      if (err) {
+        console.error('Update cart failed:', err.message);
+        return res.status(500).json({ code: -1, msg: 'Server error: ' + err.message });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ code: -1, msg: 'Cart item not found' });
+      }
+      res.json({ code: 0, msg: 'Update cart success' });
+    }
+  );
+});
+
+// 4. Delete cart item (New Added)
+router.post('/cart/delete', [
+  body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0'),
+  body('pid').isNumeric().withMessage('Product ID must be a number').custom(val => val >= 1).withMessage('Product ID must be greater than 0')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ code: -1, msg: errors.array()[0].msg });
+  }
+
+  const { userid, pid } = req.body;
+  db.run(`DELETE FROM cart WHERE userid = ? AND pid = ?`, 
+    [Number(userid), Number(pid)], 
+    function(err) {
+      if (err) {
+        console.error('Delete cart item failed:', err.message);
+        return res.status(500).json({ code: -1, msg: 'Server error: ' + err.message });
+      }
+      res.json({ code: 0, msg: 'Delete cart item success' });
+    }
+  );
+});
+
+// 5. Clear cart (New Added)
+router.post('/cart/clear', [
+  body('userid').isNumeric().withMessage('User ID must be a number').custom(val => val >= 1).withMessage('User ID must be greater than 0')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ code: -1, msg: errors.array()[0].msg });
+  }
+
+  const { userid } = req.body;
+  db.run(`DELETE FROM cart WHERE userid = ?`, [Number(userid)], function(err) {
+    if (err) {
+      console.error('Clear cart failed:', err.message);
+      return res.status(500).json({ code: -1, msg: 'Server error: ' + err.message });
+    }
+    res.json({ code: 0, msg: 'Clear cart success' });
   });
 });
 
