@@ -6,7 +6,7 @@ const db = require('./config/db');
 const globalMiddlewares = require('./middlewares/global');
 const pageRoutes = require('./routes/page');
 const userRoutes = require('./routes/user');
-const requireAdmin = require('./api/middlewares/auth'); // 你之前的管理员保安
+const requireAdmin = require('./api/middlewares/auth');
 
 // 2. 会话存储
 const sessionStore = new Map();
@@ -19,9 +19,9 @@ const port = 3000;
 globalMiddlewares(app);
 
 // 4. 挂载路由
-app.use('/', pageRoutes); // 页面路由
-app.use('/api', userRoutes); // 用户接口
-app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin'))); // 管理员页面
+app.use('/', pageRoutes);
+app.use('/api', userRoutes);
+app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin')));
 
 // 5. 挂载业务路由（分类/产品/订单）
 try {
