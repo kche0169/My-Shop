@@ -25,6 +25,7 @@
   };
 
   // 核心结账逻辑
+// 核心结账逻辑
   async function processCheckout() {
     try {
       // 1. 检查购物车
@@ -47,13 +48,27 @@
         num: item.num
       }));
 
+      // ===================== 【获取当前登录真实用户ID】 =====================
+      const userRes = await fetch('/api/userinfo', { 
+        credentials: 'include',
+        cache: 'no-store'
+      });
+      const userInfo = await userRes.json();
+      if (!userInfo.isLogin) {
+        alert('请先登录！');
+        window.location.href = '/login.html';
+        return;
+      }
+      const userId = userInfo.userId; // 真实用户ID（1=管理员，2=普通用户）
+      // ================================================================================
+
       // 3. 调用后端创建订单
       console.log('🚀 发送请求到后端...');
       const res = await fetch('/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userid: 1,
+          userid: userId, // 现在用真实ID，不再固定为1
           items: itemsToSend
         })
       });
