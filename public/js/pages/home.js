@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       pagination: { el: '.swiper-pagination', clickable: true }
     });
     
-    // 3. Load home page categories (reuse original + enhance rendering)
+    // 3. Load home page categories (内部已自动渲染，无需重复调用)
     await AppCommon.loadAllCategories();
-    renderCategoryList(); 
     
     // 4. Load home page recommended products
     await loadHomeProducts();
