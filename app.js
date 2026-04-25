@@ -11,8 +11,9 @@ const crypto = require('crypto');
 
 // [NEW] In-memory session store: Maps random session tokens to user IDs
 const sessionStore = new Map();
-app.set('sessionStore', sessionStore);
+
 const app = express();
+app.set('sessionStore', sessionStore);
 const port = 3000;
 
 process.on('uncaughtException', (err) => {
