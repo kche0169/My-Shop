@@ -27,7 +27,7 @@ class ShoppingCart {
     // Initialize cart item list (store CartItem instances)
     this.cartItems = [];
     this.userid = Number(userid);
-    this.apiBase = '/api/cart'; // ✅ 修复1：修正接口路径（解决404）
+    this.apiBase = '/api/products/cart'; 
   }
 
   /**
