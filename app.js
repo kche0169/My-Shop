@@ -132,7 +132,8 @@ app.post('/api/login', (req, res) => {
     res.cookie('user', randomSessionId, {
       httpOnly: true,
       secure: isHttps, // Only set secure on HTTPS connections
-      sameSite: 'Strict',
+      // sameSite: 'Strict',
+      sameSite: 'none',
       maxAge: 3 * 24 * 60 * 60 * 1000
     });
     
