@@ -125,6 +125,19 @@ db.serialize(() => {
     if (err) console.error('Create orders table failed:', err.message);
     else console.log('✅ Orders table created successfully (with digest & PayPal fields)!');
   });
+
+  // ===================== ✅【新增】Create cart 购物车表（修复报错核心） =====================
+  db.run(`CREATE TABLE IF NOT EXISTS cart (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userid INTEGER NOT NULL,
+    pid INTEGER NOT NULL,
+    num INTEGER NOT NULL DEFAULT 1,
+    UNIQUE(userid, pid)
+  )`, (err) => {
+    if (err) console.error('Create cart table failed:', err.message);
+    else console.log('✅ Cart table created successfully (购物车表已创建)!');
+  });
+
   // Clear existing data (double protection)
   db.run('DELETE FROM products', (err) => {
     if (err) console.error('Clear products data failed:', err.message);
@@ -629,6 +642,7 @@ db.serialize(() => {
   console.log('→ All products have multi-image paths and detailed long descriptions');
   console.log('→ Category ID: 1=Electronics, 2=Fashion, 3=Home, 4=Sports');
   console.log('→ All image paths start with /images/ (correct for frontend access)');
+  console.log('→ ✅ Added cart table for shopping cart function');
 });
 
 // Export database connection for other files
