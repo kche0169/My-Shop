@@ -4,6 +4,11 @@ const baseUrl = '/api';
 
 // 页面加载时加载分类+产品列表
 window.onload = () => {
+  // 防护：只有axios存在才执行（修复axios未定义报错）
+  if (typeof axios === 'undefined') {
+    console.warn('axios 未加载，跳过管理员接口请求');
+    return;
+  }
   getCateList();
   getProList();
 };
@@ -47,21 +52,25 @@ function getCateList() {
 }
 
 // 2. 新增分类（表单提交）
-document.getElementById('addCateForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = e.target.name.value.trim(); // 输入清洗：去除首尾空格
-  axios.post(`${baseUrl}/cate/add`, { name }).then(res => {
-    alert(res.data.msg);
-    e.target.reset();
-    getCateList(); // 刷新分类列表
-    getProList();  // 刷新产品列表
-    // ======== 新增：标记分类已更新（用于首页实时同步） ========
-    localStorage.setItem('cateUpdated', Date.now());
-  }).catch(err => {
-    const errMsg = err.response?.data?.msg || err.message || "新增分类失败：未知错误";
-    alert(errMsg);
+// ✅ 修复：加元素存在判断，避免null报错
+const addCateForm = document.getElementById('addCateForm');
+if (addCateForm) {
+  addCateForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = e.target.name.value.trim(); // 输入清洗：去除首尾空格
+    axios.post(`${baseUrl}/cate/add`, { name }).then(res => {
+      alert(res.data.msg);
+      e.target.reset();
+      getCateList(); // 刷新分类列表
+      getProList();  // 刷新产品列表
+      // ======== 新增：标记分类已更新（用于首页实时同步） ========
+      localStorage.setItem('cateUpdated', Date.now());
+    }).catch(err => {
+      const errMsg = err.response?.data?.msg || err.message || "新增分类失败：未知错误";
+      alert(errMsg);
+    });
   });
-});
+}
 
 // 3. 编辑分类（赋值到表单）
 function editCate(catid, name) {
@@ -70,22 +79,26 @@ function editCate(catid, name) {
 }
 
 // 4. 保存分类修改
-document.getElementById('editCateForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const catid = e.target.catid.value;
-  const name = e.target.name.value.trim(); // 输入清洗
-  axios.post(`${baseUrl}/cate/edit`, { catid, name }).then(res => {
-    alert(res.data.msg);
-    e.target.reset();
-    getCateList();
-    getProList();
-    // ======== 新增：标记分类已更新（用于首页实时同步） ========
-    localStorage.setItem('cateUpdated', Date.now());
-  }).catch(err => {
-    const errMsg = err.response?.data?.msg || err.message || "修改分类失败：未知错误";
-    alert(errMsg);
+// ✅ 修复：加元素存在判断
+const editCateForm = document.getElementById('editCateForm');
+if (editCateForm) {
+  editCateForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const catid = e.target.catid.value;
+    const name = e.target.name.value.trim(); // 输入清洗
+    axios.post(`${baseUrl}/cate/edit`, { catid, name }).then(res => {
+      alert(res.data.msg);
+      e.target.reset();
+      getCateList();
+      getProList();
+      // ======== 新增：标记分类已更新（用于首页实时同步） ========
+      localStorage.setItem('cateUpdated', Date.now());
+    }).catch(err => {
+      const errMsg = err.response?.data?.msg || err.message || "修改分类失败：未知错误";
+      alert(errMsg);
+    });
   });
-});
+}
 
 // 5. 删除分类
 function delCate(catid) {
@@ -146,35 +159,39 @@ function getProList() {
 }
 
 // 2. 新增产品【保留：FormData+图片大小校验 + 新增FormData日志】
-document.getElementById('addProForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const fileInput = e.target.proImg;
-  const file = fileInput.files[0];
-  // Phase2B硬性要求：图片大小≤10MB
-  if (file && file.size > 10 * 1024 * 1024) {
-    alert('图片大小不能超过10MB！（Phase2B要求）');
-    return;
-  }
-  const formData = new FormData(e.target);
-  
-  // ======== 新增：打印FormData所有字段（用于验证文件是否封装） ========
-  console.log('===== 新增产品 - FormData 内容 =====');
-  for (let [key, value] of formData.entries()) {
-    console.log('FormData字段：', key, value); // 文件会显示为 File 对象
-  }
-  // ================================================================
+// ✅ 修复：加元素存在判断
+const addProForm = document.getElementById('addProForm');
+if (addProForm) {
+  addProForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fileInput = e.target.proImg;
+    const file = fileInput.files[0];
+    // Phase2B硬性要求：图片大小≤10MB
+    if (file && file.size > 10 * 1024 * 1024) {
+      alert('图片大小不能超过10MB！（Phase2B要求）');
+      return;
+    }
+    const formData = new FormData(e.target);
+    
+    // ======== 新增：打印FormData所有字段（用于验证文件是否封装） ========
+    console.log('===== 新增产品 - FormData 内容 =====');
+    for (let [key, value] of formData.entries()) {
+      console.log('FormData字段：', key, value); // 文件会显示为 File 对象
+    }
+    // ================================================================
 
-  axios.post(`${baseUrl}/products/add`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }).then(res => {
-    alert(res.data.msg);
-    e.target.reset();
-    getProList(); // 刷新产品列表
-  }).catch(err => {
-    const errMsg = err.response?.data?.msg || err.message || "新增产品失败：未知错误";
-    alert(errMsg);
+    axios.post(`${baseUrl}/products/add`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }).then(res => {
+      alert(res.data.msg);
+      e.target.reset();
+      getProList(); // 刷新产品列表
+    }).catch(err => {
+      const errMsg = err.response?.data?.msg || err.message || "新增产品失败：未知错误";
+      alert(errMsg);
+    });
   });
-});
+}
 
 // 3. 编辑产品（赋值到表单+单引号转义，避免JS报错）
 function editPro(pid, catid, name, price, description) {
@@ -188,42 +205,50 @@ function editPro(pid, catid, name, price, description) {
 }
 
 // 4. 取消产品修改
-document.getElementById('cancelEdit').addEventListener('click', () => {
-  document.getElementById('editProForm').style.display = 'none';
-  document.getElementById('editProForm').reset();
-});
+// ✅ 修复：加元素存在判断
+const cancelEdit = document.getElementById('cancelEdit');
+if (cancelEdit) {
+  cancelEdit.addEventListener('click', () => {
+    document.getElementById('editProForm').style.display = 'none';
+    document.getElementById('editProForm').reset();
+  });
+}
 
 // 5. 保存产品修改【保留：FormData+图片校验 + 新增FormData日志】
-document.getElementById('editProForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const fileInput = e.target.proImg;
-  const file = fileInput.files[0];
-  // Phase2B图片大小校验
-  if (file && file.size > 10 * 1024 * 1024) {
-    alert('图片大小不能超过10MB！（Phase2B要求）');
-    return;
-  }
-  const formData = new FormData(e.target);
-  
-  // ======== 新增：打印FormData所有字段（用于验证文件是否封装） ========
-  console.log('===== 编辑产品 - FormData 内容 =====');
-  for (let [key, value] of formData.entries()) {
-    console.log('FormData字段：', key, value); // 文件会显示为 File 对象
-  }
-  // ================================================================
+// ✅ 修复：加元素存在判断
+const editProForm = document.getElementById('editProForm');
+if (editProForm) {
+  editProForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fileInput = e.target.proImg;
+    const file = fileInput.files[0];
+    // Phase2B图片大小校验
+    if (file && file.size > 10 * 1024 * 1024) {
+      alert('图片大小不能超过10MB！（Phase2B要求）');
+      return;
+    }
+    const formData = new FormData(e.target);
+    
+    // ======== 新增：打印FormData所有字段（用于验证文件是否封装） ========
+    console.log('===== 编辑产品 - FormData 内容 =====');
+    for (let [key, value] of formData.entries()) {
+      console.log('FormData字段：', key, value); // 文件会显示为 File 对象
+    }
+    // ================================================================
 
-  axios.post(`${baseUrl}/products/edit`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }).then(res => {
-    alert(res.data.msg);
-    e.target.reset();
-    document.getElementById('editProForm').style.display = 'none';
-    getProList();
-  }).catch(err => {
-    const errMsg = err.response?.data?.msg || err.message || "修改产品失败：未知错误";
-    alert(errMsg);
+    axios.post(`${baseUrl}/products/edit`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }).then(res => {
+      alert(res.data.msg);
+      e.target.reset();
+      document.getElementById('editProForm').style.display = 'none';
+      getProList();
+    }).catch(err => {
+      const errMsg = err.response?.data?.msg || err.message || "修改产品失败：未知错误";
+      alert(errMsg);
+    });
   });
-});
+}
 
 // 6. 删除产品【保留：图片清理提示】
 function delPro(pid) {
@@ -239,42 +264,57 @@ function delPro(pid) {
 }
 
 // Log Out 按钮点击事件
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  try {
-    // 调用后端登出接口，清除 Cookie
-    await axios.get('/api/logout');
-  } catch (error) {
-    console.error('Logout failed:', error);
-  } finally {
-    // 清除 localStorage 里的角色缓存
-    localStorage.removeItem('userRole');
-    // 强制跳转到首页
-    window.location.replace('/');
-  }
-});
+// ✅ 修复：加元素存在判断
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      // 调用后端登出接口，清除 Cookie
+      await axios.get('/api/logout');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      // 清除 localStorage 里的角色缓存
+      localStorage.removeItem('userRole');
+      // 强制跳转到首页
+      window.location.replace('/');
+    }
+  });
+}
 
 // Back 按钮点击事件：直接回首页
-document.getElementById('backBtn').addEventListener('click', () => {
-  window.location.replace('/index.html');
-});
+// ✅ 修复：加元素存在判断
+const backBtn = document.getElementById('backBtn');
+if (backBtn) {
+  backBtn.addEventListener('click', () => {
+    window.location.replace('/index.html');
+  });
+}
 
 // Orders 按钮点击事件：导航到管理员订单页
-document.getElementById('ordersBtn').addEventListener('click', () => {
-  window.location.replace('/admin/orders.html');
-});
+// ✅ 修复：加元素存在判断
+const ordersBtn = document.getElementById('ordersBtn');
+if (ordersBtn) {
+  ordersBtn.addEventListener('click', () => {
+    window.location.replace('/admin/orders.html');
+  });
+}
 
 async function loadOrders() {
+  const orderList = document.getElementById('order-list');
+  // ✅ 修复：无订单列表则退出
+  if (!orderList) return;
+
   const r = await fetch('/api/orders/admin/all');
   const data = await r.json();
-  const list = document.getElementById('order-list');
 
   if (data.code !== 0) {
-    list.innerHTML = '<p class="text-red-500">Failed to load orders</p>';
+    orderList.innerHTML = '<p class="text-red-500">Failed to load orders</p>';
     return;
   }
 
   data.data.forEach(o => {
-    list.innerHTML += `
+    orderList.innerHTML += `
       <div class="border p-4 rounded-lg shadow">
         <p><strong>Order ID:</strong> ${o.id}</p>
         <p><strong>User ID:</strong> ${o.userid}</p>
