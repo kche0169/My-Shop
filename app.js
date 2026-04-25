@@ -11,7 +11,7 @@ const crypto = require('crypto');
 
 // [NEW] In-memory session store: Maps random session tokens to user IDs
 const sessionStore = new Map();
-
+app.set('sessionStore', sessionStore);
 const app = express();
 const port = 3000;
 
@@ -267,5 +267,5 @@ app.post('/api/change-password', (req, res) => {
 });
 
 
-app.set('sessionStore', sessionStore);
+// app.set('sessionStore', sessionStore);
 module.exports = { app, db };
