@@ -3,39 +3,62 @@
 ## 1. Updated Complete Project Structure
 ```
 IEMS5718/
-├── db/                # Database directory
-│   └── conn.js        # Backend JS: Unified database connection (reused across APIs)
-├── admin/             # Admin panel (frontend HTML+JS)
-│   ├── index.html     # Admin main page (product/category CRUD operations)          
-│   ├── admin.js       # Admin exclusive JS (added) Handle admin form submission, file upload, API calls
-│   └── admin.css  # Style admin panel UI
-├── api/               # Backend API directory
-│   ├── categoryApi.js # Category API (GET all, GET by ID, POST/PUT/DELETE)
-│   └──productApi.js  # Product API (GET list, GET detail, POST/PUT/DELETE, image upload)
-├── js/                # Frontend JS (browser-side)
-│   ├── script.js      # Original common logic
-│   ├── script1.js     # Original auxiliary logic
-│   ├── config.js      # Added: Global config (API base URL, etc.)
-│   ├── utils.js       # Added: Tool functions (format price, DOM operation, etc.)
-│   ├── common.js      # Added: Common logic (cart sync, toast prompt, etc.)
-│   └── cart/          # Added: Shopping cart core logic
-│       ├── core.js    # Cart data management (localStorage, calculate total)
-│       └── index.js   # Cart UI rendering (popup/standalone page)
-├── css/               # Frontend styles
-│   └── custom.css     # Custom styles (tailwind supplement)
-├── category/          # Category page (dynamic rendering)
-│   └── detail.html    # Category detail page (load products by catid)
-├── cart/              # Added: Shopping cart page
-│   └── detail.html    # Cart standalone page (full cart management)
-├── products/          # Product detail page
-│   └── detail.html    # Product detail page (load by PID, add to cart)
-├── images/            # Original static images (carousel, default icons)
-├── index.html         # Frontend main page (rebuilt: dynamic carousel, product sections)
-├── README.md          # Project documentation (added: setup, API docs, usage)
-├── package.json       # Node project config (dependencies: express, sqlite3, multer, sharp)
+# ===================== [Global Core: Database + Service Entry] =====================
+├── db/                      # Database directory (unchanged)
+│   └── conn.js              # Unified database connection (reused across the entire project)
+├── app.js                   # Backend entry point (highly streamlined, only mounts services)
+├── package.json             # Dependency configuration (unchanged)
 ├── package-lock.json
-├── node_modules/      # NPM dependencies (.gitignore)
-└── app.js             # Backend entry: Node server (CORS, static hosting, route mounting)
+├── node_modules/
+└── README.md
+
+# ===================== [Global: Page Routes + Global Middleware] =====================
+├── routes/                  # [Pure Page Routes] Stores only web page access routes (user-facing pages)
+│   └── page.js              # Routes for login, register, homepage and other pages
+├── middlewares/             # [Global Middleware] Shared by the entire project (CORS, parsing, security headers)
+│   └── global.js            # General global middleware (cross-origin, request parsing, static files)
+
+# ===================== [Backend API Module: Fully Independent, Decoupled & Organized] =====================
+├── api/                     # [All Backend Data APIs] Fully isolated, independent of web pages
+│   ├── middlewares/         # API-specific middleware (for interfaces only)
+│   │   └── auth.js          # Admin authentication middleware (requireAdmin)
+│   ├── routes/              # API Routes: Only define interface endpoints, no business logic
+│   │   ├── category.js      # Category API routes
+│   │   ├── products.js      # Product API routes
+│   │   └── orders.js        # Order API routes
+│   ├── controllers/         # API Controllers: Separate file for each function (finely divided)
+│   │   ├── category/        # Category controllers
+│   │   │   ├── getAll.js
+│   │   │   ├── add.js
+│   │   │   ├── edit.js
+│   │   │   └── delete.js
+│   │   ├── product/         # Product controllers
+│   │   └── order/           # Order controllers
+│   └── config/              # API configuration (PayPal, etc.)
+│       └── paypal.js
+
+# ===================== [All Frontend Files: 100% Preserved & Unmodified] =====================
+├── admin/                   # Admin backend (unchanged)
+│   ├── index.html
+│   ├── admin.js
+│   └── admin.css
+├── js/                      # Frontend JavaScript (unchanged)
+│   ├── script.js
+│   ├── script1.js
+│   ├── config.js
+│   ├── utils.js
+│   ├── common.js
+│   └── cart/
+├── css/                     # Frontend styles (unchanged)
+│   └── custom.css
+├── category/                # Category pages (unchanged)
+│   └── detail.html
+├── cart/                    # Shopping cart pages (unchanged)
+│   └── detail.html
+├── products/                # Product detail pages (unchanged)
+│   └── detail.html
+├── images/                  # Static images (unchanged)
+└── index.html               # Homepage (unchanged)
 ```
 
 ---
