@@ -38,11 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       // 普通用户：显示用户面板 + 我的订单
       roleMenu = `
-      <a href="/user-panel.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+      <a href="/user.html" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-user w-4 text-center"></i>
         <span class="text-sm">User Panel</span>
       </a>
-      <a href="/user-panel.html#orders-content" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+      <a href="/user.html#orders-content" class="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
         <i class="fa-solid fa-box w-4 text-center"></i>
         <span class="text-sm">My Orders</span>
       </a>
