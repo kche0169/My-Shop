@@ -2,8 +2,8 @@
 // Define role display and behavior configurations
 const roleConfig = {
     Guest: { text: 'Guest', bgColor: 'bg-gray-100', textColor: 'text-gray-600', link: '/login.html' },
-    User: { text: 'User', bgColor: 'bg-blue-100', textColor: 'text-blue-700', link: '/login.html' },
-    Admin: { text: 'Admin', bgColor: 'bg-red-100', textColor: 'text-red-700', link: '/login.html' }
+    User: { text: 'User', bgColor: 'bg-blue-100', textColor: 'text-blue-700', link: '/' },
+    Admin: { text: 'Admin', bgColor: 'bg-red-100', textColor: 'text-red-700', link: '/admin.html' }
 };
 
 // 【核心重写】页面加载时，直接调用后端接口获取当前用户角色，100%同步
@@ -52,10 +52,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Optional: Logout function to clear stored role and redirect
 function logout() {
     localStorage.removeItem('userRole');
-    window.location.href = 'login.html';
+    window.location.href = '/login.html';
 }
 
-// login.js【修复：确保角色存完再跳转】
+// 登录表单提交逻辑
 document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -66,9 +66,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     // Hide previous errors
     errorAlert.style.display = 'none';
 
-    // ==========================================
-    // [NEW] Frontend validation: Email format + Password length
-    // ==========================================
+    // 前端校验
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         errorAlert.textContent = 'Please enter a valid email address';
@@ -80,7 +78,6 @@ document.getElementById('login-form').addEventListener('submit', async function(
         errorAlert.style.display = 'block';
         return;
     }
-    // ==========================================
 
     try {
         const res = await fetch('/api/login', {
@@ -91,23 +88,19 @@ document.getElementById('login-form').addEventListener('submit', async function(
 
         const data = await res.json();
         
-        // Debug log to see what backend returns
         console.log('Login response:', data);
 
-        // Check business logic success (not just HTTP status)
+        // 登录成功
         if (data.success) {
-            // 【关键修复】先把后端返回的角色存到localStorage
+            // 存储角色到本地
             const targetRole = data.role || 'User';
             localStorage.setItem('userRole', targetRole);
             console.log('角色已存储:', targetRole);
             
-            // 【关键修复】等100ms确保localStorage写入完成，再跳转
-            setTimeout(() => {
-                console.log('Redirecting to:', data.redirectUrl);
-                window.location.href = data.redirectUrl || '/';
-            }, 100);
+            // 直接跳转（localStorage是同步操作，无需延迟！）
+            window.location.href = data.redirectUrl || '/';
         } else {
-            // Show business logic error
+            // 显示错误
             errorAlert.textContent = data.message || data.msg || 'Invalid email or password';
             errorAlert.style.display = 'block';
         }
@@ -118,13 +111,23 @@ document.getElementById('login-form').addEventListener('submit', async function(
     }
 })
 
+// ===================== 【修复！！】用户图标点击逻辑 =====================
+// 1. 先获取 wrapper 元素（替换为你页面中真实的选择器：类名/ID）
+const wrapper = document.querySelector('#userIconWrapper'); 
+// 2. 只有元素存在时，才绑定点击事件（避免登录页报错）
+if (wrapper) {
+    wrapper.addEventListener('click', async () => {
+        let currentRole = localStorage.getItem('userRole') || 'Guest';
+        console.log('点击用户图标，当前角色:', currentRole);
 
-// 整个 user icon 区域点击跳转逻辑
-wrapper.addEventListener('click', async () => {
-  let currentRole = localStorage.getItem('userRole') || 'Guest';
-  console.log('click, role=', currentRole);
-
-  if (currentRole === 'Guest') window.location.href = '/login';
-  else if (currentRole === 'Admin') window.location.href = '/admin';
-  else window.location.href = '/';
-});
+        // 统一跳转路径，严格匹配角色
+        if (currentRole === 'Guest') {
+            window.location.href = '/login.html';
+        } else if (currentRole === 'Admin') {
+            window.location.href = '/admin.html';
+        } else {
+            // User 角色跳首页
+            window.location.href = '/';
+        }
+    });
+}
