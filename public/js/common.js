@@ -44,7 +44,7 @@ window.AppCommon = {
    */
   async loadAllCategories(activeCatId = null) {
     try {
-      const res = await axios.get(`${AppConfig.API_BASE_URL}/api/cate/all`);
+      const res = await axios.get(`${AppConfig.API_BASE_URL}/cate/all`);
       const categories = res.data.data || [];
 
       if (categories.length === 0) {
