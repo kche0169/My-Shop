@@ -24,15 +24,18 @@ app.use('/api', userRoutes); // 用户接口
 app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin'))); // 管理员页面
 
 // 5. 挂载业务路由（分类/产品/订单）
-// 🔥 修复：移除错误屏蔽，打印完整崩溃信息，强制加载路由
-const cateApi = require('./api/routes/category');
-const productsApi = require('./api/routes/products');
-const ordersApi = require('./api/routes/orders');
-
-app.use('/api/cate', cateApi);
-app.use('/api/products', productsApi);
-app.use('/api/orders', ordersApi);
-console.log('[SUCCESS] All routes mounted!');
+try {
+  const cateApi = require('./api/routes/category');
+  const productsApi = require('./api/routes/products');
+  const ordersApi = require('./api/routes/orders');
+  
+  app.use('/api/cate', cateApi);
+  app.use('/api/products', productsApi);
+  app.use('/api/orders', ordersApi);
+  console.log('[SUCCESS] All routes mounted!');
+} catch (err) {
+  console.error('[ERROR] Route mounting failed:', err.message);
+}
 
 // 6. 启动服务
 app.listen(port, '0.0.0.0', () => {
