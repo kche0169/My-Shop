@@ -240,14 +240,21 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   }
 });
 
-// ===================== 新增：作业任务5 - PayPal支付后自动跳回商店 =====================
+// ===================== PayPal支付后自动跳回商店 =====================
+// 支付成功后更新订单
 router.get('/paypal/success', async (req, res) => {
-  const { paypalOrderId } = req.query;
+  // ✅ 拿 PayPal 传回的 token（这就是订单号！）
+  const { token } = req.query;
   const db = req.app.get('db');
 
-  if (paypalOrderId) {
+  if (token) {
+    console.log("支付成功，正在更新订单：", token);
     await new Promise((resolve, reject) => {
-      db.run(`UPDATE orders SET status = 'PAID' WHERE paypal_order_id = ?`, [paypalOrderId], (err) => {
+      db.run(`
+        UPDATE orders
+        SET status = 'PAID', paid_at = CURRENT_TIMESTAMP
+        WHERE paypal_order_id = ?
+      `, [token], (err) => {
         if (err) reject(err);
         resolve();
       });
