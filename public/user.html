@@ -163,10 +163,13 @@
     });
   });
 
-  async function loadUserRealOrders() {
+async function loadUserRealOrders() {
   const listEl = document.getElementById('realOrdersList');
   try {
-    const res = await fetch('/api/orders/user/recent');
+    // 🔥 修复：必须加上 credentials: 'include' 携带登录Cookie！
+    const res = await fetch('/api/orders/user/recent', {
+      credentials: 'include'  // 👈 这是唯一要加的东西
+    });
     const result = await res.json();
 
     if (result.code !== 0 || !result.data || result.data.length === 0) {
@@ -176,7 +179,6 @@
 
     let html = '';
     result.data.forEach(order => {
-      // 解析订单里的商品
       let items = [];
       try {
         items = JSON.parse(order.items_json);
@@ -209,13 +211,12 @@
     listEl.innerHTML = `<p class="text-red-500">Failed to load orders</p>`;
   }
 }
-
 // 当页面切换到订单标签时自动加载
 document.querySelector('[data-target="orders-content"]').addEventListener('click', () => {
   setTimeout(loadUserRealOrders, 100);
 });
 
-
+loadUserRealOrders();
 </script>
 </body>
 </html>
