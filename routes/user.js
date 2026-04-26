@@ -43,7 +43,7 @@ router.post('/login', (req, res) => {
     res.cookie('user', randomSessionId, {
       httpOnly: true,
       secure: isHttps,
-      sameSite: 'none',
+      sameSite: isHttps ? 'none' : 'lax',
       maxAge: 3 * 24 * 60 * 60 * 1000
     });
     

@@ -134,7 +134,7 @@ app.post('/api/login', (req, res) => {
       httpOnly: true,
       secure: isHttps, // Only set secure on HTTPS connections
       // sameSite: 'Strict',
-      sameSite: 'none',
+      sameSite: isHttps ? 'none' : 'lax', 
       maxAge: 3 * 24 * 60 * 60 * 1000
     });
     
