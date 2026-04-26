@@ -56,60 +56,54 @@ function logout() {
 }
 
 // 登录表单提交逻辑
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const errorAlert = document.getElementById('error-alert');
-    
-    // Hide previous errors
-    errorAlert.style.display = 'none';
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    if (!loginForm) return;
 
-    // 前端校验
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        errorAlert.textContent = 'Please enter a valid email address';
-        errorAlert.style.display = 'block';
-        return;
-    }
-    if (password.length < 6) {
-        errorAlert.textContent = 'Password must be at least 6 characters long';
-        errorAlert.style.display = 'block';
-        return;
-    }
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    try {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorAlert = document.getElementById('error-alert');
 
-        const data = await res.json();
-        
-        console.log('Login response:', data);
+        errorAlert.style.display = 'none';
 
-        // 登录成功
-        if (data.success) {
-            // 存储角色到本地
-            const targetRole = data.role || 'User';
-            localStorage.setItem('userRole', targetRole);
-            console.log('角色已存储:', targetRole);
-            
-            // 直接跳转（localStorage是同步操作，无需延迟！）
-            window.location.href = data.redirectUrl || '/';
-        } else {
-            // 显示错误
-            errorAlert.textContent = data.message || data.msg || 'Invalid email or password';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            errorAlert.textContent = 'Please enter a valid email address';
+            errorAlert.style.display = 'block';
+            return;
+        }
+        if (password.length < 6) {
+            errorAlert.textContent = 'Password must be at least 6 characters long';
+            errorAlert.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                const targetRole = data.role || 'User';
+                localStorage.setItem('userRole', targetRole);
+                window.location.href = data.redirectUrl || '/';
+            } else {
+                errorAlert.textContent = data.message || data.msg || 'Invalid email or password';
+                errorAlert.style.display = 'block';
+            }
+        } catch (err) {
+            errorAlert.textContent = 'Network error, please try again later';
             errorAlert.style.display = 'block';
         }
-    } catch (err) {
-        errorAlert.textContent = 'Network error, please try again later';
-        errorAlert.style.display = 'block';
-        console.error('Login error:', err);
-    }
-})
+    });
+});
 
 // ===================== 【修复！！】用户图标点击逻辑 =====================
 // 1. 先获取 wrapper 元素（替换为你页面中真实的选择器：类名/ID）

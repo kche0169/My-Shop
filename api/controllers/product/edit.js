@@ -2,7 +2,7 @@ const db = require('../../../db/conn');
 const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
-const { handleImageUpload, getCategoryName, UPLOAD_ROOT } = require('./upload');
+const { handleImageUpload, getCategoryName, UPLOAD_ROOT } = require('./uploads');
 
 const editProduct = async (req, res) => {
   const errors = validationResult(req);

@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const { generateSalt, generateDigest, createPayPalOrder } = require('./utils');
-const paypalConfig = require('../../config/paypal');
+const paypalConfig = require('../../../config/paypal');
 
 const createOrder = async (req, res) => {
   const errors = validationResult(req);

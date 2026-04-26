@@ -1,4 +1,4 @@
-const db = require('../../db/conn');
+const db = require('../../../db/conn');
 
 const getAllCategories = (req, res) => {
   db.all('SELECT catid, name FROM categories ORDER BY catid ASC', (err, rows) => {

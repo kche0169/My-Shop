@@ -151,3 +151,86 @@ function showChangePasswordModal() {
     alert("Current password incorrect or server error");
   });
 }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有按钮和内容区域
+    const buttons = document.querySelectorAll('.user-sidebar .btn[data-target]');
+    const contentAreas = document.querySelectorAll('.content-area');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function() {
+        // 1. 移除所有按钮的 active 状态
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        // 2. 给当前点击的按钮添加 active 状态
+        this.classList.add('active');
+        
+        // 3. 获取要显示的内容区域 ID
+        const targetId = this.getAttribute('data-target');
+        
+        // 4. 隐藏所有内容区域
+        contentAreas.forEach(area => area.classList.remove('active'));
+        
+        // 5. 显示目标内容区域
+        const targetArea = document.getElementById(targetId);
+        if (targetArea) {
+          targetArea.classList.add('active');
+        }
+      });
+    });
+  });
+
+async function loadUserRealOrders() {
+  const listEl = document.getElementById('realOrdersList');
+  try {
+    // 🔥 修复：必须加上 credentials: 'include' 携带登录Cookie！
+    const res = await fetch('/api/orders/user/recent', {
+      credentials: 'include'  // 👈 这是唯一要加的东西
+    });
+    const result = await res.json();
+
+    if (result.code !== 0 || !result.data || result.data.length === 0) {
+      listEl.innerHTML = `<p class="text-gray-500">You have no orders yet.</p>`;
+      return;
+    }
+
+    let html = '';
+    result.data.forEach(order => {
+      let items = [];
+      try {
+        items = JSON.parse(order.items_json);
+      } catch (e) {}
+
+      const itemText = items.map(i => `Product #${i.pid} × ${i.num}`).join(', ');
+
+      html += `
+      <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <span class="text-sm text-gray-500">Order #${order.id}</span>
+            <p class="font-medium">Total: ${order.currency} ${order.total_price}</p>
+          </div>
+          <span class="px-2 py-1 rounded text-xs font-medium ${
+            order.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+          }">
+            ${order.status}
+          </span>
+        </div>
+        <div class="text-sm text-gray-600">
+          <p>${itemText || 'No items'}</p>
+        </div>
+      </div>
+      `;
+    });
+
+    listEl.innerHTML = html;
+  } catch (err) {
+    listEl.innerHTML = `<p class="text-red-500">Failed to load orders</p>`;
+  }
+}
+// 当页面切换到订单标签时自动加载
+document.querySelector('[data-target="orders-content"]').addEventListener('click', () => {
+  setTimeout(loadUserRealOrders, 100);
+});
+
+loadUserRealOrders();

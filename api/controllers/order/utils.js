@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const paypal = require('@paypal/checkout-server-sdk');
-const paypalConfig = require('../../config/paypal');
+const paypalConfig = require('../../../config/paypal');
 
 // PayPal环境初始化
 let environment = paypalConfig.mode === 'sandbox'

@@ -1,6 +1,6 @@
 const db = require('../../../db/conn');
 const { validationResult } = require('express-validator');
-const { handleImageUpload } = require('./upload');
+const { handleImageUpload } = require('./uploads');
 
 const addProduct = async (req, res) => {
   const errors = validationResult(req);

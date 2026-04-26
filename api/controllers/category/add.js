@@ -1,4 +1,4 @@
-const db = require('../../db/conn');
+const db = require('../../../db/conn');
 const { validationResult } = require('express-validator');
 
 const addCategory = (req, res) => {

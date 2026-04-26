@@ -2,7 +2,7 @@ const db = require('../../../db/conn');
 const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
-const { getCategoryName, UPLOAD_ROOT } = require('./upload');
+const { getCategoryName, UPLOAD_ROOT } = require('./uploads');
 
 const deleteProduct = async (req, res) => {
   const errors = validationResult(req);
