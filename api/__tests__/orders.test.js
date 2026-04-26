@@ -6,6 +6,13 @@ beforeAll(() => {
   app = createTestApp();
 });
 
+beforeEach((done) => {
+  db.run('DELETE FROM orders', (err) => {
+    if (err) console.error('Clear orders failed:', err.message);
+    done();
+  });
+});
+
 describe('Orders API Tests', () => {
   
   describe('POST /api/orders/create', () => {
@@ -110,7 +117,86 @@ describe('Orders API Tests', () => {
     });
   });
 
-  describe('GET /api/orders/user/recent', () => {
+  describe('GET /api/orders/admin/all - Admin 获取所有订单', () => {
+    
+    test('should return 401 when not logged in', async () => {
+      const res = await request(app)
+        .get('/api/orders/admin/all');
+      
+      expect(res.status).toBe(401);
+    });
+
+    test('should return 403 when logged in as normal user (not admin)', async () => {
+      const loginRes = await request(app)
+        .post('/api/login')
+        .send({ email: 'user@shop.com', password: 'User123!' });
+      
+      const cookie = loginRes.headers['set-cookie'][0];
+      
+      const res = await request(app)
+        .get('/api/orders/admin/all')
+        .set('Cookie', cookie);
+      
+      expect(res.status).toBe(403);
+      expect(res.body.msg).toBe('Admin access required');
+    });
+
+    test('should return all orders when logged in as admin', async () => {
+      const loginRes = await request(app)
+        .post('/api/login')
+        .send({ email: 'admin@shop.com', password: 'Admin123!' });
+      
+      const adminCookie = loginRes.headers['set-cookie'][0];
+
+      const insertOrder = (userid, total, callback) => {
+        const items = JSON.stringify([{ pid: 1, num: 1, price: 199.99 }]);
+        const salt = 'test_salt_' + Math.random().toString(36).substr(2, 9);
+        const digest = 'test_digest_' + Math.random().toString(36).substr(2, 9);
+        
+        db.run(
+          `INSERT INTO orders (userid, items_json, total_price, currency, digest, status, merchant_email, salt) 
+           VALUES (?, ?, ?, 'USD', ?, 'PENDING', 'admin@shop.com', ?)`,
+          [userid, items, total, digest, salt],
+          callback
+        );
+      };
+
+      await new Promise((resolve) => {
+        insertOrder(2, 199.99, () => {
+          insertOrder(2, 399.98, () => {
+            insertOrder(3, 89.99, resolve);
+          });
+        });
+      });
+
+      const res = await request(app)
+        .get('/api/orders/admin/all')
+        .set('Cookie', adminCookie);
+      
+      expect(res.status).toBe(200);
+      expect(res.body.code).toBe(0);
+      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBe(3);
+    });
+
+    test('should return empty array when no orders exist', async () => {
+      const loginRes = await request(app)
+        .post('/api/login')
+        .send({ email: 'admin@shop.com', password: 'Admin123!' });
+      
+      const adminCookie = loginRes.headers['set-cookie'][0];
+      
+      const res = await request(app)
+        .get('/api/orders/admin/all')
+        .set('Cookie', adminCookie);
+      
+      expect(res.status).toBe(200);
+      expect(res.body.code).toBe(0);
+      expect(res.body.data).toEqual([]);
+    });
+  });
+
+  describe('GET /api/orders/user/recent - User 获取最近订单', () => {
     
     test('should return 401 when not logged in', async () => {
       const res = await request(app)
@@ -121,42 +207,102 @@ describe('Orders API Tests', () => {
       expect(res.body.msg).toBe('Please login first');
     });
 
-    test('should return recent orders when logged in', async () => {
+    test('should return at most 5 recent orders for logged-in user', async () => {
       const loginRes = await request(app)
         .post('/api/login')
         .send({ email: 'user@shop.com', password: 'User123!' });
       
       const cookie = loginRes.headers['set-cookie'][0];
-      
+
+      const insertOrder = (userid, items, total, status, callback) => {
+        const salt = 'test_salt_' + Math.random().toString(36).substr(2, 9);
+        const digest = 'test_digest_' + Math.random().toString(36).substr(2, 9);
+        
+        db.run(
+          `INSERT INTO orders (userid, items_json, total_price, currency, digest, status, merchant_email, salt) 
+           VALUES (?, ?, ?, 'USD', ?, ?, 'admin@shop.com', ?)`,
+          [userid, JSON.stringify(items), total, digest, status, salt],
+          callback
+        );
+      };
+
+      await new Promise((resolve) => {
+        const items1 = [{ pid: 1, num: 1, price: 199.99 }];
+        const items2 = [{ pid: 2, num: 2, price: 299.99 }];
+        const items3 = [{ pid: 3, num: 1, price: 149.99 }];
+        const items4 = [{ pid: 4, num: 1, price: 999.99 }];
+        const items5 = [{ pid: 5, num: 3, price: 279.99 }];
+        const items6 = [{ pid: 6, num: 1, price: 49.99 }];
+        const items7 = [{ pid: 7, num: 2, price: 249.99 }];
+
+        insertOrder(2, items1, 199.99, 'PAID', () => {
+          insertOrder(2, items2, 599.98, 'PAID', () => {
+            insertOrder(2, items3, 149.99, 'PENDING', () => {
+              insertOrder(2, items4, 999.99, 'PAID', () => {
+                insertOrder(2, items5, 839.97, 'PAID', () => {
+                  insertOrder(2, items6, 49.99, 'PAID', () => {
+                    insertOrder(2, items7, 499.98, 'PAID', resolve);
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+
       const res = await request(app)
         .get('/api/orders/user/recent')
         .set('Cookie', cookie);
       
       expect(res.status).toBe(200);
       expect(res.body.code).toBe(0);
-      expect(res.body.data).toBeDefined();
       expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.body.data.length).toBeLessThanOrEqual(5);
     });
 
-    test('should return at most 5 recent orders', async () => {
+    test('should only return orders belonging to the logged-in user', async () => {
       const loginRes = await request(app)
         .post('/api/login')
         .send({ email: 'user@shop.com', password: 'User123!' });
       
       const cookie = loginRes.headers['set-cookie'][0];
-      
+
+      const insertOrder = (userid, total, callback) => {
+        const items = JSON.stringify([{ pid: 1, num: 1, price: 199.99 }]);
+        const salt = 'test_salt_' + Math.random().toString(36).substr(2, 9);
+        const digest = 'test_digest_' + Math.random().toString(36).substr(2, 9);
+        
+        db.run(
+          `INSERT INTO orders (userid, items_json, total_price, currency, digest, status, merchant_email, salt) 
+           VALUES (?, ?, ?, 'USD', ?, 'PAID', 'admin@shop.com', ?)`,
+          [userid, items, total, digest, salt],
+          callback
+        );
+      };
+
+      await new Promise((resolve) => {
+        insertOrder(2, 199.99, () => {
+          insertOrder(2, 399.98, () => {
+            insertOrder(3, 599.97, resolve);
+          });
+        });
+      });
+
       const res = await request(app)
         .get('/api/orders/user/recent')
         .set('Cookie', cookie);
       
       expect(res.status).toBe(200);
-      expect(res.body.data.length).toBeLessThanOrEqual(5);
+      expect(res.body.data.length).toBe(2);
+      res.body.data.forEach(order => {
+        expect(order.userid).toBe(2);
+      });
     });
 
     test('should return 401 with invalid session', async () => {
       const res = await request(app)
         .get('/api/orders/user/recent')
-        .set('Cookie', 'user=invalid_session_token');
+        .set('Cookie', 'connect.sid=invalid_session_token');
       
       expect(res.status).toBe(401);
     });
