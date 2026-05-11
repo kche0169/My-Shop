@@ -11,6 +11,7 @@ const requireAdmin = require('./api/middlewares/auth'); // 你之前的管理员
 // 2. 会话存储
 const sessionStore = new Map();
 const app = express();
+app.disable('x-powered-by');
 app.set('sessionStore', sessionStore);
 app.set('db', db);
 const port = 3000;
