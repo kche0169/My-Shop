@@ -4,26 +4,32 @@ const path = require('path');
 
 const deleteCategory = (req, res) => {
   const { catid } = req.params;
-  if (!catid || isNaN(catid)) {
+  const catIdNum = Number(catid);
+  if (!catid || isNaN(catIdNum)) {
     return res.status(400).json({ code: -1, msg: 'Category ID must be a valid number!' });
   }
 
-  db.serialize(() => {
-    db.all('SELECT pid FROM products WHERE catid = ?', [catid], (err, rows) => {
+  db.get('SELECT catid FROM categories WHERE catid = ?', [catIdNum], (err, category) => {
+    if (err) {
+      return res.status(500).json({ code: -1, msg: 'Database error: ' + err.message });
+    }
+    if (!category) {
+      return res.status(400).json({ code: -1, msg: 'Category does not exist' });
+    }
+
+    db.all('SELECT pid FROM products WHERE catid = ?', [catIdNum], (err, rows) => {
       if (err) {
-        console.error('Failed to get products under category: ', err);
-        return res.status(500).json({ code: -1, msg: 'Failed to get products under category: ' + err.message });
+        return res.status(500).json({ code: -1, msg: 'Failed to get products: ' + err.message });
       }
+
       if (!rows || rows.length === 0) {
-        return db.run('DELETE FROM categories WHERE catid = ?', [catid], function (err) {
+        db.run('DELETE FROM categories WHERE catid = ?', [catIdNum], function (err) {
           if (err) {
-            return res.status(500).json({ code: -1, msg: 'Failed to delete category: ' + err.message });
-          }
-          if (this.changes === 0) {
-            return res.status(400).json({ code: -1, msg: 'Category does not exist, deletion failed!' });
+            return res.status(500).json({ code: -1, msg: 'Failed to delete category' });
           }
           res.json({ code: 0, msg: 'Category deleted successfully' });
         });
+        return;
       }
 
       const deleteImages = () => {
@@ -48,17 +54,14 @@ const deleteCategory = (req, res) => {
       };
 
       deleteImages().then(() => {
-        db.run('DELETE FROM products WHERE catid = ?', [catid], (err) => {
+        db.run('DELETE FROM products WHERE catid = ?', [catIdNum], (err) => {
           if (err) {
-            return res.status(500).json({ code: -1, msg: 'Failed to delete products: ' + err.message });
+            return res.status(500).json({ code: -1, msg: 'Failed to delete products' });
           }
 
-          db.run('DELETE FROM categories WHERE catid = ?', [catid], function (err) {
+          db.run('DELETE FROM categories WHERE catid = ?', [catIdNum], function (err) {
             if (err) {
-              return res.status(500).json({ code: -1, msg: 'Failed to delete category: ' + err.message });
-            }
-            if (this.changes === 0) {
-              return res.status(400).json({ code: -1, msg: 'Category does not exist, deletion failed!' });
+              return res.status(500).json({ code: -1, msg: 'Failed to delete category' });
             }
             res.json({ code: 0, msg: 'Category deleted successfully (associated products and images cleaned up)' });
           });

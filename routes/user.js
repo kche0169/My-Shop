@@ -5,6 +5,10 @@ const crypto = require('crypto');
 // 用户注册
 router.post('/register', (req, res) => {
   const { email, password } = req.body;
+  // 验证检查email和password是否为空
+  if (!email || !password) {
+    return res.json({ success: false, message: 'Email and password are required' });
+  }
   const db = req.app.get('db');
   
   db.get('SELECT userid FROM users WHERE email = ?', [email], (err, existingUser) => {

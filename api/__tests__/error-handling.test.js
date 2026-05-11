@@ -52,7 +52,7 @@ describe('Error Handling Tests', () => {
 
     test.skip('should return 400 for register without required fields', async () => {
       jest.setTimeout(60000);
-      
+
       const res = await request(app)
         .post('/api/register')
         .send({});
@@ -146,9 +146,7 @@ describe('Error Handling Tests', () => {
       expect(res.body.code).toBe(-1);
     });
 
-    test.skip('should return 404 for non-existent category delete', async () => {
-      jest.setTimeout(60000);
-      
+    test('should return 400 for non-existent category delete', async () => {
       const loginRes = await request(app)
         .post('/api/login')
         .send({ email: 'admin@shop.com', password: 'Admin123!' });
@@ -161,7 +159,7 @@ describe('Error Handling Tests', () => {
 
       expect(res.status).toBe(400);
       expect(res.body.code).toBe(-1);
-    }, 60000);
+    });
   });
 
   describe('Product API Error Handling', () => {
