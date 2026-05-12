@@ -10,6 +10,7 @@ const createOrder = require('../controllers/order/create');
 const orderWebhook = require('../controllers/order/webhook');
 const paySuccess = require('../controllers/order/success');
 const adminGetAllOrders = require('../controllers/order/adminAll');
+const adminVerifyOrder = require('../controllers/order/adminVerify');
 const userGetRecentOrders = require('../controllers/order/userRecent');
 
 // 订单接口路由
@@ -21,6 +22,7 @@ router.post('/create', [
 router.post('/webhook', express.raw({ type: 'application/json' }), orderWebhook);
 router.get('/paypal/success', paySuccess);
 router.get('/admin/all', requireAdmin, adminGetAllOrders);
+router.post('/admin/verify', requireAdmin, adminVerifyOrder);
 router.get('/user/recent', userGetRecentOrders);
 
 module.exports = router;
