@@ -217,11 +217,11 @@
 
 <!-- Third-party libraries -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!-- API Layer -->
-<script src="../js/api/index.js"></script>
-<!-- Common config/utils -->
+<!-- Common config/utils (must load before API) -->
 <script src="../js/config.js"></script>
 <script src="../js/utils.js"></script>
+<!-- API Layer (depends on AppConfig) -->
+<script src="../js/api/index.js"></script>
 <script src="../js/common.js"></script>
 <!-- Shopping Cart -->
 <script src="../js/cart/core.js"></script>
