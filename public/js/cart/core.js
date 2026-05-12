@@ -169,20 +169,15 @@ class ShoppingCart {
   }
 
   /**
-   * 8. Load cart data (临时修改：只用 localStorage，绕过 404)
+   * 8. Load cart data from server
    */
   async load() {
     try {
-      // 【临时注释掉】先不请求服务器，避免 404 报错
-      // const serverData = await this._request('/list');
-      // this.cartItems = (serverData || []).map(item => new CartItem(item.pid, item.num));
-      // this._saveToLocalStorage();
-
-      // 【临时方案】直接用本地存储
-      console.log('[ShoppingCart] 临时使用本地存储加载');
-      this._loadFromLocalStorage();
+      const serverData = await this._request('/list');
+      this.cartItems = (serverData || []).map(item => new CartItem(item.pid, item.num));
+      this._saveToLocalStorage();
     } catch (error) {
-      console.warn('[ShoppingCart] Load failed, using localStorage');
+      console.warn('[ShoppingCart] Load from server failed, trying localStorage:', error.message);
       this._loadFromLocalStorage();
     }
   }
