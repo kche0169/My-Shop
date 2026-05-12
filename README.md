@@ -33,6 +33,9 @@ IEMS5718/
 │   │   │   ├── edit.js
 │   │   │   └── delete.js
 │   │   ├── product/         # Product controllers
+│   │   │   └── seoDetail.js  # SEO-friendly product URL
+│   │   ├── category/        # Category controllers
+│   │   │   └── seoList.js   # SEO-friendly category URL
 │   │   └── order/           # Order controllers
 │   │       ├── createOrder.js    # Create new order
 │   │       ├── adminVerify.js    # Admin verify order payment
@@ -40,7 +43,9 @@ IEMS5718/
 │   │       └── adminAll.js       # Admin view all orders
 │   ├── __tests__/            # API Test suite
 │   │   ├── setup.js              # Test setup utilities
-│   │   └── checkout-flow.test.js # Checkout flow integration tests
+│   │   ├── checkout-flow.test.js # Checkout flow integration tests
+│   │   ├── seo-url.test.js       # SEO-friendly URL tests
+│   │   └── pagination.test.js   # Pagination API tests
 │   └── config/              # API configuration (PayPal, etc.)
 │       └── paypal.js
 
@@ -55,6 +60,7 @@ IEMS5718/
 │   ├── config.js
 │   ├── utils.js
 │   ├── common.js
+│   ├── infinite-scroll.js   # AJAX infinite scroll module
 │   └── cart/
 ├── css/                     # Frontend styles (unchanged)
 │   └── custom.css
@@ -62,8 +68,9 @@ IEMS5718/
 │   └── detail.html
 ├── cart/                    # Shopping cart pages (unchanged)
 │   └── detail.html
-├── products/                # Product detail pages (unchanged)
-│   └── detail.html
+├── products/                # Product pages
+│   ├── detail.html          # Product detail page (unchanged)
+│   └── list.html            # Product listing with infinite scroll
 ├── images/                  # Static images (unchanged)
 └── index.html               # Homepage (unchanged)
 ```
@@ -179,3 +186,124 @@ All checkout flow functions have been end-to-end tested:
 
 #### Final Status
 **All tasks in Phase 5 are 100% fully completed.** The checkout flow is secure, reliable, and production-ready.
+
+---
+
+### Phase 6: SEO-Friendly URLs Implementation
+#### Overview
+This phase implements search engine optimized (SEO-friendly) URLs for browsing products and categories. URLs include meaningful keywords (category and product names) instead of just IDs, improving search engine visibility and user experience. SEO URLs are automatically applied to all products and categories, including newly inserted ones.
+
+---
+
+#### Task List & Completion Status
+| Task Description | Completion Status | Verification Details |
+| :--- | :--- | :--- |
+| A. Category SEO URL with ID and name | ✅ Fully Completed | URL format `/api/cate/seo/:catId-name` (e.g., `/api/cate/seo/1-Electronics`); returns category info and all products with auto-generated SEO URLs. |
+| B. Product SEO URL with category and product info | ✅ Fully Completed | URL format `/api/products/seo/:catId-name/:pid-name` (e.g., `/api/products/seo/1-Electronics/1-Smartphone`); validates category-product relationship. |
+| C. Auto-generated SEO URLs for all products | ✅ Fully Completed | All existing and newly inserted products automatically get SEO URLs without additional configuration. |
+| D. URL format validation and error handling | ✅ Fully Completed | Invalid URL formats return 400; non-existent resources return 404; category-product mismatch returns 404. |
+| E. Comprehensive SEO URL test suite | ✅ Fully Completed | 9 test cases covering all scenarios (A-D); all tests pass; validates all existing categories and products. |
+
+---
+
+#### API Endpoints Implemented
+| Endpoint | Method | Controller | Description |
+| :--- | :--- | :--- | :--- |
+| `/api/cate/seo/:catIdName` | GET | `category/seoList.js` | Get category info and products via SEO URL |
+| `/api/products/seo/:catIdName/:productIdName` | GET | `product/seoDetail.js` | Get product detail via SEO URL |
+
+---
+
+#### URL Format Examples
+| Resource Type | SEO URL Format | Example |
+| :--- | :--- | :--- |
+| Category List | `/{catId}-{categoryName}/` | `/1-Electronics/` |
+| Product Detail | `/{catId}-{categoryName}/{pid}-{productName}` | `/1-Electronics/1-Smartphone` |
+
+---
+
+#### Final Verification Results
+All SEO URL functions have been tested:
+1. Category SEO URL returns correct category info and product list
+2. Product SEO URL validates category-product relationship
+3. All existing categories support SEO URLs
+4. All existing products support SEO URLs
+5. Invalid URL formats are properly rejected
+6. Non-existent resources return 404 errors
+
+---
+
+#### Final Status
+**All tasks in Phase 6 are 100% fully completed.** SEO-friendly URLs are automatically applied to all products and categories, including newly inserted ones.
+
+---
+
+### Phase 7: Pagination & AJAX Infinite Scroll
+#### Overview
+This phase implements pagination support for the product listing API and AJAX infinite scroll functionality for the frontend. Users can browse large product catalogs efficiently with smooth infinite scrolling experience without page reloads.
+
+---
+
+#### Task List & Completion Status
+| Task Description | Completion Status | Verification Details |
+| :--- | :--- | :--- |
+| A. Backend pagination API with page/limit parameters | ✅ Fully Completed | `/api/products/list` now supports `page` and `limit` query parameters; returns pagination metadata including total, totalPages, hasNextPage, hasPrevPage. |
+| B. Category-filtered pagination | ✅ Fully Completed | Pagination works correctly when filtering by category (catid parameter). |
+| C. Edge case handling for pagination | ✅ Fully Completed | Invalid page numbers default to 1; limit is capped at 50; out-of-range pages return empty data gracefully. |
+| D. Frontend infinite scroll implementation | ✅ Fully Completed | `infinite-scroll.js` implements scroll detection, loading states, and appends products seamlessly. |
+| E. AJAX product loading with category filters | ✅ Fully Completed | Category filter buttons work with pagination; selecting a category resets pagination and reloads products. |
+| F. Comprehensive pagination test suite | ✅ Fully Completed | 15 test cases covering basic pagination, category filtering, edge cases, and data validation; all tests pass. |
+
+---
+
+#### API Changes
+| Endpoint | Changes | Description |
+| :--- | :--- | :--- |
+| `GET /api/products/list` | Enhanced | Added `page` (default: 1) and `limit` (default: 8, max: 50) query parameters; response includes `pagination` object with metadata |
+
+#### Pagination Response Format
+```json
+{
+  "code": 0,
+  "msg": "Found 8 products",
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 8,
+    "total": 28,
+    "totalPages": 4,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+
+#### New Frontend Files
+| File | Description |
+| :--- | :--- |
+| `public/products/list.html` | Product listing page with infinite scroll |
+| `public/js/infinite-scroll.js` | Infinite scroll module with AJAX loading |
+
+#### Infinite Scroll Features
+1. **Scroll Detection**: Automatically loads next page when user scrolls near bottom
+2. **Loading States**: Shows spinner and "Loading more products..." indicator
+3. **End of Results**: Displays message when all products have been loaded
+4. **Category Filters**: Filter products by category with automatic pagination reset
+5. **Scroll to Top**: Floating button appears after scrolling down
+6. **Error Handling**: Graceful error messages and retry capability
+
+---
+
+#### Final Verification Results
+All pagination and infinite scroll functions have been tested:
+1. API returns correct pagination metadata
+2. Products load correctly on each page
+3. Category filtering works with pagination
+4. Invalid inputs are handled gracefully
+5. Frontend infinite scroll loads data seamlessly
+6. Loading and end-of-results states display correctly
+
+---
+
+#### Final Status
+**All tasks in Phase 7 are 100% fully completed.** Pagination and infinite scroll provide a smooth browsing experience for large product catalogs.
