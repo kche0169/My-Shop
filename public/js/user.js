@@ -188,29 +188,34 @@
         return;
       }
 
-      const ordersHtml = result.data.map(order => `
+      const ordersHtml = result.data.map(order => {
+        // 解析 items_json 字段
+        const items = order.items_json ? JSON.parse(order.items_json) : [];
+        
+        return `
         <div class="border rounded-lg p-4">
           <div class="flex justify-between items-start mb-3">
             <div>
-              <h3 class="font-bold">Order #${order.oid}</h3>
+              <h3 class="font-bold">Order #${order.id || order.rowid || 'N/A'}</h3>
               <p class="text-sm text-gray-500">${order.created_at || 'Unknown date'}</p>
             </div>
             <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">${order.status || 'Pending'}</span>
           </div>
           <div class="space-y-2 mb-3">
-            ${order.items ? order.items.map(item => `
+            ${items.length > 0 ? items.map(item => `
               <div class="flex justify-between text-sm">
-                <span>${item.product_name || 'Product'}</span>
-                <span>${item.quantity} x $${(item.price || 0).toFixed(2)}</span>
+                <span>Product #${item.pid}</span>
+                <span>${item.num} x $${(item.price || 0).toFixed(2)}</span>
               </div>
-            `).join('') : ''}
+            `).join('') : '<p class="text-sm text-gray-500">No items</p>'}
           </div>
           <div class="flex justify-between font-bold">
             <span>Total:</span>
-            <span>$${(order.total_amount || 0).toFixed(2)}</span>
+            <span>$${(order.total_price || 0).toFixed(2)}</span>
           </div>
         </div>
-      `).join('');
+        `;
+      }).join('');
 
       ordersContainer.innerHTML = ordersHtml;
     } catch (error) {
