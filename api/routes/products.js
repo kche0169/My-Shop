@@ -21,6 +21,7 @@ const getProductDetail = require('../controllers/product/detail');
 const addProduct = require('../controllers/product/add');
 const editProduct = require('../controllers/product/edit');
 const deleteProduct = require('../controllers/product/delete');
+const seoProductDetail = require('../controllers/product/seoDetail');
 
 // 购物车
 const cartAdd = require('../controllers/product/cart/add');
@@ -35,6 +36,9 @@ router.get('/detail', getProductDetail);
 router.post('/add', requireAdmin, upload, addProduct);
 router.post('/edit', requireAdmin, upload, editProduct);
 router.get('/del/:pid', requireAdmin, [param('pid').isNumeric().withMessage('商品ID不合法')], deleteProduct);
+
+// SEO 友好 URL - 商品详情 /:catId-name/:pid-name
+router.get('/seo/:catIdName/:productIdName', seoProductDetail);
 
 // 购物车接口
 router.post('/cart/add', [body('userid').isNumeric(), body('pid').isNumeric(), body('num').isNumeric()], cartAdd);
