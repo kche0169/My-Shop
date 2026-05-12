@@ -38,6 +38,21 @@ try {
   console.error('[ERROR] Route mounting failed:', err.message);
 }
 
+// 6. SEO URL routing - Handle /{catId}-{name} and /{catId}-{name}/{productId}-{name}
+app.get(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/, (req, res) => {
+  const path = req.path;
+  // Check if it's a product URL (has product ID)
+  const productMatch = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+\/(\d+)-[a-zA-Z0-9\-]+\/?$/);
+  
+  if (productMatch) {
+    // Product detail page
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'product', 'detail.html'));
+  } else {
+    // Category detail page
+    res.sendFile(path.join(__dirname, 'public', 'pages', 'category', 'detail.html'));
+  }
+});
+
 // 6. Start server
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running: http://localhost:${port}`);

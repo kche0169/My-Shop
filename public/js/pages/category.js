@@ -1,11 +1,10 @@
 /**
- * Category page exclusive logic (fully functional version with infinite scroll)
- * Features: Load category list, load category products with pagination, add to cart (compatible with global cart), 
- *           Loading state, mobile drawer, infinite scroll
+ * Category page exclusive logic (fully functional version with infinite scroll and SEO URLs)
+ * Features: Load category list, load category products with pagination, add to cart, 
+ *           Loading state, mobile drawer, infinite scroll, SEO-friendly URLs
  */
 
-// ===================== Step 1: Define core utility functions (avoid undefined errors) =====================
-// Show global Loading
+// ===================== Step 1: Define core utility functions =====================
 window.showLoading = function() {
   let loadingEl = document.getElementById('global-loading');
   if (!loadingEl) {
@@ -22,64 +21,56 @@ window.showLoading = function() {
   loadingEl.style.display = 'flex';
 };
 
-// Hide global Loading
 window.hideLoading = function() {
   const loadingEl = document.getElementById('global-loading');
   if (loadingEl) loadingEl.style.display = 'none';
 };
 
-// ===================== Step 2: Global config/utils fallback (prevent dependency missing) =====================
-// Global config (adapt to actual project path, adjust according to your deployment)
+// ===================== Step 2: Global config/utils fallback =====================
 window.AppConfig = window.AppConfig || {
-  API_BASE_URL: '/api', // Backend API address
-  DEFAULT_IMG: 'https://via.placeholder.com/200x200?text=No+Image', // Default product image
+  API_BASE_URL: '/api',
+  DEFAULT_IMG: 'https://via.placeholder.com/200x200?text=No+Image',
   PAGE_PATHS: {
-    CATEGORY_DETAIL: '/pages/category/detail.html', // Category page path (relative to root)
-    PRODUCT_DETAIL: '/pages/product/detail.html'    // Product detail page path (relative to root)
+    CATEGORY_DETAIL: '/pages/category/detail.html',
+    PRODUCT_DETAIL: '/pages/product/detail.html'
   }
 };
 
-// Global utility functions (fallback, avoid missing utils.js)
 window.AppUtils = window.AppUtils || {
-  // Parse URL parameters
   getUrlParam: function(key) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(key);
   },
-  // Convert to number (with fallback)
   toNumber: function(value, defaultValue = 1) {
     const num = parseInt(value);
     return isNaN(num) ? defaultValue : num;
   },
-  // Format price (keep 2 decimal places)
   formatPrice: function(price) {
     const num = parseFloat(price) || 0;
     return `$${num.toFixed(2)}`;
+  },
+  // Generate SEO-friendly URL slug
+  slugify: function(text) {
+    return encodeURIComponent(text || '').replace(/%20/g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
   }
 };
 
-// Global common logic (fallback, avoid missing common.js)
 window.AppCommon = window.AppCommon || {
-  // Initialize mobile category drawer
   initMobileDrawer: function() {
     const mobileCateBtn = document.getElementById('mobile-category-btn');
     const mobileCateDrawer = document.getElementById('mobile-category-drawer');
     const mobileCateClose = document.getElementById('mobile-category-close');
 
-    // Fault tolerance: skip if DOM elements do not exist
     if (!mobileCateBtn || !mobileCateDrawer || !mobileCateClose) return;
 
-    // Open drawer
     mobileCateBtn.addEventListener('click', () => {
       mobileCateDrawer.classList.remove('-translate-x-full');
     });
 
-    // Close drawer
     mobileCateClose.addEventListener('click', () => {
       mobileCateDrawer.classList.add('-translate-x-full');
     });
 
-    // Close drawer when clicking outside
     document.addEventListener('click', (e) => {
       if (!mobileCateDrawer.contains(e.target) && !mobileCateBtn.contains(e.target)) {
         mobileCateDrawer.classList.add('-translate-x-full');
@@ -87,7 +78,6 @@ window.AppCommon = window.AppCommon || {
     });
   },
 
-  // Load all categories (sidebar + mobile)
   loadAllCategories: async function(activeCatId) {
     try {
       const res = await axios.get(`${AppConfig.API_BASE_URL}/cate/all`);
@@ -95,10 +85,8 @@ window.AppCommon = window.AppCommon || {
       const sidebarList = document.getElementById('sidebar-cate-list');
       const mobileList = document.getElementById('mobile-cate-list');
       
-      // Fault tolerance: return if containers do not exist
       if (!sidebarList || !mobileList) return;
 
-      // No categories prompt
       if (categories.length === 0) {
         const emptyHtml = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
         sidebarList.innerHTML = emptyHtml;
@@ -106,19 +94,21 @@ window.AppCommon = window.AppCommon || {
         return;
       }
 
-      // Render category list (highlight current category)
       let cateHtml = '';
       categories.forEach(cate => {
         const cateId = AppUtils.toNumber(cate.catid || cate.id, 0);
-        if (cateId === 0) return; // Skip invalid category ID
+        if (cateId === 0) return;
 
         const isActive = cateId === activeCatId;
+        const cateName = cate.name || 'Unnamed Category';
+        const seoUrl = `/${cateId}-${AppUtils.slugify(cateName)}`;
+        
         cateHtml += `
-          <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cateId}" 
+          <a href="${seoUrl}" 
              class="block px-3 py-2 rounded-md transition-colors ${
                isActive ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
              }">
-              ${cate.name || 'Unnamed Category'}
+              ${cateName}
           </a>
         `;
       });
@@ -201,52 +191,35 @@ function handleScroll(catid) {
 }
 
 // ===================== Step 4: Category page core business functions =====================
-/**
- * Load category basic info (title, breadcrumb, page title)
- * @param {number} catid - Category ID
- */
 async function loadCategoryInfo(catid) {
   try {
-    // Get all categories and match current category
     const res = await axios.get(`${AppConfig.API_BASE_URL}/cate/all`);
     const categories = res.data.data || [];
     const currentCate = categories.find(cate => AppUtils.toNumber(cate.catid || cate.id, 0) === catid) || {};
 
-    // Category name fallback
     const cateName = currentCate.name || 'Unknown Category';
 
-    // Update page title (SEO friendly)
     document.title = `${cateName} - ShopEasy`;
 
-    // Render breadcrumb (fault tolerance: skip if element does not exist)
     if (document.getElementById('breadcrumb-cate-name')) {
       document.getElementById('breadcrumb-cate-name').textContent = cateName;
     }
 
-    // Render category title
     if (document.getElementById('cate-name')) {
       document.getElementById('cate-name').textContent = cateName;
     }
 
-    // Render category description
     if (document.getElementById('cate-desc')) {
       document.getElementById('cate-desc').textContent = currentCate.description || `Explore all products in ${cateName} category`;
     }
 
-    // Load category list (highlight current category)
     await AppCommon.loadAllCategories(catid);
   } catch (error) {
     throw new Error(`Failed to load category info: ${error.message}`);
   }
 }
 
-/**
- * Load product list under category with pagination support
- * @param {number} catid - Category ID
- * @param {boolean} reset - Whether to reset pagination (default: true)
- */
 async function loadCategoryProducts(catid, reset = true) {
-  // Initialize state on first load
   if (reset) {
     infiniteScrollState.currentPage = 1;
     infiniteScrollState.hasMore = true;
@@ -254,7 +227,6 @@ async function loadCategoryProducts(catid, reset = true) {
     hideEndOfResults();
   }
 
-  // Check loading state
   if (infiniteScrollState.isLoading || !infiniteScrollState.hasMore) return;
 
   infiniteScrollState.isLoading = true;
@@ -266,14 +238,12 @@ async function loadCategoryProducts(catid, reset = true) {
   }
 
   try {
-    // Call backend API with pagination
     const url = `${AppConfig.API_BASE_URL}/products/list?catid=${catid}&page=${infiniteScrollState.currentPage}&limit=${infiniteScrollState.limit}`;
     const res = await axios.get(url);
     const products = res.data.data || [];
     const pagination = res.data.pagination || {};
     const productListEl = document.getElementById('product-list');
 
-    // Fault tolerance: product list container does not exist
     if (!productListEl) {
       console.warn('Product list container #product-list not found');
       hideLoading();
@@ -282,7 +252,6 @@ async function loadCategoryProducts(catid, reset = true) {
       return;
     }
 
-    // No products prompt (only on first page)
     if (products.length === 0 && infiniteScrollState.currentPage === 1) {
       productListEl.innerHTML = `
         <div class="col-span-full text-center text-gray-500 py-8">
@@ -297,7 +266,6 @@ async function loadCategoryProducts(catid, reset = true) {
       return;
     }
 
-    // Render product list items
     let productHtml = '';
     products.forEach(pro => {
       const validPid = AppUtils.toNumber(pro.pid || pro.id, 0);
@@ -311,15 +279,19 @@ async function loadCategoryProducts(catid, reset = true) {
       const proName = pro.name || 'Unnamed Product';
       const proDesc = pro.description || 'No product description available';
       const proPrice = AppUtils.formatPrice(pro.price);
+      const cateName = pro.cateName || 'Category';
+      
+      // Generate SEO-friendly URL: /{catId}-{categoryName}/{productId}-{productName}
+      const seoUrl = `/${catid}-${AppUtils.slugify(cateName)}/${validPid}-${AppUtils.slugify(proName)}`;
 
       productHtml += `
         <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
-          <a href="${AppConfig.PAGE_PATHS.PRODUCT_DETAIL}?pid=${validPid}" class="block">
+          <a href="${seoUrl}" class="block">
             <img src="${imgSrc}" alt="${proName}" class="w-full h-48 object-contain p-4 bg-gray-50"
                  onerror="this.src='${AppConfig.DEFAULT_IMG}'">
           </a>
           <div class="p-4 flex-1">
-            <a href="${AppConfig.PAGE_PATHS.PRODUCT_DETAIL}?pid=${validPid}" class="block">
+            <a href="${seoUrl}" class="block">
               <h3 class="text-lg font-medium text-gray-800 mb-2 line-clamp-1 hover:text-blue-600">${proName}</h3>
               <p class="text-gray-600 text-sm mb-4 line-clamp-2">${proDesc}</p>
               <p class="text-blue-600 font-bold text-xl mb-4">${proPrice}</p>
@@ -335,14 +307,12 @@ async function loadCategoryProducts(catid, reset = true) {
       `;
     });
 
-    // Append or replace HTML based on reset flag
     if (reset) {
       productListEl.innerHTML = productHtml;
     } else {
       productListEl.insertAdjacentHTML('beforeend', productHtml);
     }
 
-    // Update pagination state
     infiniteScrollState.hasMore = pagination.hasNextPage || false;
     infiniteScrollState.currentPage++;
 
@@ -367,9 +337,6 @@ async function loadCategoryProducts(catid, reset = true) {
   }
 }
 
-/**
- * Render global error page (fallback)
- */
 function renderErrorPage() {
   if (document.getElementById('cate-name')) {
     document.getElementById('cate-name').textContent = 'Unknown Category';
@@ -387,10 +354,29 @@ function renderErrorPage() {
   }
 }
 
-// ===================== Step 5: Page initialization entry (core) =====================
+// ===================== Step 5: Parse SEO URL and initialize =====================
+function parseSeoUrl() {
+  const path = window.location.pathname;
+  // Match SEO URL pattern: /{catId}-{categoryName} or /{catId}-{categoryName}/{productId}-{productName}
+  const categoryMatch = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/);
+  
+  if (categoryMatch) {
+    const catid = parseInt(categoryMatch[1]);
+    const productId = categoryMatch[3] ? parseInt(categoryMatch[3]) : null;
+    
+    if (!isNaN(catid)) {
+      return { catid, productId };
+    }
+  }
+  
+  // Fallback to query parameter
+  const catidParam = AppUtils.getUrlParam('catid');
+  return { catid: AppUtils.toNumber(catidParam, 1), productId: null };
+}
+
+// ===================== Step 6: Page initialization entry =====================
 document.addEventListener('DOMContentLoaded', async () => {
-  let catid = AppUtils.getUrlParam('catid');
-  catid = AppUtils.toNumber(catid, 1);
+  const { catid, productId } = parseSeoUrl();
 
   try {
     AppCommon.initMobileDrawer();
@@ -399,7 +385,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadCategoryInfo(catid);
     await loadCategoryProducts(catid, true);
 
-    // Add scroll event listener for infinite scroll
     window.addEventListener('scroll', () => handleScroll(catid));
     
   } catch (error) {
