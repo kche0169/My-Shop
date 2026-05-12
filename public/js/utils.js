@@ -61,5 +61,39 @@ getUrlParam(key) {
       clearTimeout(timer);
       timer = setTimeout(() => fn.apply(this, args), delay);
     };
+  },
+
+  /**
+   * 生成SEO友好的URL slug
+   * @param {string} text - 原始文本
+   * @returns {string} SEO友好的slug
+   */
+  slugify(text) {
+    return encodeURIComponent(text || '').replace(/%20/g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
+  },
+
+  /**
+   * 解析SEO URL
+   * @returns {Object} { catid, productId }
+   */
+  parseSeoUrl() {
+    const path = window.location.pathname;
+    const match = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/);
+    
+    if (match) {
+      const catid = parseInt(match[1]);
+      const productId = match[3] ? parseInt(match[3]) : null;
+      
+      if (!isNaN(catid)) {
+        return { catid, productId };
+      }
+    }
+    
+    const catidParam = window.AppUtils.getUrlParam('catid');
+    const pidParam = window.AppUtils.getUrlParam('pid');
+    return { 
+      catid: window.AppUtils.toNumber(catidParam, 0), 
+      productId: window.AppUtils.toNumber(pidParam, 0) 
+    };
   }
 };

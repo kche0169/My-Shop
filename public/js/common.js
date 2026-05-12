@@ -1,9 +1,32 @@
 /**
  * 全局通用交互 - 移动端抽屉、全局事件等
  */
+
+// 全局加载状态函数
+window.showLoading = function() {
+  let loadingEl = document.getElementById('global-loading');
+  if (!loadingEl) {
+    loadingEl = document.createElement('div');
+    loadingEl.id = 'global-loading';
+    loadingEl.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;
+      z-index: 9999; font-size: 18px; color: #165DFF; gap: 12px;
+    `;
+    loadingEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-2xl"></i> Loading...';
+    document.body.appendChild(loadingEl);
+  }
+  loadingEl.style.display = 'flex';
+};
+
+window.hideLoading = function() {
+  const loadingEl = document.getElementById('global-loading');
+  if (loadingEl) loadingEl.style.display = 'none';
+};
+
 window.AppCommon = {
   /**
-   * 初始化移动端分类抽屉
+   * 初始化移动端抽屉
    */
   initMobileDrawer() {
     const btnOpen = document.getElementById('mobile-category-btn');
@@ -74,9 +97,10 @@ renderCategoryList(categories, activeCatId) {
 
   categories.forEach(cate => {
     const isActive = cate.catid === activeCatId;
-    // 👇 核心修改：直接用绝对路径，不再拼接相对路径
+    // 使用 SEO URL 格式: /{catId}-{categoryName}
+    const seoUrl = `/${cate.catid}-${AppUtils.slugify(cate.name)}`;
     const liHtml = `
-      <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cate.catid}" 
+      <a href="${seoUrl}" 
          class="block px-3 py-2 rounded-md ${isActive ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600'} hover:bg-blue-100 hover:text-blue-600 transition-colors">
           ${cate.name}
       </a>

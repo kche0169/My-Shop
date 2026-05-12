@@ -1,130 +1,8 @@
 /**
  * Category page exclusive logic (fully functional version with infinite scroll and SEO URLs)
- * Features: Load category list, load category products with pagination, add to cart, 
- *           Loading state, mobile drawer, infinite scroll, SEO-friendly URLs
  */
 
-// ===================== Step 1: Define core utility functions =====================
-window.showLoading = function() {
-  let loadingEl = document.getElementById('global-loading');
-  if (!loadingEl) {
-    loadingEl = document.createElement('div');
-    loadingEl.id = 'global-loading';
-    loadingEl.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center;
-      z-index: 9999; font-size: 18px; color: #165DFF; gap: 12px;
-    `;
-    loadingEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-2xl"></i> Loading...';
-    document.body.appendChild(loadingEl);
-  }
-  loadingEl.style.display = 'flex';
-};
-
-window.hideLoading = function() {
-  const loadingEl = document.getElementById('global-loading');
-  if (loadingEl) loadingEl.style.display = 'none';
-};
-
-// ===================== Step 2: Global config/utils fallback =====================
-window.AppConfig = window.AppConfig || {
-  API_BASE_URL: '/api',
-  DEFAULT_IMG: 'https://via.placeholder.com/200x200?text=No+Image',
-  PAGE_PATHS: {
-    CATEGORY_DETAIL: '/pages/category/detail.html',
-    PRODUCT_DETAIL: '/pages/product/detail.html'
-  }
-};
-
-window.AppUtils = window.AppUtils || {
-  getUrlParam: function(key) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(key);
-  },
-  toNumber: function(value, defaultValue = 1) {
-    const num = parseInt(value);
-    return isNaN(num) ? defaultValue : num;
-  },
-  formatPrice: function(price) {
-    const num = parseFloat(price) || 0;
-    return `$${num.toFixed(2)}`;
-  },
-  // Generate SEO-friendly URL slug
-  slugify: function(text) {
-    return encodeURIComponent(text || '').replace(/%20/g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
-  }
-};
-
-window.AppCommon = window.AppCommon || {
-  initMobileDrawer: function() {
-    const mobileCateBtn = document.getElementById('mobile-category-btn');
-    const mobileCateDrawer = document.getElementById('mobile-category-drawer');
-    const mobileCateClose = document.getElementById('mobile-category-close');
-
-    if (!mobileCateBtn || !mobileCateDrawer || !mobileCateClose) return;
-
-    mobileCateBtn.addEventListener('click', () => {
-      mobileCateDrawer.classList.remove('-translate-x-full');
-    });
-
-    mobileCateClose.addEventListener('click', () => {
-      mobileCateDrawer.classList.add('-translate-x-full');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!mobileCateDrawer.contains(e.target) && !mobileCateBtn.contains(e.target)) {
-        mobileCateDrawer.classList.add('-translate-x-full');
-      }
-    });
-  },
-
-  loadAllCategories: async function(activeCatId) {
-    try {
-      const res = await axios.get(`${AppConfig.API_BASE_URL}/cate/all`);
-      const categories = res.data.data || [];
-      const sidebarList = document.getElementById('sidebar-cate-list');
-      const mobileList = document.getElementById('mobile-cate-list');
-      
-      if (!sidebarList || !mobileList) return;
-
-      if (categories.length === 0) {
-        const emptyHtml = '<li class="text-gray-500 px-3 py-2">No categories available</li>';
-        sidebarList.innerHTML = emptyHtml;
-        mobileList.innerHTML = emptyHtml;
-        return;
-      }
-
-      let cateHtml = '';
-      categories.forEach(cate => {
-        const cateId = AppUtils.toNumber(cate.catid || cate.id, 0);
-        if (cateId === 0) return;
-
-        const isActive = cateId === activeCatId;
-        const cateName = cate.name || 'Unnamed Category';
-        const seoUrl = `/${cateId}-${AppUtils.slugify(cateName)}`;
-        
-        cateHtml += `
-          <a href="${seoUrl}" 
-             class="block px-3 py-2 rounded-md transition-colors ${
-               isActive ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
-             }">
-              ${cateName}
-          </a>
-        `;
-      });
-
-      sidebarList.innerHTML = cateHtml;
-      mobileList.innerHTML = cateHtml;
-    } catch (e) {
-      console.error('Failed to load category list:', e);
-      const errorHtml = '<li class="text-red-500 px-3 py-2">Failed to load categories</li>';
-      if (sidebarList) sidebarList.innerHTML = errorHtml;
-      if (mobileList) mobileList.innerHTML = errorHtml;
-    }
-  }
-};
-
-// ===================== Step 3: Infinite Scroll State & Functions =====================
+// ===================== Step 1: Infinite Scroll State & Functions =====================
 const infiniteScrollState = {
   currentPage: 1,
   limit: 8,
@@ -190,7 +68,7 @@ function handleScroll(catid) {
   updateScrollToTopButton();
 }
 
-// ===================== Step 4: Category page core business functions =====================
+// ===================== Step 2: Category page core business functions =====================
 async function loadCategoryInfo(catid) {
   try {
     const res = await axios.get(`${AppConfig.API_BASE_URL}/cate/all`);
@@ -354,33 +232,17 @@ function renderErrorPage() {
   }
 }
 
-// ===================== Step 5: Parse SEO URL and initialize =====================
-function parseSeoUrl() {
-  const path = window.location.pathname;
-  // Match SEO URL pattern: /{catId}-{categoryName} or /{catId}-{categoryName}/{productId}-{productName}
-  const categoryMatch = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/);
-  
-  if (categoryMatch) {
-    const catid = parseInt(categoryMatch[1]);
-    const productId = categoryMatch[3] ? parseInt(categoryMatch[3]) : null;
-    
-    if (!isNaN(catid)) {
-      return { catid, productId };
-    }
-  }
-  
-  // Fallback to query parameter
-  const catidParam = AppUtils.getUrlParam('catid');
-  return { catid: AppUtils.toNumber(catidParam, 1), productId: null };
-}
-
-// ===================== Step 6: Page initialization entry =====================
+// ===================== Step 3: Page initialization entry =====================
 document.addEventListener('DOMContentLoaded', async () => {
-  const { catid, productId } = parseSeoUrl();
+  const { catid } = AppUtils.parseSeoUrl();
 
   try {
     AppCommon.initMobileDrawer();
     bindScrollToTopButton();
+    
+    if (catid <= 0) {
+      throw new Error('Invalid category ID');
+    }
     
     await loadCategoryInfo(catid);
     await loadCategoryProducts(catid, true);
