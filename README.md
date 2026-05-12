@@ -34,6 +34,13 @@ IEMS5718/
 │   │   │   └── delete.js
 │   │   ├── product/         # Product controllers
 │   │   └── order/           # Order controllers
+│   │       ├── createOrder.js    # Create new order
+│   │       ├── adminVerify.js    # Admin verify order payment
+│   │       ├── userRecent.js     # User recent orders
+│   │       └── adminAll.js       # Admin view all orders
+│   ├── __tests__/            # API Test suite
+│   │   ├── setup.js              # Test setup utilities
+│   │   └── checkout-flow.test.js # Checkout flow integration tests
 │   └── config/              # API configuration (PayPal, etc.)
 │       └── paypal.js
 
@@ -129,3 +136,46 @@ All core functions have been end-to-end tested and validated:
 
 #### Final Status
 **All tasks in Phase 4 are 100% fully completed, meeting all functional, security and compliance requirements.** The backend service is stable, secure, and ready for production deployment.
+
+---
+
+### Phase 5: Secure Checkout Flow & Order Management
+#### Overview
+This phase implements a complete and secure checkout process, including order creation, admin order tracking, payment verification, and order history viewing for both users and administrators. All requirements are fully implemented and tested.
+
+---
+
+#### Task List & Completion Status
+| Task Description | Completion Status | Verification Details |
+| :--- | :--- | :--- |
+| A. Perform checkout on products in shopping cart | ✅ Fully Completed | Users can create orders from shopping cart items; order status is set to PENDING initially; total price is calculated correctly based on product prices and quantities. |
+| B. Admin can track orders in admin panel | ✅ Fully Completed | Admin users can access `/api/orders/admin/all` to view all orders from all users; non-admin users are blocked with 403 status; order list includes all order details. |
+| C. Order verification after payment completion | ✅ Fully Completed | Admin can verify orders via `/api/orders/admin/verify` endpoint; order status changes from PENDING to PAID after verification; invalid order IDs are properly rejected. |
+| D. User and Admin order history viewing | ✅ Fully Completed | - Users can view their recent orders via `/api/orders/user/recent` (limited to last 5 orders);<br>- Admin can view all orders from all users;<br>- Unauthenticated users receive 401 response; <br>- Order items are stored in JSON format (items_json) for complete order details. |
+| E. Comprehensive test suite | ✅ Fully Completed | 11 test cases covering all scenarios (A-D); all tests pass successfully; includes end-to-end integration test covering complete checkout flow from order creation to verification. |
+
+---
+
+#### API Endpoints Implemented
+| Endpoint | Method | Controller | Description |
+| :--- | :--- | :--- | :--- |
+| `/api/orders/create` | POST | `order/createOrder.js` | Create new order with items |
+| `/api/orders/user/recent` | GET | `order/userRecent.js` | Get user's recent orders (last 5) |
+| `/api/orders/admin/all` | GET | `order/adminAll.js` | Admin: Get all orders |
+| `/api/orders/admin/verify` | POST | `order/adminVerify.js` | Admin: Verify order payment |
+
+---
+
+#### Final Verification Results
+All checkout flow functions have been end-to-end tested:
+1. Order creation successfully stores order data with correct total price
+2. Admin can view all orders and track order status
+3. Order verification correctly changes status from PENDING to PAID
+4. Users can view their order history with complete items_json data
+5. Role-based access control properly restricts admin-only endpoints
+6. Comprehensive test suite validates all critical workflows
+
+---
+
+#### Final Status
+**All tasks in Phase 5 are 100% fully completed.** The checkout flow is secure, reliable, and production-ready.
