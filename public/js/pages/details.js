@@ -1,5 +1,5 @@
 /**
- * Product detail page exclusive logic
+ * Product detail page exclusive logic (with SEO URL support)
  */
 
 // ===================== Step 1: Define missing Loading function =====================
@@ -56,6 +56,33 @@ window.AppUtils = window.AppUtils || {
     const imgBase = mainImgPath.substring(0, imgExtIndex);
     const imgExt = mainImgPath.substring(imgExtIndex + 1) || 'jpg';
     return [mainImgPath, `${imgBase}2.${imgExt}`, `${imgBase}3.${imgExt}`];
+  },
+  // Generate SEO-friendly URL slug
+  slugify: function(text) {
+    return encodeURIComponent(text || '').replace(/%20/g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
+  },
+  // Parse SEO URL: /{catId}-{name}/{productId}-{name}
+  parseSeoUrl: function() {
+    const path = window.location.pathname;
+    // Match SEO URL pattern: /{catId}-{categoryName}/{productId}-{productName}
+    const match = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+\/(\d+)-[a-zA-Z0-9\-]+\/?$/);
+    
+    if (match) {
+      const catid = parseInt(match[1]);
+      const pid = parseInt(match[2]);
+      
+      if (!isNaN(catid) && !isNaN(pid)) {
+        return { catid, pid };
+      }
+    }
+    
+    // Fallback to query parameters
+    const pidParam = AppUtils.getUrlParam('pid');
+    const catidParam = AppUtils.getUrlParam('catid');
+    return { 
+      catid: AppUtils.toNumber(catidParam, 0), 
+      pid: AppUtils.toNumber(pidParam, 0) 
+    };
   }
 };
 
@@ -109,10 +136,13 @@ window.AppCommon = window.AppCommon || {
         const cateId = AppUtils.toNumber(cate.catid || 0, 0);
         if (cateId === 0) return;
         const isActive = cateId === activeCatId;
+        const cateName = cate.name || 'Unnamed Category';
+        // Use SEO URL format: /{catId}-{categoryName}
+        const seoUrl = `/${cateId}-${AppUtils.slugify(cateName)}`;
         html += `
-          <a href="${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cateId}" 
+          <a href="${seoUrl}" 
              class="block px-3 py-2 rounded-md transition-colors ${isActive ? 'text-blue-700 bg-blue-50 font-medium' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}">
-              ${cate.name || 'Unnamed Category'}
+              ${cateName}
           </a>
         `;
       });
@@ -187,8 +217,11 @@ function renderBreadcrumb(product) {
   const proName = document.getElementById('breadcrumb-pro-name');
   if (cateLink) {
     const cateId = AppUtils.toNumber(product.catid || 0, 0);
-    cateLink.href = cateId > 0 ? `${AppConfig.PAGE_PATHS.CATEGORY_DETAIL}?catid=${cateId}` : '#';
-    cateLink.textContent = product.cateName || product.cate_name || 'Uncategorized';
+    const cateName = product.cateName || product.cate_name || 'Uncategorized';
+    // Use SEO URL for category link
+    const seoUrl = cateId > 0 ? `/${cateId}-${AppUtils.slugify(cateName)}` : '#';
+    cateLink.href = seoUrl;
+    cateLink.textContent = cateName;
   }
   if (proName) proName.textContent = product.name || 'Unknown Product';
 }
@@ -207,58 +240,30 @@ function renderProductInfo(product) {
     document.getElementById('product-desc').textContent = product.description || 'No detailed description';
 }
 
-// ===================== 【唯一改动：这里自动拼 origin.jpg，兼容旧逻辑】 =====================
-// function renderProductSlider(product) {
-//   const sliderWrapper = document.getElementById('product-slider');
-//   if (!sliderWrapper) return;
-//   sliderWrapper.innerHTML = '';
-
-//   let imgUrl = AppConfig.DEFAULT_IMG;
-
-//   if (product.img_path) {
-//     // 自动判断：有目录结构就用 origin.jpg，否则保持原来的路径
-//     if (product.img_path.includes('/images/') && !product.img_path.includes('.')) {
-//       imgUrl = `${product.img_path}/origin.jpg`;
-//     } else {
-//       imgUrl = product.img_path;
-//     }
-//   }
-
-//   sliderWrapper.innerHTML = `
-//     <div class="swiper-slide flex items-center justify-center bg-gray-100">
-//       <img src="${imgUrl}" class="max-h-full object-contain" alt="${product.name || 'Product image'}"
-//            onerror="this.src='${AppConfig.DEFAULT_IMG}'">
-//     </div>
-//   `;
-// }
 function renderProductSlider(product) {
   const sliderWrapper = document.getElementById('product-slider');
   if (!sliderWrapper) return;
-  sliderWrapper.innerHTML = ''; // 先清空
+  sliderWrapper.innerHTML = '';
 
-  // 如果数据库没有 img_path，就用默认图
   let baseImgs = [];
   if (product.img_path && product.img_path.trim() !== '') {
     const imgPath = product.img_path.trim();
     const extIndex = imgPath.lastIndexOf('.');
     if (extIndex !== -1) {
-      const base = imgPath.substring(0, extIndex);  // /images/xxx/xxx
-      const ext = imgPath.substring(extIndex);      // .jpg
-      // 自动生成三张图片的路径（如果只存一张，就假设有 2、3 张同目录同名加后缀）
+      const base = imgPath.substring(0, extIndex);
+      const ext = imgPath.substring(extIndex);
       baseImgs = [
         imgPath,
         `${base}2${ext}`,
         `${base}3${ext}`
       ];
     } else {
-      // 没有扩展名，直接用原路径
       baseImgs = [imgPath];
     }
   } else {
     baseImgs = [AppConfig.DEFAULT_IMG];
   }
 
-  // 构建 swiper-slide DOM，遇到找不到的图片自动 fallback 默认图
   baseImgs.forEach(src => {
     const slide = document.createElement('div');
     slide.className = 'swiper-slide flex items-center justify-center bg-gray-100';
@@ -275,7 +280,6 @@ function renderProductSlider(product) {
     sliderWrapper.appendChild(slide);
   });
 }
-// ===================== 【改动结束，其他完全不动】 =====================
 
 function renderErrorPage() {
   hideLoading();
@@ -323,10 +327,15 @@ async function loadProductDetail(pid) {
 
 // ===================== Step 4: Page initialization entry =====================
 document.addEventListener('DOMContentLoaded', async () => {
+  // Parse SEO URL first, fallback to query parameters
+  const { pid: seoPid } = AppUtils.parseSeoUrl();
   const rawPid = AppUtils.getUrlParam('pid');
-  console.log('Original PID passed via jump:', rawPid);
-  let pid = AppUtils.toNumber(rawPid, 9);
-  console.log('Processed valid PID:', pid);
+  console.log('Original PID from query param:', rawPid);
+  console.log('PID from SEO URL:', seoPid);
+  
+  // Priority: SEO URL pid > query param pid
+  let pid = seoPid > 0 ? seoPid : AppUtils.toNumber(rawPid, 9);
+  console.log('Final processed PID:', pid);
 
   try {
     showLoading();

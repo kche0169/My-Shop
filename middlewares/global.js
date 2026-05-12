@@ -59,8 +59,7 @@ const globalMiddlewares = (app) => {
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   app.use(cookieParser());
 
-  // 静态文件
-  app.use(express.static(path.join(__dirname, '../public')));
+  // Static file service is moved to app.js (AFTER SEO routes)
 };
 
 module.exports = globalMiddlewares;

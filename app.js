@@ -16,15 +16,31 @@ app.set('sessionStore', sessionStore);
 app.set('db', db);
 const port = 3000;
 
-// 3. Register global middlewares
+// 3. Register global middlewares (without static file service)
 globalMiddlewares(app);
 
-// 4. Mount routes
+// 4. SEO URL routing - MUST be BEFORE static file service
+// Handle /{catId}-{name} and /{catId}-{name}/{productId}-{name}
+app.get(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/, (req, res) => {
+  const reqPath = req.path;
+  // Check if it's a product URL (has product ID)
+  const productMatch = reqPath.match(/^\/(\d+)-[a-zA-Z0-9\-]+\/(\d+)-[a-zA-Z0-9\-]+\/?$/);
+  
+  if (productMatch) {
+    // Product detail page
+    res.sendFile(path.join(__dirname, 'public', 'products', 'detail.html'));
+  } else {
+    // Category detail page
+    res.sendFile(path.join(__dirname, 'public', 'category', 'detail.html'));
+  }
+});
+
+// 5. Mount routes
 app.use('/', pageRoutes); // Page routes
 app.use('/api', userRoutes); // User APIs
 app.use('/admin', requireAdmin, express.static(path.join(__dirname, 'admin'))); // Admin pages
 
-// 5. Mount business routes (category / product / order)
+// 6. Mount business routes (category / product / order)
 try {
   const cateApi = require('./api/routes/category');
   const productsApi = require('./api/routes/products');
@@ -38,27 +54,15 @@ try {
   console.error('[ERROR] Route mounting failed:', err.message);
 }
 
-// 6. SEO URL routing - Handle /{catId}-{name} and /{catId}-{name}/{productId}-{name}
-app.get(/^\/(\d+)-[a-zA-Z0-9\-]+(\/(\d+)-[a-zA-Z0-9\-]+)?\/?$/, (req, res) => {
-  const path = req.path;
-  // Check if it's a product URL (has product ID)
-  const productMatch = path.match(/^\/(\d+)-[a-zA-Z0-9\-]+\/(\d+)-[a-zA-Z0-9\-]+\/?$/);
-  
-  if (productMatch) {
-    // Product detail page
-    res.sendFile(path.join(__dirname, 'public', 'pages', 'product', 'detail.html'));
-  } else {
-    // Category detail page
-    res.sendFile(path.join(__dirname, 'public', 'pages', 'category', 'detail.html'));
-  }
-});
+// 7. Static file service - MUST be AFTER all other routes
+app.use(express.static(path.join(__dirname, 'public')));
 
-// 6. Start server
+// 8. Start server
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running: http://localhost:${port}`);
 });
 
-// 7. Graceful shutdown
+// 9. Graceful shutdown
 process.on('SIGINT', () => {
   db.close(() => process.exit(0));
 });
