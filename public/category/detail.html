@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy - Category</title> <!-- Dynamic title, fetched from database -->
+    <title>ShopEasy - Category</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,6 +49,7 @@
         </button>
       </div>
     </div>
+
   <!-- user icon -->
 <div class="flex items-center gap-2 text-gray-700 hover:text-blue-600 py-2 px-3 cursor-pointer relative group" id="userIconWrapper">
   <div class="flex items-center gap-2">
@@ -72,7 +73,7 @@
 
     <!-- ================= Shopping Cart ================= -->
 
-    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry"> <!-- Added: Core entry ID, match index.js -->
+    <div class="relative cart-wrapper w-full md:w-auto group" id="cart-entry">
       <input type="checkbox" id="cart-toggle" class="hidden peer">
 
       <!-- Cart Button -->
@@ -80,24 +81,23 @@
         <i class="fa-solid fa-cart-shopping mr-2"></i>
         <span>Shopping List</span>
         <span class="ml-2 bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium" id="cart-count">
-          0 <!-- Dynamic cart item count, keep ID unchanged -->
+          0
         </span>
       </label>
 
-      <!-- Cart Dropdown (match index.js popup ID, keep styles/structure) -->
+      <!-- Cart Dropdown -->
       <div class="cart-dropdown absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl
                   border border-gray-200 z-50
                   opacity-0 invisible translate-y-2 pointer-events-none
                   transition-all duration-200 ease-in-out
                   group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-hover:pointer-events-auto
-                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup"> <!-- Added: Core popup ID, match index.js -->
+                  peer-checked:opacity-100 peer-checked:visible peer-checked:translate-y-0 peer-checked:pointer-events-auto" id="cart-popup">
 
-        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title"> <!-- Modified ID: match index.js popup title -->
+        <div class="px-5 py-4 border-b font-semibold text-gray-800" id="cart-popup-title">
           My Shopping List (0 items)
         </div>
 
-        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items"> <!-- Modified ID: match index.js popup item list -->
-          <!-- Cart items rendered dynamically (Implemented in Phase3) -->
+        <div class="px-5 py-4 max-h-[300px] overflow-y-auto divide-y divide-gray-100" id="cart-popup-items">
           <div class="text-center text-gray-500 py-4">
             Your cart is empty
           </div>
@@ -106,7 +106,7 @@
         <div class="px-5 py-4 border-t bg-gray-50">
           <div class="flex justify-between font-bold mb-4">
             <span>Total</span>
-            <span class="text-blue-700" id="cart-popup-total">$0.00</span> <!-- Modified ID: match index.js popup total price -->
+            <span class="text-blue-700" id="cart-popup-total">$0.00</span>
           </div>
           <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700" id="checkout-btn">
             Checkout
@@ -120,16 +120,15 @@
 <!-- ================= Main Content ================= -->
 <main class="container mx-auto px-4 py-6 max-w-7xl flex flex-col gap-4">
 
-  <!-- Dynamically loaded left category sidebar (replace static category list) -->
+  <!-- Dynamically loaded left category sidebar -->
   <aside class="hidden xl:block w-64 bg-white rounded-lg shadow-sm p-4 fixed top-20 left-4 z-40">
     <h2 class="text-xl font-bold mb-4 text-gray-800">Categories</h2>
     <ul class="flex flex-col gap-3" id="sidebar-cate-list">
-      <!-- Category list rendered dynamically from database -->
       <li class="text-gray-500">Loading categories...</li>
     </ul>
   </aside>
 
-  <!-- Dynamic breadcrumb (replace static Electronics) -->
+  <!-- Dynamic breadcrumb -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="flex items-center space-x-2">
       <li>
@@ -144,7 +143,7 @@
     </ol>
   </nav>
 
-  <!-- Dynamic category title/description (replace static Electronics) -->
+  <!-- Dynamic category title/description -->
   <section class="mb-8">
     <h1 class="text-3xl font-bold text-gray-800 mb-2" id="cate-name">Loading Category...</h1>
     <p class="text-gray-600" id="cate-desc">
@@ -152,37 +151,37 @@
     </p>
   </section>
 
-  <!-- Dynamic product list (add product card template with Add to Cart button) -->
+  <!-- Dynamic product list with infinite scroll -->
   <section>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-list">
       <!-- Placeholder for dynamically rendered product cards -->
       <div class="col-span-full text-center text-gray-500 py-8">
         Loading products...
       </div>
-      <!-- Product card template (reused for dynamic rendering): Below is an example HTML structure for a single product -->
-      <!-- 👇 Note: This template will be generated dynamically by category.js, remove this comment and generate real data during actual rendering -->
-      <!--
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow" data-pid="PRODUCT_ID">
-        <img src="PRODUCT_IMAGE_URL" alt="PRODUCT_NAME" class="w-full h-48 object-cover">
-        <div class="p-4">
-          <h3 class="font-medium text-gray-800 mb-2 line-clamp-1">PRODUCT_NAME</h3>
-          <p class="text-blue-600 font-bold mb-4">$PRODUCT_PRICE</p>
-          <div class="flex justify-between items-center">
-            <a href="../pages/detail.html?pid=PRODUCT_ID" class="text-gray-600 hover:text-blue-600 text-sm">View Details</a>
-            <!-- Add to Cart button: bind global addToCart function -->
-            <button onclick="addToCart(PRODUCT_ID, event)" 
-                    class="bg-blue-600 text-white py-1 px-3 rounded text-sm hover:bg-blue-700">
-              <i class="fa-solid fa-cart-plus mr-1"></i> Add to Cart
-            </button>
-          </div>
-        </div>
+    </div>
+    
+    <!-- Loading Indicator for Infinite Scroll -->
+    <div class="flex items-center justify-center py-8" id="loading-indicator" style="display: none;">
+      <div class="flex items-center gap-3 text-gray-500">
+        <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+        <span>Loading more products...</span>
       </div>
-      -->
+    </div>
+
+    <!-- End of Results -->
+    <div class="text-center py-8 text-gray-500" id="end-of-results" style="display: none;">
+      <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
+      You've reached the end
     </div>
   </section>
+  
+  <!-- Scroll to Top Button -->
+  <button id="scroll-to-top" class="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 z-50">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
 </main>
 
-<!-- Dynamic mobile category drawer (replace static categories) -->
+<!-- Dynamic mobile category drawer -->
 <aside id="mobile-category-drawer" 
        class="fixed top-0 left-0 h-full w-64 bg-white p-4 shadow-lg transform -translate-x-full transition-transform duration-300 z-50 xl:hidden">
   <h2 class="text-xl font-bold mb-4 text-gray-800 flex justify-between items-center">
@@ -192,7 +191,6 @@
     </button>
   </h2>
   <ul class="flex flex-col gap-3" id="mobile-cate-list">
-    <!-- Mobile category list rendered dynamically from database -->
     <li class="text-gray-500">Loading...</li>
   </ul>
 </aside>
@@ -226,7 +224,7 @@
 <!-- Shopping Cart -->
 <script src="../js/cart/core.js"></script>
 <script src="../js/cart/index.js"></script>
-<!-- Category page exclusive: Implement dynamic product card rendering + bind add to cart button in category.js -->
+<!-- Category page exclusive: Implement dynamic product card rendering + infinite scroll -->
 <script src="../js/pages/category.js"></script>
 <script src="../js/login.js"></script>
 <script src="../js/checkout.js"></script>

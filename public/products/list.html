@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Products - ShopEasy</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/custom.css">
+</head>
+<body class="bg-gray-50 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-6 w-full md:w-auto">
+        <a href="../index.html" class="text-2xl font-bold text-blue-600">ShopEasy</a>
+      </div>
+      
+      <div class="w-full md:flex-1 md:px-8">
+        <div class="flex">
+          <input type="text" placeholder="Search products..." class="w-full border rounded-l-md px-4 py-2 focus:outline-none"/>
+          <button class="bg-blue-600 text-white px-4 rounded-r-md">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+      </div>
+
+      <a href="../cart/detail.html" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Cart</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Category Filter -->
+  <div class="bg-white border-b">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex items-center gap-4 overflow-x-auto" id="category-filters">
+        <button class="category-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white" data-catid="">
+          All
+        </button>
+        <!-- Categories will be loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">All Products</h1>
+      <span class="text-gray-500 text-sm" id="product-count">Loading...</span>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-grid">
+      <!-- Products will be loaded dynamically -->
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="flex items-center justify-center py-8" id="loading-indicator" style="display: none;">
+      <div class="flex items-center gap-3 text-gray-500">
+        <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+        <span>Loading more products...</span>
+      </div>
+    </div>
+
+    <!-- End of Results -->
+    <div class="text-center py-8 text-gray-500" id="end-of-results" style="display: none;">
+      <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
+      You've reached the end
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" class="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 text-white rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700 z-50">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+  </main>
+
+  <!-- Product Card Template -->
+  <template id="product-card-template">
+    <a href="../products/detail.html?pid=${pid}" class="block group">
+      <div class="product-card bg-white rounded-lg shadow-sm overflow-hidden transition-transform hover:scale-[1.02]">
+        <div class="product-image-wrapper aspect-square bg-gray-100">
+          <img src="${img_path}" alt="${name}" class="product-image w-full h-full object-cover" 
+               onerror="this.src='../images/placeholder.jpg'">
+        </div>
+        <div class="p-4">
+          <h3 class="font-medium text-gray-800 truncate">${name}</h3>
+          <p class="text-sm text-gray-500 truncate cateName">${cateName}</p>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-lg font-bold text-blue-600">$${price}</span>
+            <button class="add-to-cart-btn text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors" data-pid="${pid}">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </a>
+  </template>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/cart/core.js"></script>
+  <script src="../js/infinite-scroll.js"></script>
+</body>
+</html>

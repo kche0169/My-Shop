@@ -1,7 +1,7 @@
 /**
- * Category page exclusive logic (fully functional version)
- * Features: Load category list, load category products, add to cart (compatible with global cart), Loading state, mobile drawer
- * Fixes: Path errors, function overwriting, a-tag jump interception, DOM fault tolerance, data validation
+ * Category page exclusive logic (fully functional version with infinite scroll)
+ * Features: Load category list, load category products with pagination, add to cart (compatible with global cart), 
+ *           Loading state, mobile drawer, infinite scroll
  */
 
 // ===================== Step 1: Define core utility functions (avoid undefined errors) =====================
@@ -134,7 +134,73 @@ window.AppCommon = window.AppCommon || {
   }
 };
 
-// ===================== Step 3: Category page core business functions =====================
+// ===================== Step 3: Infinite Scroll State & Functions =====================
+const infiniteScrollState = {
+  currentPage: 1,
+  limit: 8,
+  isLoading: false,
+  hasMore: true,
+  currentCatid: null
+};
+
+function showLoadingIndicator() {
+  const el = document.getElementById('loading-indicator');
+  if (el) el.style.display = 'flex';
+}
+
+function hideLoadingIndicator() {
+  const el = document.getElementById('loading-indicator');
+  if (el) el.style.display = 'none';
+}
+
+function showEndOfResults() {
+  const el = document.getElementById('end-of-results');
+  if (el) el.style.display = 'block';
+}
+
+function hideEndOfResults() {
+  const el = document.getElementById('end-of-results');
+  if (el) el.style.display = 'none';
+}
+
+function updateScrollToTopButton() {
+  const el = document.getElementById('scroll-to-top');
+  if (!el) return;
+
+  if (window.scrollY > 300) {
+    el.classList.remove('opacity-0', 'invisible');
+    el.classList.add('opacity-100', 'visible');
+  } else {
+    el.classList.add('opacity-0', 'invisible');
+    el.classList.remove('opacity-100', 'visible');
+  }
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function bindScrollToTopButton() {
+  const el = document.getElementById('scroll-to-top');
+  if (el) {
+    el.addEventListener('click', scrollToTop);
+  }
+}
+
+function handleScroll(catid) {
+  if (infiniteScrollState.isLoading || !infiniteScrollState.hasMore) return;
+
+  const scrollPosition = window.innerHeight + window.scrollY;
+  const threshold = document.documentElement.scrollHeight - 500;
+
+  if (scrollPosition >= threshold) {
+    loadCategoryProducts(catid, false);
+  }
+
+  updateScrollToTopButton();
+}
+
+// ===================== Step 4: Category page core business functions =====================
 /**
  * Load category basic info (title, breadcrumb, page title)
  * @param {number} catid - Category ID
@@ -175,26 +241,49 @@ async function loadCategoryInfo(catid) {
 }
 
 /**
- * Load product list under category (core: compatible with global addToCart function)
+ * Load product list under category with pagination support
  * @param {number} catid - Category ID
+ * @param {boolean} reset - Whether to reset pagination (default: true)
  */
-async function loadCategoryProducts(catid) {
+async function loadCategoryProducts(catid, reset = true) {
+  // Initialize state on first load
+  if (reset) {
+    infiniteScrollState.currentPage = 1;
+    infiniteScrollState.hasMore = true;
+    infiniteScrollState.currentCatid = catid;
+    hideEndOfResults();
+  }
+
+  // Check loading state
+  if (infiniteScrollState.isLoading || !infiniteScrollState.hasMore) return;
+
+  infiniteScrollState.isLoading = true;
+  
+  if (reset) {
+    showLoading();
+  } else {
+    showLoadingIndicator();
+  }
+
   try {
-    showLoading(); // Show Loading
-    // Call backend API to get category products
-    const res = await axios.get(`${AppConfig.API_BASE_URL}/products/list?catid=${catid}`);
+    // Call backend API with pagination
+    const url = `${AppConfig.API_BASE_URL}/products/list?catid=${catid}&page=${infiniteScrollState.currentPage}&limit=${infiniteScrollState.limit}`;
+    const res = await axios.get(url);
     const products = res.data.data || [];
+    const pagination = res.data.pagination || {};
     const productListEl = document.getElementById('product-list');
 
     // Fault tolerance: product list container does not exist
     if (!productListEl) {
       console.warn('Product list container #product-list not found');
       hideLoading();
+      hideLoadingIndicator();
+      infiniteScrollState.isLoading = false;
       return;
     }
 
-    // No products prompt
-    if (products.length === 0) {
+    // No products prompt (only on first page)
+    if (products.length === 0 && infiniteScrollState.currentPage === 1) {
       productListEl.innerHTML = `
         <div class="col-span-full text-center text-gray-500 py-8">
           <i class="fa-solid fa-box-open text-4xl mb-3"></i>
@@ -202,37 +291,33 @@ async function loadCategoryProducts(catid) {
         </div>
       `;
       hideLoading();
+      hideLoadingIndicator();
+      infiniteScrollState.isLoading = false;
+      infiniteScrollState.hasMore = false;
       return;
     }
 
-    // Render product list (compatible with global addToCart function)
+    // Render product list items
     let productHtml = '';
     products.forEach(pro => {
-      // Force validate product ID validity
       const validPid = AppUtils.toNumber(pro.pid || pro.id, 0);
-      if (validPid === 0) return; // Skip invalid ID
+      if (validPid === 0) return;
 
-      // ========== 终极笨办法：只判断是否有后缀，无后缀才加thumb.jpg ==========
       let imgSrc = pro.img_path || AppConfig.DEFAULT_IMG;
-      // 只有路径里没有 .jpg/.png/.gif 这些后缀时，才加 /thumb.jpg
       if (imgSrc && !imgSrc.includes('.') && imgSrc !== AppConfig.DEFAULT_IMG) {
         imgSrc = `${imgSrc}/thumb.jpg`;
       }
-      // ========== 旧路径（带后缀）完全不变，新路径（无后缀）加thumb.jpg ==========
       
       const proName = pro.name || 'Unnamed Product';
       const proDesc = pro.description || 'No product description available';
       const proPrice = AppUtils.formatPrice(pro.price);
 
-      // Product card HTML (core: add to cart button intercepts a-tag jump, calls global addToCart)
       productHtml += `
         <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col">
-          <!-- Product image -->
           <a href="${AppConfig.PAGE_PATHS.PRODUCT_DETAIL}?pid=${validPid}" class="block">
             <img src="${imgSrc}" alt="${proName}" class="w-full h-48 object-contain p-4 bg-gray-50"
-                 onerror="this.src='${AppConfig.DEFAULT_IMG}'"> <!-- 加载失败显示默认图 -->
+                 onerror="this.src='${AppConfig.DEFAULT_IMG}'">
           </a>
-          <!-- Product info -->
           <div class="p-4 flex-1">
             <a href="${AppConfig.PAGE_PATHS.PRODUCT_DETAIL}?pid=${validPid}" class="block">
               <h3 class="text-lg font-medium text-gray-800 mb-2 line-clamp-1 hover:text-blue-600">${proName}</h3>
@@ -240,7 +325,6 @@ async function loadCategoryProducts(catid) {
               <p class="text-blue-600 font-bold text-xl mb-4">${proPrice}</p>
             </a>
           </div>
-          <!-- Add to cart button (core: call global addToCart, intercept default events) -->
           <button 
             class="mt-auto bg-blue-600 text-white py-2 px-4 rounded-b-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
             onclick="addToCart(${validPid}, event); event.preventDefault(); event.stopPropagation();"
@@ -251,14 +335,24 @@ async function loadCategoryProducts(catid) {
       `;
     });
 
-    // Render to page
-    productListEl.innerHTML = productHtml;
-    hideLoading(); // Hide Loading
+    // Append or replace HTML based on reset flag
+    if (reset) {
+      productListEl.innerHTML = productHtml;
+    } else {
+      productListEl.insertAdjacentHTML('beforeend', productHtml);
+    }
+
+    // Update pagination state
+    infiniteScrollState.hasMore = pagination.hasNextPage || false;
+    infiniteScrollState.currentPage++;
+
+    if (!infiniteScrollState.hasMore) {
+      showEndOfResults();
+    }
+
   } catch (error) {
     console.error(`Failed to load category products: ${error.message}`);
-    hideLoading(); // Hide Loading even on failure
-    // Render error prompt
-    if (document.getElementById('product-list')) {
+    if (infiniteScrollState.currentPage === 1 && document.getElementById('product-list')) {
       document.getElementById('product-list').innerHTML = `
         <div class="col-span-full text-center text-red-500 py-8">
           <i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i>
@@ -266,6 +360,10 @@ async function loadCategoryProducts(catid) {
         </div>
       `;
     }
+  } finally {
+    infiniteScrollState.isLoading = false;
+    hideLoading();
+    hideLoadingIndicator();
   }
 }
 
@@ -273,15 +371,12 @@ async function loadCategoryProducts(catid) {
  * Render global error page (fallback)
  */
 function renderErrorPage() {
-  // Reset category title
   if (document.getElementById('cate-name')) {
     document.getElementById('cate-name').textContent = 'Unknown Category';
   }
-  // Reset breadcrumb
   if (document.getElementById('breadcrumb-cate-name')) {
     document.getElementById('breadcrumb-cate-name').textContent = 'Unknown';
   }
-  // Reset product list
   if (document.getElementById('product-list')) {
     document.getElementById('product-list').innerHTML = `
       <div class="col-span-full text-center text-red-500 py-8">
@@ -292,24 +387,24 @@ function renderErrorPage() {
   }
 }
 
-// ===================== Step 4: Page initialization entry (core) =====================
+// ===================== Step 5: Page initialization entry (core) =====================
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Parse and validate category ID (URL parameter)
   let catid = AppUtils.getUrlParam('catid');
-  catid = AppUtils.toNumber(catid, 1); // Fallback to 1
+  catid = AppUtils.toNumber(catid, 1);
 
   try {
-    // 2. Initialize common interactions (mobile drawer)
     AppCommon.initMobileDrawer();
+    bindScrollToTopButton();
     
-    // 3. Load category basic info (title/breadcrumb/category list)
     await loadCategoryInfo(catid);
+    await loadCategoryProducts(catid, true);
+
+    // Add scroll event listener for infinite scroll
+    window.addEventListener('scroll', () => handleScroll(catid));
     
-    // 4. Load product list under category
-    await loadCategoryProducts(catid);
   } catch (error) {
     console.error('Category page initialization failed:', error);
-    renderErrorPage(); // Render error page
-    hideLoading(); // Ensure Loading is hidden
+    renderErrorPage();
+    hideLoading();
   }
 });
